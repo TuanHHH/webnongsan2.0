@@ -1,18 +1,13 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from 'tailwindcss'
-import path from 'path'
+import jsconfigPaths from 'vite-jsconfig-paths'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
 
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
+  plugins: [react(), jsconfigPaths()],
   css: {
     postcss: {
       plugins: [tailwindcss()],

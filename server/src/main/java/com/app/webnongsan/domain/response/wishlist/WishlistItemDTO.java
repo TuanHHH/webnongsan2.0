@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class WishlistItemDTO {
-    private Long productId;
+    private Long id;
     private String productName;
-    private Double productPrice;
-    private String productImageUrl;
+    private Double pirice;
+    private String imageUrl;
 }

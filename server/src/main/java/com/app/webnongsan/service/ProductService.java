@@ -64,7 +64,7 @@ public class ProductService{
     public ResProductDTO convertToProductDTO(Product p) {
         ResProductDTO res = new ResProductDTO();
         res.setId(p.getId());
-        res.setProduct_name(p.getProduct_name());
+        res.setProduct_name(p.getProductName());
         res.setCategory(p.getCategory().getName());
         res.setPrice(p.getPrice());
         res.setSold(p.getSold());
@@ -83,7 +83,7 @@ public class ProductService{
     public Product update(Product p){
         Product curr = this.findById(p.getId());
         if (curr != null){
-            curr.setProduct_name(p.getProduct_name());
+            curr.setProductName(p.getProductName());
             curr.setPrice(p.getPrice());
             curr.setImageUrl(p.getImageUrl());
             curr.setDescription(p.getDescription());

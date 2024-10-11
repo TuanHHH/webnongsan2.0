@@ -7,7 +7,7 @@ export const appSlice = createSlice({
     categories: null,
     isLoading: false,
     isShowModal: false,
-    modalChildren: null
+    modalChildren: null,
   },
   // Code logic xử lý sync action
   reducers: {
@@ -41,6 +41,6 @@ export const appSlice = createSlice({
   },
 });
 
-export const { showModal } = appSlice.actions
+export const { showModal} = appSlice.actions
 //export reducer = reducer(s) = extrareducers
 export default appSlice.reducer;

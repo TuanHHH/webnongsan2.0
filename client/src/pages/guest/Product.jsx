@@ -20,10 +20,10 @@ const override = {
 };
 
 const Product = () => {
-  const [products, setProducts] = useState(null);
+  const [products, setProducts] = useState([]);
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();
-  const { category} = useParams()
+  const { category } = useParams()
   const [maxPrice, setMaxPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isProductLoading, setIsProductLoading] = useState(true);
@@ -42,10 +42,6 @@ const Product = () => {
     return 'Tất cả sản phẩm';
   };
 
-  useEffect(() => {
-    fetchMaxPrice();
-  }, [category]);
-
   const fetchMaxPrice = async () => {
     try {
       setIsLoading(true);
@@ -53,6 +49,7 @@ const Product = () => {
       const res = await apiGetMaxPrice(category, params.get('search'));
       if (res.statusCode === 200) {
         setMaxPrice(res.data);
+        
       } else {
         throw new Error('Lỗi khi lấy giá tối đa');
       }
@@ -102,57 +99,65 @@ const Product = () => {
 
   useEffect(() => {
     let queries = {
-        page: params.get('page') || 1,
-        size: 10,
-        filter: []
+      page: params.get('page') || 1,
+      size: 10,
+      filter: []
     };
 
     let ratings = [], priceRange = [];
 
     if (category) {
-        queries.filter.push(`category.name='${category}'`);
+      queries.filter.push(`category.name='${category}'`);
     }
 
     const searchTerm = params.get('search');
     if (searchTerm) {
-        queries.filter.push(`product_name~'${searchTerm}'`);
+      queries.filter.push(`productName~'${searchTerm}'`);
     }
 
     for (let [key, value] of params.entries()) {
-        if (key === 'rating') {
-            const ratingValues = value.split('-');
-            ratings.push(...ratingValues);
-        } else if (key === 'price') {
-            const priceValues = value.split('-');
-            priceRange.push(...priceValues);
-        }
+      if (key === 'rating') {
+        const ratingValues = value.split('-');
+        ratings.push(...ratingValues);
+      } else if (key === 'price') {
+        const priceValues = value.split('-');
+        priceRange.push(...priceValues);
+      }
     }
 
     if (ratings.length > 0) {
-        queries.filter.push(`rating >= ${ratings[0]} and rating <= ${ratings[1]}`);
+      queries.filter.push(`rating >= ${ratings[0]} and rating <= ${ratings[1]}`);
     }
 
     if (priceRange.length > 0) {
-        queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
+      queries.filter.push(`price >= ${priceRange[0]} and price <= ${priceRange[1]}`);
     }
 
     if (ratings.length > 0 || priceRange.length > 0) {
-        queries.page = params.get('page') || 1;
+      queries.page = params.get('page') || 1;
     }
 
     if (sortOption) {
-        const [sortField, sortDirection] = sortOption.split('-');
-        queries.sort = `${sortField},${sortDirection}`;
+      const [sortField, sortDirection] = sortOption.split('-');
+      queries.sort = `${sortField},${sortDirection}`;
     }
 
     if (queries.filter.length > 0) {
-        queries.filter = encodeURIComponent(queries.filter.join(' and '));
+      queries.filter = encodeURIComponent(queries.filter.join(' and '));
     } else {
-        delete queries.filter;
+      delete queries.filter;
     }
 
     fetchProducts(queries);
-}, [params, sortOption, category, navigate]);
+  }, [params, sortOption, category, navigate]);
+
+  useEffect(() => {
+    if (!isProductLoading && !error && products?.result?.length > 0) {
+      fetchMaxPrice();
+    } else {
+      setIsLoading(false);
+    }
+  }, [isProductLoading, error, products.result]);
 
   const changeActiveFilter = useCallback((name) => {
     if (activeClick === name) setActiveClick(null);

@@ -73,6 +73,8 @@ export const voteOption = [
 ]
 
 export const sortProductOption = [
+  {value: 'productName-asc', label: 'Tên A-Z'},
+  {value: 'productName-desc', label: 'Tên Z-A'},
   { value: 'price-asc', label: 'Giá thấp đến cao' },
   { value: 'price-desc', label: 'Giá cao đến thấp' },
   { value: 'rating-asc', label: 'Rating thấp' },

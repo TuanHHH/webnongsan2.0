@@ -24,7 +24,7 @@ public class Product {
     private long id;
 
     @NotBlank(message = "Tên không được để trống")
-    private String product_name;
+    private String productName;
 
     private double price;
 

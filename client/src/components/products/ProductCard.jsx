@@ -4,22 +4,51 @@ import { SelectOption } from "..";
 import icons from "@/utils/icons";
 import withBaseComponent from "@/hocs/withBaseComponent";
 import product_default from '@/assets/product_default.png';
-import { showModal } from "../../store/app/appSlice";
-import ProductDetail from "../../pages/guest/ProductDetail";
+import { showModal } from "@/store/app/appSlice";
+import ProductDetail from "@/pages/guest/ProductDetail";
+import { apiAddOrUpdateCart } from "@/apis";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import path from "@/utils/path";
+import { getCurrentUser } from "@/store/user/asyncActions";
+
 const { FaCartShopping, FaHeart, FaEye } = icons;
 
 const ProductCard = ({ productData, navigate, dispatch }) => {
   const [showOption, setShowOption] = useState(false);
-
-  const handleClickOptions = (e, flag) => {
+  const { isLoggedIn } = useSelector(state => state.user)
+  const handleClickOptions = async (e, flag) => {
     e.stopPropagation();
     if (flag === 'QUICK_VIEW') {
       dispatch(showModal({
         isShowModal: true,
-        modalChildren: <ProductDetail isQuickView data={{pid: productData?.id, category:productData?.category}}/>
+        modalChildren: <ProductDetail isQuickView data={{ pid: productData?.id, category: productData?.category }} />
       }))
     }
-    if (flag === 'ADD_TO_CART') console.log("ADD_TO_CART");
+    if (flag === 'ADD_TO_CART') {
+      if (!isLoggedIn) {
+        Swal.fire({
+          text: "Vui lòng đăng nhập",
+          confirmButtonText: "Đăng nhập",
+          cancelButtonText: "Hủy",
+          showCancelButton: true,
+          icon: 'info',
+          title: "Oops!"
+        }).then(rs => {
+          if (rs.isConfirmed) navigate(`/${path.LOGIN}`)
+        })
+        return
+      }
+      const res = await apiAddOrUpdateCart(productData?.id, 1)
+      if (res.statusCode === 201) {
+        toast.success('Đã thêm vào giỏ hàng')
+        dispatch(getCurrentUser())
+      }
+      else {
+        toast.error("Có lỗi xảy ra")
+      }
+    }
     if (flag === 'ADD_WISHLIST') console.log("ADD_WISHLIST");
   };
 
@@ -44,19 +73,19 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
                 className="py-2 cursor-pointer"
                 onClick={(e) => handleClickOptions(e, 'QUICK_VIEW')}
               >
-                <SelectOption key={productData.id + '0'} icon={<FaEye />} />
+                <span title="Quick view"><SelectOption key={productData.id + '0'} icon={<FaEye />} /></span>
               </div>
               <div
                 className="py-2 cursor-pointer"
                 onClick={(e) => handleClickOptions(e, 'ADD_TO_CART')}
               >
-                <SelectOption key={productData.id + '1'} icon={<FaCartShopping />} />
+                <span title="Add to Cart"><SelectOption key={productData.id + '1'} icon={<FaCartShopping />} /></span>
               </div>
               <div
                 className="py-2 cursor-pointer"
                 onClick={(e) => handleClickOptions(e, 'ADD_WISHLIST')}
               >
-                <SelectOption key={productData.id + '2'} icon={<FaHeart />} />
+                <span title="Add to Wishlist"><SelectOption key={productData.id + '2'} icon={<FaHeart />} /></span>
               </div>
             </div>
           )}
