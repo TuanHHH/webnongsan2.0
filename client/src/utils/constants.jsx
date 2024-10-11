@@ -1,6 +1,9 @@
 import path from "./path";
 import icons from "./icons";
 import { AiOutlineInfo } from "react-icons/ai";
+import { FaHome } from "react-icons/fa";
+import { FaCartShopping, FaHeart } from "react-icons/fa6";
+import { MdHistory } from "react-icons/md";
 export const navigation = [
   {
     id: 1,
@@ -93,21 +96,28 @@ export const memberSidebar = [
     type: 'SINGLE',
     text: 'My Cart',
     path: `/${path.MEMBER}/${path.MY_CART}`,
-    icon: <AiOutlineInfo size={20}/>
+    icon: <FaCartShopping size={20}/>
   },
   {
     id: 3,
     type: 'SINGLE',
     text: 'Buy Histories',
     path: `/${path.MEMBER}/${path.HISTORY}`,
-    icon: <AiOutlineInfo size={20}/>
+    icon: <MdHistory size={20}/>
   },
   {
     id: 4,
     type: 'SINGLE',
     text: 'Wishlist',
     path: `/${path.MEMBER}/${path.WISHLIST}`,
-    icon: <AiOutlineInfo size={20}/>
+    icon: <FaHeart size={20}/>
+  },
+  {
+    id: 5,
+    type: 'SINGLE',
+    text: 'Home',
+    path: `/`,
+    icon: <FaHome size={20}/>
   },
 ]
 

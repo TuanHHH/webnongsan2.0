@@ -2,20 +2,36 @@ import React, { useEffect, useState } from "react";
 import { Button, InputForm } from "../../components";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import avatar from "../../assets/avatarDefault.png"
-import { apiUpdateCurrentUser, fetchAvatarBase64 } from "../../apis";
+import { apiUpdateCurrentUser, fetchAvatarBase64, getUserById } from "../../apis";
 import { getCurrentUser } from "../../store/user/asyncActions";
 import { toast } from "react-toastify";
+import path from "../../utils/path";
+
 
 const Personal = () => {
     const { handleSubmit, register, formState: { errors, isDirty }, reset } = useForm()
     const { current } = useSelector(state => state.user)
     const dispatch = useDispatch()
     const [avatarData, setAvatarData] = useState()
+    const [user,setUser] = useState()
+
+
+    const fetchUserByCurrentId = async ()=>{
+        try {
+            const response = await getUserById(current?.id);
+            // Kiểm tra nếu response.data là một Blob
+            setUser(response.data)
+        } catch (error) {
+            console.error("Error fetching avatar:", error);
+        }
+    }
 
     const fetchAvatar = async () => {
         try {
+                const response = await fetchAvatarBase64("avatar", user?.avatarUrl);
+                // Kiểm tra nếu response.data là một Blob
+                setAvatarData(response);
             const response = await fetchAvatarBase64("avatar", current?.avatarUrl);
             // Kiểm tra nếu response.data là một Blob
             setAvatarData(response);
@@ -24,6 +40,27 @@ const Personal = () => {
             console.error("Error fetching avatar:", error);
         }
     };
+
+
+    useEffect(()=>{
+        fetchUserByCurrentId()
+    },[current])
+    useEffect(()=>{
+        reset({
+            name: user?.name,
+            email: user?.email,
+            avatarUrl: user?.avatarUrl,
+            phone: user?.phone,
+            address: user?.address
+        }) 
+    },[user])
+    useEffect(()=>{
+        if(user?.avatarUrl){
+            fetchAvatar()
+        }
+    },[user])
+
+    const handleUpdateInfor = async (data)=>{
     useEffect(() => {
         reset({
             name: current?.name,
@@ -50,8 +87,8 @@ const Personal = () => {
                 hideProgressBar: false, // Bật thanh tiến trình
                 autoClose: delay, // Tùy chọn để tự động đóng sau 3 giây (hoặc thời gian bạn muốn)
             })
-            setTimeout(() => {
-                dispatch(getCurrentUser())
+            setTimeout( () => {
+                dispatch(getCurrentUser());
             }, delay);
 
         } else {
@@ -61,8 +98,11 @@ const Personal = () => {
             })
         }
     }
+
     return (
         <div className="w-full relative px-4">
+
+
             <header className="text-xl font-semibold py-4 border-b border-b-blue-200">
                 Personal
             </header>
@@ -135,12 +175,15 @@ const Personal = () => {
                 />
                 <div className="flex items-center gap-2">
                     <span>Account status: </span>
-                    <span>{current?.islocked ? "Block" : "Actived"}</span>
+                    <span>{+user?.status === 0 ? "Block" : "Actived"}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <span className="font-medium">Role: </span>
+                    <span>{current?.role == 1 ?"Admin":"User"}</span>
+                </div> */}
                     <span>{current?.role == 1 ? "Admin" : "User"}</span>
                 </div>
+
                 {/* <div className="flex items-center gap-2">
                     <span className="font-medium">Created At: </span>
                     <span>{moment(current?.createdAt).fromNow()}</span>
@@ -148,7 +191,9 @@ const Personal = () => {
                 <div className="flex flex-col gap-2">
                     <span className="font-medium">Profile image:</span>
                     <label htmlFor="file" className="flex w-1/5">
-                        <img src={current?.avatarUrl ? avatarData : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
+                        <img src={user?.avatarUrl ? avatarData : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full"/>
+                     
+
                     </label>
                     <input type="file" accept="image/*" id="file" {...register('avatarUrl')} hidden />
                 </div>

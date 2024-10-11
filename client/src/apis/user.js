@@ -73,6 +73,13 @@ export const fetchAvatarBase64 = async (folder, fileName) => {
     });
 };
 
+
+export const getUserById = async (id)=>{
+    return axiosInstance({
+        url: `/users/${id}`,
+        method: 'get',
+    });
+  
 export const apiAddOrUpdateCart = async(pid, quantity)=>{
     return axiosInstance({
         url: '/cart',
