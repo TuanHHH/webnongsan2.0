@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import path from "../../utils/path";
-import { Navigate, Outlet, replace } from "react-router-dom";
+import { Navigate, Outlet} from "react-router-dom";
 import MemberSidebar from "../../components/sidebar/MemberSidebar";
 
 const MemberLayout = ()=>{

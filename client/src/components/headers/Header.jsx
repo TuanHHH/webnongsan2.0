@@ -1,165 +1,57 @@
-import React, { useState, useEffect, useRef } from "react";
+
+import React, { useState, useEffect, memo } from "react";
 import logo from "@/assets/logo.png";
 import icons from "@/utils/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import path from "@/utils/path";
 import { useSelector } from "react-redux";
-import {Logout} from "@/components/index"
-import { apiGetProducts } from "@/apis/product";
-import { ProductMiniItem } from "@/components";
-import product_default from '@/assets/product_default.png';
+import { Logout, SearchBar } from "@/components";
+import withBaseComponent from "@/hocs/withBaseComponent";
+//import { apiGetProducts } from "@/apis"; // không được bỏ
+
+
+
 const { FaUserCircle, FaCartShopping } = icons;
 
-const Header = () => {
-   const {current} = useSelector(state => state.user)
+const Header = ({ navigate}) => {
+  const { current } = useSelector(state => state.user)
   const [isShowOption, setIsShowOption] = useState(false)
   //console.log(current);
-  useEffect(()=>{
-    const handleClickOutOption = (e)=>{
+  useEffect(() => {
+    const handleClickOutOption = (e) => {
       const profile = document.getElementById('profile')
-      if(!profile.contains(e.target)) setIsShowOption(false)
+      if (!profile.contains(e.target)) setIsShowOption(false)
     }
-    document.addEventListener('click',handleClickOutOption)
-    return ()=>{
-      document.removeEventListener('click',handleClickOutOption)
-    }
-  },[])
-  const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState(null); 
-  const [error, setError] = useState(null);
-  const [showResults, setShowResults] = useState(false);
-  const navigate = useNavigate();
-  const resultsRef = useRef(null);
-  const searchTimeoutRef = useRef(null);
-
-  useEffect(() => {
-    if (searchTerm.trim() !== "") {
-      // Clear any existing timeout
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-      
-      // Set new timeout for search
-      searchTimeoutRef.current = setTimeout(() => {
-        handleSearch();
-      }, 1500);
-    } else {
-      setProducts(null); 
-      setShowResults(false);
-    }
-
+    document.addEventListener('click', handleClickOutOption)
     return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, [searchTerm]);
-
-  const handleSearch = async () => {
-    setError(null);
-    setProducts(null); 
-    try {
-      const params = {
-        page: 1,
-        size: 3,
-        filter: `product_name~'${searchTerm}'`,
-      };
-      const response = await apiGetProducts(params);
-      setProducts(response.data.result);
-      setShowResults(true);
-    } catch (error) {
-      setError("Error fetching products");
+      document.removeEventListener('click', handleClickOutOption)
     }
-  };
+  }, [])
 
-  const handleShowAll = () => {
-    navigate(`/products?search=${searchTerm}`);
-  };
-
-  const handleClickOutside = (event) => {
-    if (resultsRef.current && !resultsRef.current.contains(event.target)) {
-      setShowResults(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && searchTerm.trim() !== "") {
-      // Clear the timeout when Enter is pressed
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-      navigate(`/products?search=${searchTerm}`);
-    }
-  };
 
   return (
     <div className="flex justify-between items-center w-main h-[110px] py-[35px]">
       <Link to={`/${path.HOME}`}>
         <img src={logo} alt="logo" className="w-[120px] object-contain" />
       </Link>
-
-      <div className="flex flex-grow justify-center mx-5 relative items-center">
-        <input
-          type="text"
-          placeholder="Tìm kiếm..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={handleKeyDown} 
-          className="w-[500px] border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-
-        {showResults && (
-          <div ref={resultsRef} className="absolute top-full w-[500px] bg-white shadow-md rounded-md mt-2 z-10">
-            {error ? (
-              <div className="text-red-500 p-2 text-sm">{error}</div>
-            ) : products && products.length > 0 ? (
-              <>
-                {products.map((product) => (
-                  <div key={product.id} className="p-2 border-b">
-                    <Link to={`/${encodeURIComponent(product.category)}/${product.id}/${encodeURIComponent(product.product_name)}`}>
-                      <ProductMiniItem title={product.product_name} image={product.imageUrl || product_default} price={product.price} />
-                    </Link>
-                  </div>
-                ))}
-                <button
-                  onClick={handleShowAll}
-                  className="w-full p-2 text-green-500 hover:underline text-sm"
-                >
-                  Hiển thị tất cả
-                </button>
-              </>
-            ) : (
-              <div className="p-2 text-sm">Không tìm thấy sản phẩm.</div>
-            )}
-          </div>
-        )}
-      </div>
-
+      <SearchBar/>
       <div className="ml-auto flex">
-        <div className="cursor-pointer hover:underline flex items-center justify-center gap-2 px-5 border-r">
+        <div className="cursor-pointer hover:underline flex items-center justify-center gap-2 px-5 border-r" onClick={() => navigate(`/${path.CART}`)}>
           <FaCartShopping color="#10B981" size={25} />
-          <span>0 sản phẩm</span>
+          <span>{`${current?.cartLength || 0} sản phẩm`} </span>
         </div>
 
         <div className="cursor-pointer flex items-center justify-center px-5 gap-2 relative"
-          onClick={()=>setIsShowOption(prev => !prev)}
+          onClick={() => setIsShowOption(prev => !prev)}
           id="profile"
         >
           <FaUserCircle color="#10B981" size={25} />
           <span>Tài khoản</span>
-          {isShowOption && current && <div onClick={e=>e.stopPropagation()} className="absolute flex flex-col top-full left-0 bg-gray-100 border min-w-[150px] py-2">
+          {isShowOption && current && <div onClick={e => e.stopPropagation()} className="absolute flex flex-col top-full left-0 bg-gray-100 border min-w-[150px] py-2">
             <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.MEMBER}/${path.PERSONAL}`} >Personal</Link>
-            {+current?.role === 1945 && <Link 
-            className="p-2 w-full hover:bg-sky-100" to={`/${path.ADMIN}/${path.DASHBOARD}`} >Admin Workplace</Link>}
-            {/* <span className="p-2 w-full hover:bg-sky-100" onClick={handleLogout} >Logout</span> */}
-            <Logout text="Logout"/>
+            {current?.role === "ADMIN" && <Link
+              className="p-2 w-full hover:bg-sky-100" to={`/${path.ADMIN}/${path.DASHBOARD}`} >Admin Workplace</Link>}
+            <Logout text="Logout" />
           </div>}
         </div>
       </div>
@@ -167,4 +59,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default withBaseComponent(memo(Header));

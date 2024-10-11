@@ -41,7 +41,7 @@ const Login = () => {
       else {
         setLoading(false)
         Swal.fire(
-          'Oops!', result.message, 'error'
+          'Oops!', res.message, 'error'
         )
       }
 

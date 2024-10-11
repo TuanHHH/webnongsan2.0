@@ -19,15 +19,15 @@ const commonConfig = {
   storage
 }
 
-const userConfig ={
+const userConfig = {
   ...commonConfig,
-  whitelist: ['isLoggedIn', 'token']
+  whitelist: ['isLoggedIn', 'token', 'current']
 }
 
 export const store = configureStore({
   reducer: {
     app: appSlice,
-//    products: productSlice,
+    //    products: productSlice,
     user: persistReducer(userConfig, userSlice)
   },
   middleware: (getDefaultMiddleware) =>

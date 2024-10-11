@@ -14,7 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("SELECT MAX(p.price) FROM Product p " +
             "WHERE (:category IS NULL OR p.category.name = :category) " +
-            "AND (:productName IS NULL OR LOWER(p.product_name) LIKE LOWER(CONCAT('%', :productName, '%')))")
+            "AND (:productName IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%')))")
     double getMaxPriceByCategoryAndProductName(@Param("category") String category,
                                                @Param("productName") String productName);
 

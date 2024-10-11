@@ -22,7 +22,7 @@ public class CartController {
     @PostMapping("cart")
     @ApiMessage("Add to cart")
     public ResponseEntity<Cart> add(@RequestBody Cart cart) throws ResourceInvalidException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.cartService.addToCart(cart));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.cartService.addOrUpdateCart(cart));
     }
 
     @DeleteMapping("cart/{productId}")
@@ -38,12 +38,12 @@ public class CartController {
         return ResponseEntity.ok(this.cartService.getCartByCurrentUser(pageable));
     }
 
-    @PutMapping("cart")
-    @ApiMessage("Update quantity")
-    public ResponseEntity<Cart> updateQuantity(
-            @RequestParam Long productId,
-            @RequestParam int quantity) throws ResourceInvalidException {
-            Cart updatedCart = cartService.updateProductQuantity(productId, quantity);
-            return ResponseEntity.ok(updatedCart);
-    }
+//    @PutMapping("cart")
+//    @ApiMessage("Update quantity")
+//    public ResponseEntity<Cart> updateQuantity(
+//            @RequestParam Long productId,
+//            @RequestParam int quantity) throws ResourceInvalidException {
+//            Cart updatedCart = cartService.updateProductQuantity(productId, quantity);
+//            return ResponseEntity.ok(updatedCart);
+//    }
 }

@@ -23,10 +23,7 @@ public class ResLoginDTO {
         private String email;
         private String name;
         private Role role;
-        private String avatarUrl;
-        private String address;
-        private String phone;
-        private int status;
+        private long cartLength;
     }
 
     @Getter

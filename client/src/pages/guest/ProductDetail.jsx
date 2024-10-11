@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts } from '@/apis';
-import { Breadcrumb, Button, SelectQuantity, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
+import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart } from '@/apis';
+import { Breadcrumb, Button, QuantitySelector, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
 import { formatMoney, renderStarFromNumber } from '@/utils/helper'
 import product_default from '@/assets/product_default.png'
 import { productExtraInfo } from '@/utils/constants';
@@ -13,6 +13,7 @@ import path from '@/utils/path';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/paginate/Pagination';
 import clsx from 'clsx';
+import { toast } from 'react-toastify';
 
 const ProductDetail = ({ isQuickView, data }) => {
 
@@ -56,12 +57,12 @@ const ProductDetail = ({ isQuickView, data }) => {
   //   }
   // }
   const fetchFeedbacksPageData = async (page = 1) => {
-      const response = await apiGetRatingsPage(pid, { page, size: 5 })
-      if (response.statusCode === 200) {
-        setFeedbacksPage(response.data?.result)
-        setPaginate(response.data?.meta)
-        setCurrentPage(page)
-      }
+    const response = await apiGetRatingsPage(pid, { page, size: 5 })
+    if (response.statusCode === 200) {
+      setFeedbacksPage(response.data?.result)
+      setPaginate(response.data?.meta)
+      setCurrentPage(page)
+    }
   }
   const fetchFeedbacksData = async () => {
     const response = await apiGetRatingsPage(pid, { page: 1 })
@@ -105,26 +106,18 @@ const ProductDetail = ({ isQuickView, data }) => {
     }
   }, []);
 
-  // const handleQuantity = useCallback((x) => {
-  //   if (!Number(x) || Number(x) < 1) {
-  //     return
-  //   }
-  //   else setQuantity(x)
-  // }, [quantity])
   const rerender = useCallback(() => {
     setUpdate(!update)
   }, [update])
 
-  const handleButtonQuantity = useCallback((flag) => {
-    if (flag === 'minus') {
-      if (quantity === 1) return
-      setQuantity(prev => +prev - 1)
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity > product?.quantity) {
+      toast.info(`Chỉ còn ${product?.quantity} sản phẩm`);
+      setQuantity(product?.quantity); // Reset về số lượng tối đa
+    } else {
+      setQuantity(newQuantity);
     }
-    else if (flag === 'plus') {
-      if (quantity === product?.quantity) return;
-      setQuantity(prev => +prev + 1)
-    }
-  }, [quantity])
+  };
 
 
   const handleSubmitVoteOption = async ({ comment, score }) => {
@@ -150,17 +143,23 @@ const ProductDetail = ({ isQuickView, data }) => {
     } else {
       dispatch(showModal(
         {
-          isShowModal: true, modalChildren: <VoteOption nameProduct={product?.product_name} handleSubmitOption={handleSubmitVoteOption} />
+          isShowModal: true, modalChildren: <VoteOption nameProduct={product?.productName} handleSubmitOption={handleSubmitVoteOption} />
         }))
 
     }
   }
+
+  const addToCart = async (pid, quantity) => {
+    const rs = await apiAddOrUpdateCart(pid, quantity)
+    console.log(rs);
+  }
+  
   return (
     <div className='w-full' onClick={e => e.stopPropagation()}>
       {!isQuickView && <div className='h-20 flex justify-center items-center bg-gray-100'>
         <div className='w-main'>
-          <h3 className='font-semibold'>{product?.product_name}</h3>
-          <Breadcrumb title={product?.product_name} category={category} />
+          <h3 className='font-semibold'>{product?.productName}</h3>
+          <Breadcrumb title={product?.productName} category={category} />
         </div>
       </div>}
       <div className={clsx('m-auto mt-4 flex', isQuickView ? 'max-w-[900px] max-h-[80vh] gap-5 p-4 overflow-y-auto' : 'w-main')}>
@@ -187,14 +186,23 @@ const ProductDetail = ({ isQuickView, data }) => {
             {`Đơn vị: ${product?.unit || "Không"}`}
           </ul>
           <div className='flex flex-col gap-8'>
-            {product?.quantity > 0 ?
+            {product?.quantity > 0 ? (
               <>
                 <div className='flex items-center gap-4'>
                   <span>Số lượng</span>
-                  <SelectQuantity quantity={quantity} changeQuantity={handleButtonQuantity} />
+                  <QuantitySelector
+                    quantity={quantity}
+                    stock={product?.quantity}
+                    onIncrease={() => handleQuantityChange(quantity + 1)}
+                    onDecrease={() => handleQuantityChange(Math.max(quantity - 1, 1))}
+                    onChange={handleQuantityChange}
+                  />
                 </div>
-                <Button fw>Thêm vào giỏ hàng</Button>
-              </> : <p className='text-red-500'>Sản phẩm đang tạm hết hàng, bạn vui lòng quay lại sau nhé</p>}
+                <Button fw onClick={() => addToCart(product?.id, quantity)}>Thêm vào giỏ hàng</Button>
+              </>
+            ) : (
+              <p className='text-red-500'>Sản phẩm đang tạm hết hàng, bạn vui lòng quay lại sau nhé</p>
+            )}
           </div>
         </div>
         {!isQuickView && <div className='flex-2 w-1/5 ml-4'>

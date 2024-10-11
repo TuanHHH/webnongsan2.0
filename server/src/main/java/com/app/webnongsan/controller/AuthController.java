@@ -1,5 +1,6 @@
 package com.app.webnongsan.controller;
 
+import com.app.webnongsan.domain.Role;
 import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.request.EmailRequestDTO;
 import com.app.webnongsan.domain.request.LoginDTO;
@@ -7,6 +8,7 @@ import com.app.webnongsan.domain.request.ResetPasswordDTO;
 import com.app.webnongsan.domain.response.user.CreateUserDTO;
 import com.app.webnongsan.domain.response.user.ResLoginDTO;
 import com.app.webnongsan.service.AuthService;
+import com.app.webnongsan.service.CartService;
 import com.app.webnongsan.service.EmailService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
@@ -36,15 +38,17 @@ public class AuthController {
     private final UserService userService;
     private final EmailService emailService;
     private final AuthService authService;
+    private final CartService cartService;
     @Value("${jwt.refreshtoken-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, AuthService authService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, AuthService authService, CartService cartService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
         this.emailService = emailService;
         this.authService = authService;
+        this.cartService = cartService;
     }
 
     @PostMapping("auth/login")
@@ -57,7 +61,12 @@ public class AuthController {
 
         User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
         if (currentUserDB != null) {
-            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserDB.getId(), currentUserDB.getEmail(), currentUserDB.getName(), currentUserDB.getRole());
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    currentUserDB.getId(),
+                    currentUserDB.getEmail(),
+                    currentUserDB.getName(),
+                    currentUserDB.getRole(),
+                    cartService.countProductInCart(currentUserDB.getId()));
             res.setUser(userLogin);
         }
 
@@ -91,6 +100,7 @@ public class AuthController {
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
             userLogin.setRole(currentUserDB.getRole());
+            userLogin.setCartLength(cartService.countProductInCart(currentUserDB.getId()));
             userGetAccount.setUser(userLogin);
         }
         return ResponseEntity.ok(userGetAccount);
@@ -119,7 +129,9 @@ public class AuthController {
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getName(),
-                    currentUserDB.getRole());
+                    currentUserDB.getRole(),
+                    cartService.countProductInCart(currentUserDB.getId()));
+
             res.setUser(userLogin);
         }
 
@@ -176,7 +188,9 @@ public class AuthController {
         if (this.userService.isExistedEmail(user.getEmail())) {
             throw new ResourceInvalidException("Email " + user.getEmail() + " đã tồn tại");
         }
-
+        Role r = new Role();
+        r.setId(2);
+        user.setRole(r);
         User newUser = this.userService.create(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToCreateDTO(newUser));
     }
@@ -218,4 +232,6 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("valid", false));
         }
     }
+
+
 }
