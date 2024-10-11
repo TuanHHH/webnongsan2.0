@@ -79,7 +79,7 @@ export const getUserById = async (id)=>{
         url: `/users/${id}`,
         method: 'get',
     });
-  
+}
 export const apiAddOrUpdateCart = async(pid, quantity)=>{
     return axiosInstance({
         url: '/cart',
