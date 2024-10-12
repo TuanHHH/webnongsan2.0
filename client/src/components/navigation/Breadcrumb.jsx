@@ -1,13 +1,14 @@
 import React from 'react'
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 import { NavLink } from 'react-router-dom';
-import icons from '../utils/icons'
+import icons from '@/utils/icons'
 
 const { GrNext } = icons
 const Breadcrumb = ({ title, category }) => {
     const routes = [
-        { path: "/:category", breadcrumb: category },
         { path: "/", breadcrumb: "Home" },
+        { path: "/products", breadcrumb: "Sản phẩm" },
+        { path: "/products/:category", breadcrumb: category },
         { path: "/:category/:pid/:title", breadcrumb: title }
     ];
     const breadcrumb = useBreadcrumbs(routes);
@@ -19,8 +20,8 @@ const Breadcrumb = ({ title, category }) => {
             }, idx, self) => (
                 <span key={match.pathname}>
                     <NavLink to={match.pathname} className='gap-1 flex items-center hover:text-main'>
-                        <span className='capitalize'> {breadcrumb}</span>
-                        {idx !== self.length-1 && <GrNext size={10} />}
+                        <span> {breadcrumb}</span>
+                        {idx !== self.length - 1 && <GrNext size={10} />}
                     </NavLink>
                 </span>
             ))}

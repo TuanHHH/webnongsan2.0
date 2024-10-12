@@ -1,9 +1,9 @@
 import React from "react";
 
-const Button = ({children, handleOnClick, style, fw }) => {
+const Button = ({children, handleOnClick, style, fw, type = "button" }) => {
   return (
     <button
-      type="button"
+    type={type}
       className={
         style ? style : `px-4 py-2 rounded-md text-white bg-main text-semibold my-2 ${fw? 'w-full': 'w-fit'}`
       }

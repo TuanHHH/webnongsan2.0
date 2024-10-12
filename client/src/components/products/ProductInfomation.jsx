@@ -1,11 +1,12 @@
 import React, { memo, useState } from 'react';
 
-const ProductInfomation = ({ des, review }) => {
+
+const ProductInfomation = ({ des, review, rerender }) => {
     const [activedTab, setActiveTab] = useState(1);
 
     return (
         <div>
-            <div className='flex items-center gap-2 relative bottom-[-1px]'>
+            <div className='flex items-center gap-2 bottom-[-1px]'>
                 <span
                     className={`p-2 px-4 cursor-pointer ${activedTab === 1 ? 'bg-white border border-b-0' : 'bg-gray-200'}`}
                     onClick={() => setActiveTab(1)}
@@ -22,7 +23,7 @@ const ProductInfomation = ({ des, review }) => {
 
             <div className='w-full border p-4'>
                 {activedTab === 1 && <p>{des}</p>}
-                {activedTab === 2 && <p>{review}</p>}
+                {activedTab === 2 && <div>{review}</div>}
             </div>
         </div>
     );

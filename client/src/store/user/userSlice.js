@@ -7,45 +7,44 @@ export const userSlice = createSlice({
         isLoggedIn: false,
         current: null,
         token: null,
-        isLoading: false
+        isLoading: false,
+        message: ''
     },
-    // Code logic xử lý sync action
     reducers: {
         login: (state, action) => {
-            state.isLoggedIn = action.payload.isLoggedIn
-            state.token = action.payload.token
+            state.isLoggedIn = action.payload.isLoggedIn;
+            state.token = action.payload.token;
         },
-        logout: (state, action) => {
-            //console.log(action)
-            state.isLoggedIn = false
-            state.token = null
-            state.current = null
+        logout: (state) => {
+            state.isLoggedIn = false;
+            state.token = null;
+            state.current = null;
+            state.message = ''; // Không hiển thị thông báo khi đăng xuất
+        },
+        clearMessage: (state) => {
+            state.message = '';
+        },
+        setExpiredMessage: (state) => {
+            state.message = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại'; // Hiển thị thông báo khi token hết hạn
         }
     },
     extraReducers: (builder) => {
-        // Bắt đầu thực hiện action (Promise pending)
         builder.addCase(getCurrentUser.pending, (state) => {
-            // Bật trạng thái loading
             state.isLoading = true;
         });
-
-        // Khi thực hiện action thành công (Promise fulfilled)
         builder.addCase(getCurrentUser.fulfilled, (state, action) => {
-            //console.log(action);
-            // Tắt trạng thái loading, lưu thông tin user vào store
             state.isLoading = false;
             state.current = action.payload;
+            state.isLoggedIn = true;
         });
-
-        // Khi thực hiện action thất bại (Promise rejected)
-        builder.addCase(getCurrentUser.rejected, (state, action) => {
-            // Tắt trạng thái loading, lưu thông báo lỗi vào store
+        builder.addCase(getCurrentUser.rejected, (state) => {
             state.isLoading = false;
             state.current = null;
+            state.isLoggedIn = false;
+            state.token = null;
         });
     },
 });
 
-export const { login, logout } = userSlice.actions;
-//export reducer = reducer(s) = extrareducers
+export const { login, logout, clearMessage, setExpiredMessage } = userSlice.actions;
 export default userSlice.reducer;

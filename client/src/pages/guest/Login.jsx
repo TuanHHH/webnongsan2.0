@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { InputField, Button, ForgotPassword } from "../../components";
+import { InputField, Button, ForgotPassword } from "@/components";
 import Swal from 'sweetalert2'
 import { apiLogin, apiRegister } from "../../apis";
 import { useNavigate, Link } from "react-router-dom";
@@ -30,7 +30,6 @@ const Login = () => {
     const { name, ...data } = payload;
     if (isRegister) {
       const res = await apiRegister(payload);
-      console.log(res)
       setLoading(false);
       if (res.statusCode === 201) {
         Swal.fire(
@@ -42,7 +41,7 @@ const Login = () => {
       else {
         setLoading(false)
         Swal.fire(
-          'Oops!', result.message, 'error'
+          'Oops!', res.message, 'error'
         )
       }
 

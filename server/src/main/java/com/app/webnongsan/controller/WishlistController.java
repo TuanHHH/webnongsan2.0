@@ -25,9 +25,9 @@ public class WishlistController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.wishlistService.addWishlist(w));
     }
 
-    @DeleteMapping("wishlist/{productId}")
+    @DeleteMapping("wishlist")
     @ApiMessage("Delete wishlist")
-    public ResponseEntity<Void> delete(@PathVariable Long productId) throws ResourceInvalidException {
+    public ResponseEntity<Void> delete(@RequestParam("pid") long productId) throws ResourceInvalidException {
         this.wishlistService.deleteWishlist(productId);
         return ResponseEntity.ok(null);
     }

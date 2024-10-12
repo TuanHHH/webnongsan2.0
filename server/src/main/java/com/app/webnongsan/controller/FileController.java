@@ -14,8 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.List;
 import java.util.Arrays;
 @RestController
@@ -56,5 +61,18 @@ public class FileController {
         ResUploadFileDTO rs = new ResUploadFileDTO(uploadFile, Instant.now());
         return ResponseEntity.ok(rs);
     }
+    @GetMapping("files")
+    public ResponseEntity<String> getFileBase64(@RequestParam("folder") String folder, @RequestParam("fileName") String fileName)
+            throws URISyntaxException, IOException {
+        URI uri = new URI(baseURI + folder + "/" + fileName);
+        Path path = Paths.get(uri);
 
+        byte[] fileContent = Files.readAllBytes(path);
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+
+        String mimeType = Files.probeContentType(path);
+        String base64Image = "data:" + mimeType + ";base64," + encodedString;
+
+        return ResponseEntity.ok().body(base64Image);
+    }
 }

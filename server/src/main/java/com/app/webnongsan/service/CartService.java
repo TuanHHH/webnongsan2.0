@@ -25,19 +25,36 @@ public class CartService {
     private final UserRepository userRepository;
     private final PaginationHelper paginationHelper;
 
-    public Cart addToCart(Cart cart) throws ResourceInvalidException {
+    public Cart addOrUpdateCart(Cart cart) throws ResourceInvalidException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User u = this.userRepository.findByEmail(email);
-        if (u == null){
+        if (u == null) {
             throw new ResourceInvalidException("User không tồn tại");
         }
-        Product p = this.productRepository.findById(cart.getId().getProductId()).orElseThrow(()-> new ResourceInvalidException("Product không tồn tại"));
-        if (cart.getQuantity() > p.getQuantity()){
+        Product p = this.productRepository.findById(cart.getId().getProductId()).orElseThrow(() -> new ResourceInvalidException("Product không tồn tại"));
+
+        if (cart.getQuantity() > p.getQuantity()) {
             throw new ResourceInvalidException("Số lượng hàng không đủ");
         }
-        cart.setUser(u);
-        cart.setProduct(p);
-        return this.cartRepository.save(cart);
+
+        Optional<Cart> existingCart = cartRepository.findById(new CartId(u.getId(), p.getId()));
+        if (existingCart.isPresent()) {
+            Cart cartItem = existingCart.get();
+            int newQuantity = cartItem.getQuantity() + cart.getQuantity();
+            if (newQuantity < 0){
+                throw new ResourceInvalidException("Số lượng sản phẩm không hợp lệ");
+            }
+            if (newQuantity > p.getQuantity()) {
+                throw new ResourceInvalidException("Số lượng hàng trong kho không đủ");
+            }
+            cartItem.setQuantity(newQuantity);
+            return this.cartRepository.save(cartItem);
+        } else {
+            cart.setUser(u);
+            cart.setProduct(p);
+            return this.cartRepository.save(cart);
+        }
+
     }
 
     public void deleteFromCart(long productId) throws ResourceInvalidException {
@@ -48,7 +65,7 @@ public class CartService {
             throw new ResourceInvalidException("User không tồn tại");
         }
 
-        boolean exists = this.cartRepository.existsByUserIdAndProductId(user.getId(), productId);
+        boolean exists = this.cartRepository.existsById(new CartId(user.getId(), productId));
         if (!exists) {
             throw new ResourceInvalidException("Sản phẩm không tồn tại trong giỏ hàng");
         }
@@ -69,25 +86,7 @@ public class CartService {
         return this.paginationHelper.fetchAllEntities(cartItems);
     }
 
-    public Cart updateProductQuantity(long productId, int newQuantity) throws ResourceInvalidException {
-        long userId = SecurityUtil.getUserId();
-        CartId cartId = new CartId(userId, productId);
-        Optional<Cart> optionalCart = cartRepository.findById(cartId);
-
-        if (optionalCart.isPresent()) {
-            Cart cart = optionalCart.get();
-            Product product = this.productRepository.findById(productId)
-                    .orElseThrow(() -> new ResourceInvalidException("Product không tồn tại"));
-
-            if (newQuantity > product.getQuantity()) {
-                throw new ResourceInvalidException("Số lượng hàng không đủ");
-            }
-
-            cart.setQuantity(newQuantity);
-            return cartRepository.save(cart);
-        } else {
-            throw new ResourceInvalidException("Sản phẩm không tồn tại trong giỏ hàng");
-        }
+    public long countProductInCart(long userId){
+        return this.cartRepository.countProductsByUserId(userId);
     }
-
 }

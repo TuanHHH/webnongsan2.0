@@ -5,6 +5,14 @@ export const apiGetProducts = async (params) =>
         url: "/products",
         method: "get",
         params,
+        paramsSerializer: {
+            encode: (value) => value,
+            serialize: (params) => {
+                return Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+            }
+        }
     });
 
 export const apiGetProduct = async (pid) =>
@@ -13,18 +21,42 @@ export const apiGetProduct = async (pid) =>
         method: "get",
     });
 
-export const apiGetRecommendedProducts = async(pid) =>
+export const apiGetRecommendedProducts = async (pid) =>
     axiosInstanceRecommended({
         url: `/similar-products/${pid}`,
-        method: 'get'
+        method: 'get',
     });
+
 export const apiDeleteProduct = async (pid)=>
     axiosInstance({
         url: `/products/${pid}`,
         method: 'delete',
     });
+
 export const apiUpdateProduct = async (product) =>
     axiosInstance({
         url: `/products`,
         method: 'put',
     });
+    
+export const apiRatings = async (data) =>
+    axiosInstance({
+        url: `/product/ratings`,
+        method: "put",
+        data
+    });
+
+export const apiGetRatingsPage = async (pid, params) =>
+    axiosInstance({
+        url: `/product/ratings/${pid}`,
+        method: "get",
+        params,
+    });
+
+export const apiGetMaxPrice = async (category, productName) =>
+    axiosInstance({
+        url: `/products/max-price`,
+        method: "get",
+        params: { category, productName },
+    });
+

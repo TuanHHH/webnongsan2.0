@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '../../components';
+import { Button } from '@/components';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { apiResetPassword, apiValidateToken } from '../../apis';
+import { apiResetPassword, apiValidateToken } from '@/apis';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
-import path from '../../utils/path';
+import path from '@/utils/path';
 
 const ResetPassword = () => {
     const location = useLocation();

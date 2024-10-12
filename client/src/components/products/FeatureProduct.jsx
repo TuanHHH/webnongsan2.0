@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ProductCard } from ".";
-import { apiGetProducts } from "../apis";
+import { ProductCard } from "@/components";
+import { apiGetProducts } from "@/apis";
 
 const FeatureProduct = () => {
   const [products, setProducts] = useState(null);
@@ -29,14 +29,14 @@ const FeatureProduct = () => {
         ))}
       </div>
 
-      <div className="flex justify-between mt-[40px]">
+      <div className="grid grid-cols-5 grid-rows-1 mt-10">
         <img
           src="https://free.vector6.com/wp-content/uploads/2020/04/0425-Vector-Hoa-Qua-ourckq010.jpg"
           alt=""
-          className="w-[60%] object-contain"
+          className="w-full h-full col-span-3 row-span-1 "
         />
         <img
-          className="w-[40%] object-contain"
+          className="w-full h-full col-span-2 row-span-1"
           src="https://free.vector6.com/wp-content/uploads/2020/04/0425-Vector-Hoa-Qua-ourckq031.jpg"
           alt=""
         />

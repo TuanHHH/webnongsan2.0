@@ -3,7 +3,7 @@ import {
     Banner,
     Sidebar,
     FeatureProduct
-} from "../../components";
+} from "@/components";
 const Home = () => {
     return (
         <>

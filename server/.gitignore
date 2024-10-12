@@ -33,3 +33,6 @@ build/
 .vscode/
 
 **/application.properties
+**/application.yml
+**/application-urls.yml
+

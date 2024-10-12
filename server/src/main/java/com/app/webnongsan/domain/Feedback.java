@@ -23,6 +23,8 @@ public class Feedback {
     @Column(nullable = false)
     private int status;
 
+    private Instant updatedAt;
+
     private Instant timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,5 +38,11 @@ public class Feedback {
     @PrePersist
     public void handleCreateFeedback() {
         this.timestamp = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void hadnleBeforeUpdate(){
+        this.updatedAt = Instant.now();
     }
 }

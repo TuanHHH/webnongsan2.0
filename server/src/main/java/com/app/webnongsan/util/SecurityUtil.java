@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.SignatureException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -71,17 +70,17 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
-        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
-        userToken.setId(resLoginDTO.getUser().getId());
-        userToken.setEmail(resLoginDTO.getUser().getEmail());
-        userToken.setName(resLoginDTO.getUser().getName());
-
-        List<String> listAuthority = Arrays.asList("ROLE_USER_CREATE", "ROLE_USER_UPDATE");
+        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
+        userLogin.setId(resLoginDTO.getUser().getId());
+        userLogin.setEmail(resLoginDTO.getUser().getEmail());
+        userLogin.setName(resLoginDTO.getUser().getName());
+        if (resLoginDTO.getUser().getRole()!=null){
+            userLogin.setRole(resLoginDTO.getUser().getRole());
+        }
 
         // Tạo claims bổ sung cho access token
         Map<String, Object> additionalClaims = new HashMap<>();
-        additionalClaims.put("user", userToken);
-        additionalClaims.put("permission", listAuthority);
+        additionalClaims.put("user", userLogin);
 
         return createToken(email, now, validity, additionalClaims);
     }
@@ -152,4 +151,25 @@ public class SecurityUtil {
 
         throw new IllegalArgumentException("User ID not found or invalid token");
     }
+
+    public static String getUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+            Object userClaimObj = jwt.getClaims().get("user");
+
+            if (userClaimObj instanceof Map<?, ?> userClaim) {
+                Object roleObj = userClaim.get("role");
+                if (roleObj instanceof Map<?, ?> roleMap) {
+                    Object roleNameObj = roleMap.get("roleName");
+                    if (roleNameObj instanceof String) {
+                        return (String) roleNameObj;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

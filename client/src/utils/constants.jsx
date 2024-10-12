@@ -1,5 +1,9 @@
 import path from "./path";
 import icons from "./icons";
+import { AiOutlineInfo } from "react-icons/ai";
+import { FaHome } from "react-icons/fa";
+import { FaCartShopping, FaHeart } from "react-icons/fa6";
+import { MdHistory } from "react-icons/md";
 export const navigation = [
   {
     id: 1,
@@ -9,7 +13,7 @@ export const navigation = [
   {
     id: 2,
     value: "Sản phẩm",
-    path: `/${path.PRODUCTS}`,
+    path: `/${path.PRODUCTS_BASE}`,
   },
   {
     id: 3,
@@ -44,3 +48,72 @@ export const productExtraInfo = [{
   icon: <FaPhone />
 }
 ]
+
+export const voteOption = [
+  {
+    id: 1,
+    text: "Rất tệ"
+  },
+  {
+    id: 2,
+    text: "Tệ"
+  },
+  {
+    id: 3,
+    text: "Bình thường"
+  },
+  {
+    id: 4,
+    text: "Tốt"
+  },
+  {
+    id: 5,
+    text: "Rất tốt"
+  }
+]
+
+export const sortProductOption = [
+  { value: 'productName-asc', label: 'Tên A-Z' },
+  { value: 'productName-desc', label: 'Tên Z-A' },
+  { value: 'price-asc', label: 'Giá thấp đến cao' },
+  { value: 'price-desc', label: 'Giá cao đến thấp' },
+  { value: 'rating-asc', label: 'Rating thấp' },
+  { value: 'rating-desc', label: 'Rating cao' },
+  { value: 'sold-desc', label: 'Bán chạy' },
+  { value: 'createdAt-desc', label: 'Mới nhất' }
+];
+
+export const memberSidebar = [
+  {
+    id: 4,
+    type: 'SINGLE',
+    text: 'Home',
+    path: `/`,
+    icon: <FaHome size={20} />
+  },
+  {
+    id: 1,
+    type: 'SINGLE',
+    text: 'Personal',
+    path: `/${path.MEMBER}/${path.PERSONAL}`,
+    icon: <AiOutlineInfo size={20} />
+  },
+
+  {
+    id: 2,
+    type: 'SINGLE',
+    text: 'Buy Histories',
+    path: `/${path.MEMBER}/${path.HISTORY}`,
+    icon: <MdHistory size={20} />
+  },
+  {
+    id: 3,
+    type: 'SINGLE',
+    text: 'Wishlist',
+    path: `/${path.MEMBER}/${path.WISHLIST}`,
+    icon: <FaHeart size={20} />
+  },
+
+]
+
+

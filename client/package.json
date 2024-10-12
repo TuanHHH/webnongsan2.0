@@ -11,9 +11,15 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.7.7",
+    "client": "file:",
+    "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
+    "js-cookie": "^3.0.5",
     "moment": "^2.30.1",
+    "rc-slider": "^11.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
@@ -27,7 +33,9 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "sweetalert2": "^11.14.0",
-    "use-react-router-breadcrumbs": "^4.0.1"
+    "use-react-router-breadcrumbs": "^4.0.1",
+    "uuid": "^10.0.0",
+    "vite-jsconfig-paths": "^2.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

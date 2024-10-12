@@ -84,6 +84,7 @@ def calculate_distance(product, current_product, price_weight=0.1, category_weig
     description_index = products.index(product)
     current_description_index = products.index(current_product)
     description_distance = 1 - cosine_sim_desc[description_index, current_description_index]
+    print(current_description_index, description_distance)
     name_distance = 1 - cosine_sim_name[description_index, current_description_index]
 
     # Tổng khoảng cách, ưu tiên tên và mô tả

@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { createSlug } from '../utils/helper';
-import category_default from "../assets/category_default.png";
+import { createSlug } from '@/utils/helper';
+import category_default from "@/assets/category_default.png";
 const Sidebar = () => {
     const { categories } = useSelector((state) => {
         //console.log(state)
@@ -14,7 +14,7 @@ const Sidebar = () => {
             {categories?.map((e) => (
                 <NavLink
                     key={createSlug(e.name)}
-                    to={e.name}
+                    to={`products/${e.name}`}
                     className={({ isActive }) =>
                         isActive
                             ? "bg-main text-sm px-5 pt-[15px] pb-[14px] hover:text-main"
