@@ -73,8 +73,8 @@ export const voteOption = [
 ]
 
 export const sortProductOption = [
-  {value: 'productName-asc', label: 'Tên A-Z'},
-  {value: 'productName-desc', label: 'Tên Z-A'},
+  { value: 'productName-asc', label: 'Tên A-Z' },
+  { value: 'productName-desc', label: 'Tên Z-A' },
   { value: 'price-asc', label: 'Giá thấp đến cao' },
   { value: 'price-desc', label: 'Giá cao đến thấp' },
   { value: 'rating-asc', label: 'Rating thấp' },
@@ -85,40 +85,35 @@ export const sortProductOption = [
 
 export const memberSidebar = [
   {
+    id: 4,
+    type: 'SINGLE',
+    text: 'Home',
+    path: `/`,
+    icon: <FaHome size={20} />
+  },
+  {
     id: 1,
     type: 'SINGLE',
     text: 'Personal',
     path: `/${path.MEMBER}/${path.PERSONAL}`,
-    icon: <AiOutlineInfo size={20}/>
+    icon: <AiOutlineInfo size={20} />
   },
+
   {
     id: 2,
     type: 'SINGLE',
-    text: 'My Cart',
-    path: `/${path.MEMBER}/${path.MY_CART}`,
-    icon: <FaCartShopping size={20}/>
+    text: 'Buy Histories',
+    path: `/${path.MEMBER}/${path.HISTORY}`,
+    icon: <MdHistory size={20} />
   },
   {
     id: 3,
     type: 'SINGLE',
-    text: 'Buy Histories',
-    path: `/${path.MEMBER}/${path.HISTORY}`,
-    icon: <MdHistory size={20}/>
-  },
-  {
-    id: 4,
-    type: 'SINGLE',
     text: 'Wishlist',
     path: `/${path.MEMBER}/${path.WISHLIST}`,
-    icon: <FaHeart size={20}/>
+    icon: <FaHeart size={20} />
   },
-  {
-    id: 5,
-    type: 'SINGLE',
-    text: 'Home',
-    path: `/`,
-    icon: <FaHome size={20}/>
-  },
+
 ]
 
 

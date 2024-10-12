@@ -61,8 +61,8 @@ public class FileController {
         ResUploadFileDTO rs = new ResUploadFileDTO(uploadFile, Instant.now());
         return ResponseEntity.ok(rs);
     }
-    @GetMapping("/file/{folder}/{fileName}")
-    public ResponseEntity<String> getFileBase64(@PathVariable String folder, @PathVariable String fileName)
+    @GetMapping("files")
+    public ResponseEntity<String> getFileBase64(@RequestParam("folder") String folder, @RequestParam("fileName") String fileName)
             throws URISyntaxException, IOException {
         URI uri = new URI(baseURI + folder + "/" + fileName);
         Path path = Paths.get(uri);

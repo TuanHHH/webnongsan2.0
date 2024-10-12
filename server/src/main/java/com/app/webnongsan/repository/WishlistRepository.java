@@ -17,8 +17,8 @@ public interface WishlistRepository extends JpaRepository<Wishlist, WishlistId>,
     boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
 
     @Query("SELECT new com.app.webnongsan.domain.response.wishlist.WishlistItemDTO" +
-            "(p.id, p.productName, p.price, p.imageUrl) " +
-            "FROM Wishlist w JOIN w.product p WHERE w.user.id = :userId")
+            "(p.id, p.productName, p.price, p.imageUrl, c.name) " +
+            "FROM Wishlist w JOIN w.product p JOIN p.category c WHERE w.user.id = :userId")
     Page<WishlistItemDTO> findWishlistItemsByUserId(@Param("userId") Long userId, Pageable pageable);
 
 }
