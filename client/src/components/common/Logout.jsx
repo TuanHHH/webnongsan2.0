@@ -5,7 +5,7 @@ import icons from '@/utils/icons'
 import { useNavigate } from "react-router-dom";
 import path from "@/utils/path";
 import clsx from "clsx";
-
+//
 const { IoLogOutOutline } = icons
 
 const Logout = ({text = ""}) => {

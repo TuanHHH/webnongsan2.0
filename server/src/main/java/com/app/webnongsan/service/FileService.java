@@ -29,7 +29,7 @@ public class FileService {
                 System.out.println(">>> CREATE NEW DIRECTORY SUCCESSFUL, PATH = " + tmpDir.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }   
         } else {
             System.out.println(">>> SKIP MAKING DIRECTORY, ALREADY EXISTS");
         }

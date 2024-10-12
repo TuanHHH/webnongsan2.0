@@ -151,7 +151,12 @@ const ProductDetail = ({ isQuickView, data }) => {
 
   const addToCart = async (pid, quantity) => {
     const rs = await apiAddOrUpdateCart(pid, quantity)
-    console.log(rs);
+    if (rs.statusCode === 201){
+      toast.success(`Đã thêm vào giỏ hàng (${rs.data.quantity})`)
+    }
+    else{
+      toast.error(rs.message)
+    }
   }
   
   return (
@@ -198,7 +203,7 @@ const ProductDetail = ({ isQuickView, data }) => {
                     onChange={handleQuantityChange}
                   />
                 </div>
-                <Button fw onClick={() => addToCart(product?.id, quantity)}>Thêm vào giỏ hàng</Button>
+                <Button fw handleOnClick={()=> addToCart(product?.id, quantity)}>Thêm vào giỏ hàng</Button>
               </>
             ) : (
               <p className='text-red-500'>Sản phẩm đang tạm hết hàng, bạn vui lòng quay lại sau nhé</p>
