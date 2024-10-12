@@ -16,13 +16,13 @@ const DEBOUNCE_DELAY = 2000;
 const DELETE_DELAY = 750;
 
 const Cart = ({ dispatch }) => {
-  const {current, isLoggedIn} = useSelector(state => state.user)
-  //console.log(current, isLoggedIn)
+  const { current, isLoggedIn } = useSelector(state => state.user)
   const [cartItems, setCartItems] = useState([]);
   const [isCheckoutDisabled, setIsCheckoutDisabled] = useState(false);
   const [pendingUpdates, setPendingUpdates] = useState(new Set());
   // Trạng thái loading xóa sản phẩm
-  const [loadingDeletes, setLoadingDeletes] = useState(new Set()); 
+  const [loadingDeletes, setLoadingDeletes] = useState(new Set());
+  const [selectedItems, setSelectedItems] = useState(new Set());
   const debounceTimeouts = useRef({});
   const pendingChanges = useRef({});
 
@@ -47,7 +47,7 @@ const Cart = ({ dispatch }) => {
       }
     };
 
-    if (isLoggedIn && current){
+    if (isLoggedIn && current) {
       fetchCartItems();
     }
 
@@ -73,25 +73,15 @@ const Cart = ({ dispatch }) => {
     if (!currentItem) return;
 
     const validatedQuantity =
-      newQuantity === '' || isNaN(newQuantity) || newQuantity < 1
-        ? 1
-        : Math.min(newQuantity, currentItem.stock);
-
+      newQuantity === '' || isNaN(newQuantity) || newQuantity < 1 ? 1 : Math.min(newQuantity, currentItem.stock);
     const quantityDifference = validatedQuantity - currentItem.quantity;
 
     if (quantityDifference === 0) return;
-
     // Thêm pid vào danh sách pending updates
     setPendingUpdates(prev => new Set(prev).add(pid));
-
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === pid
-          ? {
-            ...item,
-            quantity: validatedQuantity,
-          }
-          : item
+        item.id === pid ? { ...item, quantity: validatedQuantity, } : item
       )
     );
 
@@ -126,7 +116,6 @@ const Cart = ({ dispatch }) => {
       }
     }, DEBOUNCE_DELAY);
   };
-
   const increaseQuantity = (pid) => {
     const item = cartItems.find((item) => item.id === pid);
     if (item && item.quantity < item.stock) {
@@ -155,6 +144,25 @@ const Cart = ({ dispatch }) => {
     }, DELETE_DELAY);
   };
 
+  const toggleSelectItem = (pid) => {
+    setSelectedItems((prevSelectedItems) => {
+      const newSet = new Set(prevSelectedItems);
+      if (newSet.has(pid)) {
+        newSet.delete(pid);
+      } else {
+        newSet.add(pid);
+      }
+      return newSet;
+    });
+  };
+
+  const calculateSelectedTotal = () => {
+    return cartItems
+      .filter(item => selectedItems.has(item.id))
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toLocaleString('vi-VN');
+  };
+
   return (
     <div className="w-main mt-10 p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Giỏ hàng</h2>
@@ -163,42 +171,59 @@ const Cart = ({ dispatch }) => {
           {cartItems.map((item) => (
             <div
               key={item.id}
-              className="grid grid-cols-10 items-center border-b pb-4"
+              className='grid grid-cols-10 items-center border-b pb-4'
             >
-              <div className="col-span-6 flex items-center">
+              <div className={`ml-4 ${item?.stock <= 0 ? 'opacity-50' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.has(item.id)}
+                  onChange={() => {
+                    if (item.stock > 0) {
+                      toggleSelectItem(item.id);
+                    }
+                  }}
+                />
+              </div>
+              <Link
+                to={`/${encodeURIComponent(item?.category)}/${item?.id}/${encodeURIComponent(item?.productName)}`}
+                className={`col-span-6 flex items-center ${item?.stock <= 0 ? 'opacity-50' : ''}`}
+              >
                 <img
                   src={item.imageUrl}
                   alt={item.productName}
                   className="w-20 h-20 object-cover rounded-md mr-4"
                 />
                 <div className="flex flex-col">
-                  <h3 className="text-lg truncate">{item.productName}</h3>
-                  <p className="text-sm text-gray-500">
-                    {item.price.toLocaleString('vi-VN')} đ
-                  </p>
-                  <p className="text-xs text-gray-500">Tồn kho: {item.stock}</p>
+                  <h3 className="text-lg truncate hover:underline">{item.productName}</h3>
+                  <p className="text-sm text-gray-500">{item.price.toLocaleString('vi-VN')} đ</p>
+                  <p className="text-xs text-gray-500">Có sẵn: {item.stock}</p>
+                  {item.stock <= 0 && (
+                    <p className="text-red-500 text-xs">Sản phẩm tạm hết hàng</p>
+                  )}
                 </div>
-              </div>
-              <div className="col-span-2 flex justify-center">
+              </Link>
+              <div className={`${item?.stock <= 0 ? 'opacity-50' : ''} col-span-2 flex justify-center`}>
                 <QuantitySelector
                   quantity={item.quantity}
                   stock={item.stock}
-                  onIncrease={() => increaseQuantity(item.id)}
-                  onDecrease={() => decreaseQuantity(item.id)}
-                  onChange={(newQuantity) => handleQuantityChange(item.id, newQuantity)}
+                  onIncrease={item.stock > 0 ? () => increaseQuantity(item.id) : null}
+                  onDecrease={item.stock > 0 ? () => decreaseQuantity(item.id) : null}
+                  onChange={item.stock > 0 ? (newQuantity) => handleQuantityChange(item.id, newQuantity) : null}
                 />
               </div>
-              <div className="col-span-2 flex justify-center">
-                {loadingDeletes.has(item.id) ? (
-                  <ClipLoader size={20} color="#FF0000" />
-                ) : (
-                  <span
-                    onClick={() => removeItem(item.id)}
-                    className="hover:cursor-pointer hover:scale-110 transition-transform duration-200"
-                  >
-                    <IoTrashBinOutline color="red" size={20} />
-                  </span>
-                )}
+              <div className="col-span-1 flex justify-center">
+                <button
+                  disabled={isCheckoutDisabled}
+                  onClick={() => removeItem(item.id)}
+                  className={`transition-transform duration-200 hover:cursor-pointer hover:scale-110 ${isCheckoutDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isCheckoutDisabled ? (
+                    <ClipLoader size={20} color="#FF0000" />
+                  ) : (
+                    <IoTrashBinOutline className={`${item.stock <= 0 ? 'opacity-100' : ''}`} color="red" size={20} />
+                  )}
+
+                </button>
               </div>
             </div>
           ))}
@@ -209,17 +234,11 @@ const Cart = ({ dispatch }) => {
           <Link to={`/${path.PRODUCTS_BASE}`} className='mt-4'>
             <button className='bg-main p-4 rounded-xl text-white hover:underline hover:bg-green-500'>Mua sắm ngay</button>
           </Link>
-        </div>
-      )}
+        </div>)}
 
       {cartItems?.length > 0 && <>
         <div className="mt-6 text-right">
-          <span className="text-lg font-semibold">
-            Tổng:{' '}
-            {cartItems
-              .reduce((total, item) => total + item.price * item.quantity, 0)
-              .toLocaleString('vi-VN')}{' '}
-            đ
+          <span className="text-lg font-semibold">Tổng:{' '}{calculateSelectedTotal()}đ
           </span>
         </div>
         <div className="mt-4 text-right">

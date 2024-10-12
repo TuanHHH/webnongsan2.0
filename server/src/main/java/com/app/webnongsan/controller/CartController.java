@@ -37,13 +37,4 @@ public class CartController {
     public ResponseEntity<PaginationDTO> getCartByUser(Pageable pageable) throws ResourceInvalidException {
         return ResponseEntity.ok(this.cartService.getCartByCurrentUser(pageable));
     }
-
-//    @PutMapping("cart")
-//    @ApiMessage("Update quantity")
-//    public ResponseEntity<Cart> updateQuantity(
-//            @RequestParam Long productId,
-//            @RequestParam int quantity) throws ResourceInvalidException {
-//            Cart updatedCart = cartService.updateProductQuantity(productId, quantity);
-//            return ResponseEntity.ok(updatedCart);
-//    }
 }

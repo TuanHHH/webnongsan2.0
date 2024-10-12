@@ -100,9 +100,10 @@ export const apiDeleteCart = async(pid)=>{
     })
 }
 
-export const apiGetCart = async() => {
+export const apiGetCart = async(page, size) => {
     return axiosInstance({
         url: '/cart',
-        method: 'get'
+        method: 'get',
+        params: {page, size}
     })
 }
