@@ -10,6 +10,7 @@ import lombok.Setter;
 public class WishlistItemDTO {
     private Long id;
     private String productName;
-    private Double pirice;
+    private Double price;
     private String imageUrl;
+    private String category;
 }

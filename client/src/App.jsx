@@ -2,27 +2,23 @@ import React, { useEffect } from 'react'
 import path from '@/utils/path'
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword, CartDetail } from "@/pages/guest";
-import { MemberLayout, MyCart, Personal, Wishlist, History } from '@/pages/member';
+import { MemberLayout, Personal, Wishlist, History } from '@/pages/member';
 import { useDispatch, useSelector } from "react-redux";
 import { getCategories } from "@/store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { Cart, Modal } from '@/components';
-
+import {Modal } from '@/components';
 const App = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
-  const { isShowModal, modalChildren, isShowCart } = useSelector(state => state.app)
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);
-
+  const { isShowModal, modalChildren } = useSelector(state => state.app)
+ 
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
   return (
     <div className="min-h-screen font-main relative">
+      
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
@@ -36,7 +32,6 @@ const App = () => {
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />}></Route>
-          <Route path={path.MY_CART} element={<MyCart />}></Route>
           <Route path={path.HISTORY} element={<History />}></Route>
           <Route path={path.WISHLIST} element={<Wishlist />}></Route>
         </Route>
@@ -45,7 +40,7 @@ const App = () => {
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
-        hideProgressBar={true}
+        hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
         rtl={false}

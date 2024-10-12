@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart } from '@/apis';
+import { useParams, useSearchParams } from 'react-router-dom'
+import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart, apiAddWishList } from '@/apis';
 import { Breadcrumb, Button, QuantitySelector, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
 import { formatMoney, renderStarFromNumber } from '@/utils/helper'
 import product_default from '@/assets/product_default.png'
@@ -14,7 +14,10 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/paginate/Pagination';
 import clsx from 'clsx';
 import { toast } from 'react-toastify';
+import icons from '@/utils/icons';
+import { getCurrentUser } from '@/store/user/asyncActions';
 
+const { FaHeart } = icons
 const ProductDetail = ({ isQuickView, data }) => {
 
   const params = useParams();
@@ -31,16 +34,13 @@ const ProductDetail = ({ isQuickView, data }) => {
   const [quantity, setQuantity] = useState(1);
   const [recommendedProducts, setRecommendedProducts] = useState(null)
   const [pid, setPid] = useState(null)
-  const [category, setCategory] = useState(null)
 
   useEffect(() => {
     if (data) {
       setPid(data.pid)
-      setCategory(data.category)
     }
     else if (params) {
       setPid(params.pid)
-      setCategory(params.category)
     }
   }, [params, data])
   const fetchProductData = async () => {
@@ -129,42 +129,60 @@ const ProductDetail = ({ isQuickView, data }) => {
     dispatch(showModal({ isShowModal: false, modalChildren: null }))
     rerender()
   }
-  const handleVoteNow = () => {
+  const checkLoginAndExecute = async (callback) => {
     if (!isLoggedIn) {
-      Swal.fire({
-        text: "Đăng nhập trước để đánh giá sản phẩm",
+      const result = await Swal.fire({
+        text: "Đăng nhập trước để thực hiện hành động này",
         confirmButtonText: "Đăng nhập",
         cancelButtonText: "Hủy",
         showCancelButton: true,
         title: "Oops!"
-      }).then(rs => {
-        if (rs.isConfirmed) navigate(`/${path.LOGIN}`)
-      })
+      });
+      if (result.isConfirmed) navigate(`/${path.LOGIN}`);
     } else {
-      dispatch(showModal(
-        {
-          isShowModal: true, modalChildren: <VoteOption nameProduct={product?.productName} handleSubmitOption={handleSubmitVoteOption} />
-        }))
-
+      await callback();
     }
-  }
+  };
+
+  const handleVoteNow = () => {
+    checkLoginAndExecute(() => {
+      dispatch(showModal({
+        isShowModal: true,
+        modalChildren: <VoteOption nameProduct={product?.productName} handleSubmitOption={handleSubmitVoteOption} />
+      }));
+    });
+  };
+
+  const addWishList = async (pid) => {
+    await checkLoginAndExecute(async () => {
+      const rs = await apiAddWishList(pid);
+      if (rs.statusCode === 201) {
+        toast.success("Thêm thành công vào danh sách yêu thích");
+      } else {
+        toast.warn(rs.message);
+      }
+    });
+  };
 
   const addToCart = async (pid, quantity) => {
-    const rs = await apiAddOrUpdateCart(pid, quantity)
-    if (rs.statusCode === 201){
-      toast.success(`Đã thêm vào giỏ hàng (${rs.data.quantity})`)
-    }
-    else{
-      toast.error(rs.message)
-    }
-  }
-  
+    await checkLoginAndExecute(async () => {
+      const rs = await apiAddOrUpdateCart(pid, quantity);
+      if (rs.statusCode === 201) {
+        toast.success(`Đã thêm vào giỏ hàng (${rs.data.quantity})`);
+        dispatch(getCurrentUser());
+      } else {
+        toast.error(rs.message);
+      }
+    });
+  };
+
+
   return (
     <div className='w-full' onClick={e => e.stopPropagation()}>
       {!isQuickView && <div className='h-20 flex justify-center items-center bg-gray-100'>
         <div className='w-main'>
           <h3 className='font-semibold'>{product?.productName}</h3>
-          <Breadcrumb title={product?.productName} category={category} />
+          <Breadcrumb title={product?.productName} category={params.category} />
         </div>
       </div>}
       <div className={clsx('m-auto mt-4 flex', isQuickView ? 'max-w-[900px] max-h-[80vh] gap-5 p-4 overflow-y-auto' : 'w-main')}>
@@ -202,8 +220,13 @@ const ProductDetail = ({ isQuickView, data }) => {
                     onDecrease={() => handleQuantityChange(Math.max(quantity - 1, 1))}
                     onChange={handleQuantityChange}
                   />
+                  <span className='ml-4 hover:scale-125 transition-transform duration-300 ease-in-out transform'
+                    onClick={() => addWishList(product?.id)}>
+                    <FaHeart size={20} color='#10B981'/>
+                  </span>
                 </div>
-                <Button fw handleOnClick={()=> addToCart(product?.id, quantity)}>Thêm vào giỏ hàng</Button>
+
+                <Button fw handleOnClick={() => addToCart(product?.id, quantity)}>Thêm vào giỏ hàng</Button>
               </>
             ) : (
               <p className='text-red-500'>Sản phẩm đang tạm hết hàng, bạn vui lòng quay lại sau nhé</p>

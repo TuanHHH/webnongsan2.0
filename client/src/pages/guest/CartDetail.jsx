@@ -185,7 +185,7 @@ const Cart = ({ dispatch }) => {
                 />
               </div>
               <Link
-                to={`/${encodeURIComponent(item?.category)}/${item?.id}/${encodeURIComponent(item?.productName)}`}
+                to={`/products/${encodeURIComponent(item?.category)}/${item?.id}/${encodeURIComponent(item?.productName)}`}
                 className={`col-span-6 flex items-center ${item?.stock <= 0 ? 'opacity-50' : ''}`}
               >
                 <img

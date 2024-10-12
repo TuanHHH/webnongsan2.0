@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, InputForm } from "../../components";
+import { Button, InputForm } from "@/components";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import avatar from "../../assets/avatarDefault.png";
-import { apiUpdateCurrentUser, fetchAvatarBase64, getUserById } from "../../apis";
-import { getCurrentUser } from "../../store/user/asyncActions";
+import avatar from "@/assets/avatarDefault.png";
+import { apiUpdateCurrentUser, fetchAvatarBase64, getUserById } from "@/apis";
+import { getCurrentUser } from "@/store/user/asyncActions";
 import { toast } from "react-toastify";
-import path from "../../utils/path";
+import path from "@/utils/path";
 
 const Personal = () => {
     const { handleSubmit, register, formState: { errors, isDirty }, reset } = useForm();

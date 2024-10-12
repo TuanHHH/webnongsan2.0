@@ -47,7 +47,7 @@ const Header = ({ navigate}) => {
         >
           <FaUserCircle color="#10B981" size={25} />
           <span>Tài khoản</span>
-          {isShowOption && current && <div onClick={e => e.stopPropagation()} className="absolute flex flex-col top-full left-0 bg-gray-100 border min-w-[150px] py-2">
+          {isShowOption && current && <div onClick={e => e.stopPropagation()} className="z-10 absolute mt-4 flex flex-col top-full left-0 bg-gray-100 border min-w-[150px] py-2">
             <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.MEMBER}/${path.PERSONAL}`} >Personal</Link>
             {current?.role.roleName === "ADMIN" && <Link
               className="p-2 w-full hover:bg-sky-100" to={`/${path.ADMIN}/${path.DASHBOARD}`} >Admin Workplace</Link>}

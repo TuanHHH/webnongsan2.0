@@ -6,7 +6,7 @@ import withBaseComponent from "@/hocs/withBaseComponent";
 import product_default from '@/assets/product_default.png';
 import { showModal } from "@/store/app/appSlice";
 import ProductDetail from "@/pages/guest/ProductDetail";
-import { apiAddOrUpdateCart } from "@/apis";
+import { apiAddOrUpdateCart, apiAddWishList } from "@/apis";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -18,6 +18,23 @@ const { FaCartShopping, FaHeart, FaEye } = icons;
 const ProductCard = ({ productData, navigate, dispatch }) => {
   const [showOption, setShowOption] = useState(false);
   const { isLoggedIn } = useSelector(state => state.user)
+
+  const handleLoginCheck = async () => {
+    if (!isLoggedIn) {
+      const result = await Swal.fire({
+        text: "Vui lòng đăng nhập",
+        confirmButtonText: "Đăng nhập",
+        cancelButtonText: "Hủy",
+        showCancelButton: true,
+        icon: 'info',
+        title: "Oops!"
+      });
+      if (result.isConfirmed) navigate(`/${path.LOGIN}`);
+      return false; 
+    }
+    return true; 
+  };
+
   const handleClickOptions = async (e, flag) => {
     e.stopPropagation();
     if (flag === 'QUICK_VIEW') {
@@ -25,37 +42,38 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
         isShowModal: true,
         modalChildren: <ProductDetail isQuickView data={{ pid: productData?.id, category: productData?.category }} />
       }))
-    }
+    } 
+
     if (flag === 'ADD_TO_CART') {
-      if (!isLoggedIn) {
-        Swal.fire({
-          text: "Vui lòng đăng nhập",
-          confirmButtonText: "Đăng nhập",
-          cancelButtonText: "Hủy",
-          showCancelButton: true,
-          icon: 'info',
-          title: "Oops!"
-        }).then(rs => {
-          if (rs.isConfirmed) navigate(`/${path.LOGIN}`)
-        })
-        return
-      }
-      const res = await apiAddOrUpdateCart(productData?.id, 1)
+      const isLoggedInCheck = await handleLoginCheck();
+      if (!isLoggedInCheck) return;
+
+      const res = await apiAddOrUpdateCart(productData?.id, 1);
       if (res.statusCode === 201) {
-        toast.success('Đã thêm vào giỏ hàng')
-        dispatch(getCurrentUser())
-      }
-      else {
-        toast.error("Có lỗi xảy ra")
+        toast.success('Đã thêm vào giỏ hàng');
+        dispatch(getCurrentUser());
+      } else {
+        toast.error("Có lỗi xảy ra");
       }
     }
-    if (flag === 'ADD_WISHLIST') console.log("ADD_WISHLIST");
+
+    if (flag === 'ADD_WISHLIST') {
+      const isLoggedInCheck = await handleLoginCheck();
+      if (!isLoggedInCheck) return;
+
+      const res = await apiAddWishList(productData?.id);
+      if (res.statusCode === 201) {
+        toast.success('Đã thêm vào danh sách yêu thích');
+      } else {
+        toast.warn(res.message);
+      }
+    }
   };
 
   return (
     <div className="w-full h-auto text-base px-[10px]">
       <div
-        onClick={e => navigate(`/${encodeURIComponent(productData?.category)}/${productData?.id}/${encodeURIComponent(productData?.product_name)}`)}
+        onClick={e => navigate(`/products/${encodeURIComponent(productData?.category)}/${productData?.id}/${encodeURIComponent(productData?.product_name)}`)}
         onMouseEnter={(e) => {
           e.stopPropagation();
           setShowOption(true);

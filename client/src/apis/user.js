@@ -68,19 +68,22 @@ export const apiUpdateCurrentUser = async (formData) =>
 
 export const fetchAvatarBase64 = async (folder, fileName) => {
     return axiosInstance({
-        url: `/file/${folder}/${fileName}`,
+        url: '/files',
+        params: {
+            folder, fileName
+        },
         method: 'get',
     });
 };
 
 
-export const getUserById = async (id)=>{
+export const getUserById = async (id) => {
     return axiosInstance({
         url: `/users/${id}`,
         method: 'get',
     });
 }
-export const apiAddOrUpdateCart = async(pid, quantity)=>{
+export const apiAddOrUpdateCart = async (pid, quantity) => {
     return axiosInstance({
         url: '/cart',
         method: 'post',
@@ -93,17 +96,47 @@ export const apiAddOrUpdateCart = async(pid, quantity)=>{
     })
 }
 
-export const apiDeleteCart = async(pid)=>{
+export const apiDeleteCart = async (pid) => {
     return axiosInstance({
         url: `/cart/${pid}`,
         method: 'delete'
     })
 }
 
-export const apiGetCart = async(page, size) => {
+export const apiGetCart = async (page, size) => {
     return axiosInstance({
         url: '/cart',
         method: 'get',
-        params: {page, size}
+        params: { page, size }
+    })
+}
+
+export const apiDeleteWishlist = async (pid) => {
+    return axiosInstance({
+        url: `/wishlist`,
+        method: 'delete',
+        params: {
+            pid
+        }
+    })
+}
+
+export const apiGetWishlist = async (page, size) => {
+    return axiosInstance({
+        url: '/wishlist',
+        method: 'get',
+        params: { page, size }
+    })
+}
+
+export const apiAddWishList = async (pid) => {
+    return axiosInstance({
+        url: '/wishlist',
+        method: 'post',
+        data: {
+            id: {
+                productId: pid
+            }
+        }
     })
 }
