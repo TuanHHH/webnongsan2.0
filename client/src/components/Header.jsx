@@ -4,6 +4,8 @@ import icons from "../utils/icons";
 import { Link } from "react-router-dom";
 import path from "../utils/path";
 
+import { NavLink } from "react-router-dom";
+
 const {FaUserCircle, FaCartShopping } = icons;
 
 const Header = () => {

@@ -55,3 +55,15 @@ export const apiLogout = async () =>
         method: 'post',
         withCredentials: true,
     });
+
+// export const apiGetAllUser = async ()=>
+//     axiosInstance({
+//         url:"/users",
+//         method:"get"
+//     });
+export const apiGetAllUser = async (params)=>
+    axiosInstance({
+        url:"/users",
+        method:"get",
+        params,
+    });

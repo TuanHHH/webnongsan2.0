@@ -46,12 +46,12 @@ public class CategoryController {
         return ResponseEntity.ok(c);
     }
 
-    @DeleteMapping("categories/{id}")
-    @ApiMessage("Delete category")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) throws ResourceInvalidException {
-        this.categoryService.delete(id);
-        return ResponseEntity.ok(null);
-    }
+        @DeleteMapping("categories/{id}")
+        @ApiMessage("Delete category")
+        public ResponseEntity<Void> delete(@PathVariable("id") long id) throws ResourceInvalidException {
+            this.categoryService.delete(id);
+            return ResponseEntity.ok(null);
+        }
 
     @GetMapping("categories")
     @ApiMessage("Get all categories")

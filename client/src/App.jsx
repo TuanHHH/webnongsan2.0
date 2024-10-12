@@ -2,10 +2,12 @@ import React, {useEffect} from 'react'
 import path from './utils/path'
 import { Route, Routes, useLocation} from "react-router-dom";
 import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword} from "./pages/guest";
+import { Admin } from "./pages/admin";
 import { useDispatch } from "react-redux";
 import { getCategories } from "./store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -29,7 +31,14 @@ const App = () => {
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />}></Route>
         </Route>
         <Route path={path.LOGIN} element={<Login />}></Route>
+        <Route path='/admin/*' element={<Admin/>}>
+          {/* <Route path='Overview' element={<Overview/>}></Route> */}
+        </Route>
       </Routes>
+      {/* <Routes> */}
+      {/* <Route path='admin' element={<Admin/>}></Route> */}
+      {/* </Routes> */}
+      
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

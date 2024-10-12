@@ -16,10 +16,10 @@ const Product = () => {
   const [products, setProducts] = useState(null)
   const [activeClick, setActiveClick] = useState(null)
   const { category } = useParams();
-  //console.log(category)
+  // console.log(category)
   const fetchProducts = async (queries) => {
     const response = await apiGetProducts(queries)
-    //console.log(response)
+    // console.log(response)
     setProducts(response.data.result)
   }
 
