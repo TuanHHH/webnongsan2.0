@@ -5,7 +5,7 @@ import icons from '@/utils/icons';
 import { apiDeleteWishlist, apiGetWishlist } from '@/apis';
 import { toast } from 'react-toastify';
 import withBaseComponent from '@/hocs/withBaseComponent';
-import { getCurrentUser } from '@/store/user/asyncActions';
+//import { getCurrentUser } from '@/store/user/asyncActions';
 import { Link } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ const { IoTrashBinOutline } = icons;
 const DELETE_DELAY = 750;
 const PAGE_SIZE = 5;
 
-const Wishlist = ({ dispatch }) => {
+const Wishlist = () => {
     const { current, isLoggedIn } = useSelector(state => state.user);
     const [wishlist, setWishlist] = useState(null);
     const [pages, setPages] = useState(1);
@@ -30,7 +30,7 @@ const Wishlist = ({ dispatch }) => {
         const res = await apiDeleteWishlist(pid);
         if (res.statusCode === 200) {
             toast.success("Đã xóa sản phẩm khỏi yêu thích");
-            dispatch(getCurrentUser());
+            //dispatch(getCurrentUser());
         } else {
             toast.error("Có lỗi trong quá trình xóa");
         }
@@ -156,4 +156,4 @@ const Wishlist = ({ dispatch }) => {
     );
 };
 
-export default withBaseComponent(Wishlist);
+export default Wishlist;
