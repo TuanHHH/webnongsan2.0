@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { setExpiredMessage } from '@/store/user/userSlice';
 import { store } from '@/store/redux';
+
 //Document: https://axios-http.com/docs/instance
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -40,8 +41,7 @@ axiosInstance.interceptors.response.use(function (response) {
   // Kiểm tra có phải lỗi 401 do access_token hết hạn hay không
   if (error.response.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
-    
-    
+
     const state = store.getState();
     if (!state.user.isLoggedIn) {
       return Promise.reject(error); 
@@ -49,9 +49,12 @@ axiosInstance.interceptors.response.use(function (response) {
     // Gọi api làm mới token
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
         withCredentials: true,
       });
-      const { access_token } = response.data;
+      const { access_token } = response.data.data;
       if (access_token) {
         // Cập nhật access token trong local storage
         let localData = window.localStorage.getItem('persist:ogani_shop/user');
@@ -61,9 +64,10 @@ axiosInstance.interceptors.response.use(function (response) {
 
         // Cập nhật lại header authorization và gửi lại request gốc
         originalRequest.headers['authorization'] = `Bearer ${access_token}`;
-        return axiosInstance(originalRequest);
+        return axios(originalRequest);
       }
     } catch (err) {
+      window.localStorage.removeItem('persist:ogani_shop/user');
       store.dispatch(setExpiredMessage());
       return Promise.reject(err);
     }

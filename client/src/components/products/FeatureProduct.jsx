@@ -6,7 +6,7 @@ const FeatureProduct = () => {
   const [products, setProducts] = useState(null);
 
   const fetchProduct = async () => {
-    const response = await apiGetProducts({ page: 1, size: 6, sort: 'rating,desc'});
+    const response = await apiGetProducts({ page: 1, size: 12, sort: 'sold,desc'});
     if (response.statusCode === 200) {
       setProducts(response.data.result)
     }
@@ -20,7 +20,7 @@ const FeatureProduct = () => {
   return (
     <div className="w-main">
       <h2 className="text-[20px] uppercase font-semibold py-[10px] border-b-4 border-main">
-        Sản phẩm nổi bật
+        Sản phẩm bán chạy
       </h2>
 
       <div className="grid grid-cols-6 gap-4 mt-4">

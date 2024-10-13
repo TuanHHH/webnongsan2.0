@@ -4,8 +4,7 @@ import { ClipLoader } from 'react-spinners';
 import icons from '@/utils/icons';
 import { apiDeleteWishlist, apiGetWishlist } from '@/apis';
 import { toast } from 'react-toastify';
-import withBaseComponent from '@/hocs/withBaseComponent';
-//import { getCurrentUser } from '@/store/user/asyncActions';
+import product_default from '@/assets/product_default.png';
 import { Link } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
@@ -107,7 +106,7 @@ const Wishlist = () => {
                                     className={`flex items-center flex-1 ${item?.stock <= 0 ? 'opacity-50' : ''}`}
                                 >
                                     <img
-                                        src={item.imageUrl}
+                                        src={item.imageUrl || product_default}
                                         alt={item.productName}
                                         className="w-20 h-20 object-cover rounded-md mr-4"
                                     />
