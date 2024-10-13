@@ -14,6 +14,7 @@ import com.app.webnongsan.service.FileService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.annotation.ApiMessage;
+import com.app.webnongsan.util.exception.AuthException;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,13 +60,18 @@ public class AuthController {
 
     @PostMapping("auth/login")
     @ApiMessage("Login")
-    public ResponseEntity<ResLoginDTO> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<ResLoginDTO> login(@RequestBody LoginDTO loginDTO) throws AuthException {
+        User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
+
+        if (currentUserDB != null && currentUserDB.getStatus() == 0) {
+           throw new AuthException("Tài khoản của bạn đã bị khóa. Không thể đăng nhập");
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         ResLoginDTO res = new ResLoginDTO();
 
-        User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
         if (currentUserDB != null) {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),

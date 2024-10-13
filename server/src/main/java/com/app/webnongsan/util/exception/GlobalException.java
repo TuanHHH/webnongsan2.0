@@ -32,8 +32,7 @@ public class GlobalException {
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
             BadCredentialsException.class,
-            ResourceInvalidException.class,
-            AuthException.class
+            ResourceInvalidException.class
     })
     public ResponseEntity<RestResponse<Object>> handleIdException(Exception ex) {
         RestResponse<Object> res = new RestResponse<Object>();
@@ -80,5 +79,16 @@ public class GlobalException {
         res.setError("Upload file exception!");
         res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(value = {
+            AuthException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleAuthException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.FORBIDDEN.value());
+        res.setError("Authentication failed!");
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
     }
 }

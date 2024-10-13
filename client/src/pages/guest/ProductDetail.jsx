@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart, apiAddWishList } from '@/apis';
 import { Breadcrumb, Button, QuantitySelector, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
-import { formatMoney, renderStarFromNumber } from '@/utils/helper'
+import { formatMoney, renderStarFromNumber, convertToSlug} from '@/utils/helper'
 import product_default from '@/assets/product_default.png'
 import { productExtraInfo } from '@/utils/constants';
 import Votebar from '@/components/vote/Votebar';
@@ -185,7 +185,7 @@ const ProductDetail = ({ isQuickView, data }) => {
           <Breadcrumb title={product?.productName} category={params.category} />
         </div>
       </div>}
-      <div className={clsx('m-auto mt-4 flex', isQuickView ? 'max-w-[900px] max-h-[80vh] gap-5 p-4 overflow-y-auto' : 'w-main')}>
+      <div className={clsx('m-auto mt-4 flex', isQuickView ? 'max-w-[900px] max-h-[80vh] bg-gray-100 rounded-lg gap-5 p-4 overflow-y-auto' : 'w-main')}>
         <div className={clsx('flex-4 flex flex-col gap-4 ', isQuickView ? 'w-1/2' : 'w-2/5')}>
           <div className='w-[450px]'>
             <div className='px-2' >
@@ -199,7 +199,7 @@ const ProductDetail = ({ isQuickView, data }) => {
             <span className='text-sm text-red-500 ml-2 mt-1 pr-2'>{`Có sẵn: ${product?.quantity}`}</span>
           </div>
           <div className='flex items-center'>
-            {product?.rating}
+            {parseFloat(product?.rating.toFixed(1))}
             {renderStarFromNumber(product?.rating)?.map((el, index) => (
               <span key={index}>{el}</span>
             ))}
@@ -222,7 +222,7 @@ const ProductDetail = ({ isQuickView, data }) => {
                   />
                   <span className='ml-4 hover:scale-125 transition-transform duration-300 ease-in-out transform'
                     onClick={() => addWishList(product?.id)}>
-                    <FaHeart size={20} color='#10B981'/>
+                    <FaHeart size={20} color='#10B981' />
                   </span>
                 </div>
 
@@ -244,7 +244,7 @@ const ProductDetail = ({ isQuickView, data }) => {
           <div>
             <div className='flex p-4'>
               <div className='flex-4 flex flex-col items-center justify-center'>
-                <span className='font-semibold text-3xl'>{`${product?.rating}/5`}</span>
+                <span className='font-semibold text-3xl'>{`${parseFloat(product?.rating.toFixed(1))}/5`}</span>
                 <span className='flex items-center gap-1'>{renderStarFromNumber(product?.rating)?.map((el, index) => (
                   <span key={index}>{el}</span>
                 ))}</span>
