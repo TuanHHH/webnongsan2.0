@@ -99,7 +99,6 @@ public class GlobalException {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .expires(Instant.EPOCH)
                 .build();
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
