@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { createSlug } from '@/utils/helper';
+import { convertToSlug} from '@/utils/helper';
 import category_default from "@/assets/category_default.png";
 const Sidebar = () => {
     const { categories } = useSelector((state) => {
@@ -13,7 +13,7 @@ const Sidebar = () => {
         <div className="flex flex-col border h-[400px] overflow-y-auto">
             {categories?.map((e) => (
                 <NavLink
-                    key={createSlug(e.name)}
+                    key={convertToSlug(e.name)}
                     to={`products/${e.name}`}
                     className={({ isActive }) =>
                         isActive

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { formatMoney, renderStarFromNumber } from "@/utils/helper";
+import { formatMoney, renderStarFromNumber, convertToSlug } from "@/utils/helper";
 import { SelectOption } from "..";
 import icons from "@/utils/icons";
 import withBaseComponent from "@/hocs/withBaseComponent";
@@ -30,9 +30,9 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
         title: "Oops!"
       });
       if (result.isConfirmed) navigate(`/${path.LOGIN}`);
-      return false; 
+      return false;
     }
-    return true; 
+    return true;
   };
 
   const handleClickOptions = async (e, flag) => {
@@ -42,7 +42,7 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
         isShowModal: true,
         modalChildren: <ProductDetail isQuickView data={{ pid: productData?.id, category: productData?.category }} />
       }))
-    } 
+    }
 
     if (flag === 'ADD_TO_CART') {
       const isLoggedInCheck = await handleLoginCheck();
@@ -73,7 +73,7 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
   return (
     <div className="w-full h-auto text-base px-[10px]">
       <div
-        onClick={e => navigate(`/products/${encodeURIComponent(productData?.category)}/${productData?.id}/${encodeURIComponent(productData?.product_name)}`)}
+        onClick={e => navigate(`/products/${encodeURIComponent(productData?.category)}/${productData?.id}/${convertToSlug(productData?.product_name)}`)}
         onMouseEnter={(e) => {
           e.stopPropagation();
           setShowOption(true);
@@ -94,11 +94,22 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
                 <span title="Quick view"><SelectOption key={productData.id + '0'} icon={<FaEye />} /></span>
               </div>
               <div
-                className="py-2 cursor-pointer"
-                onClick={(e) => handleClickOptions(e, 'ADD_TO_CART')}
+                className='py-2 cursor-pointer'
+                onClick={(e) => {
+                  if (productData?.quantity > 0) {
+                    handleClickOptions(e, 'ADD_TO_CART');
+                  }
+                  else{
+                    e.stopPropagation();
+                    toast.info("Sản phẩm đang tạm hết hàng")
+                  }
+                }}
               >
-                <span title="Add to Cart"><SelectOption key={productData.id + '1'} icon={<FaCartShopping />} /></span>
+                <span title="Add to Cart"  className={`${productData?.quantity <=0 ? 'opacity-50' : ''}`}>
+                  <SelectOption key={productData.id + '1'} icon={<FaCartShopping />}/>
+                </span>
               </div>
+
               <div
                 className="py-2 cursor-pointer"
                 onClick={(e) => handleClickOptions(e, 'ADD_WISHLIST')}
