@@ -32,10 +32,11 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        //ignoredPaths: ['app.modalChildren'],
-      },
+      // serializableCheck: {
+      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, 'app/showModal', 'persist/PERSIST', 'persist/REHYDRATE'],
+      //   ignoredPaths: ['modalChildren'],
+      // },
+      serializableCheck: false
     }),
 });
 
