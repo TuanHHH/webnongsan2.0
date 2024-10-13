@@ -13,8 +13,7 @@ const TopHeader = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { isLoggedIn, current, message } = useSelector(
-        state =>
-            state.user
+        state => state.user
     )
     useEffect(() => {
         const setTimeoutId =  setTimeout(() => {
@@ -34,8 +33,8 @@ const TopHeader = () => {
     }, [message])
 
     return (
-        <div className="h-[38px] w-full bg-main flex items-center justify-center">
-            <div className="w-main flex items-center justify-between text-xs text-white">
+        <div className="w-full bg-main flex items-center justify-center">
+            <div className="w-main h-10 flex items-center justify-between text-xs text-white">
                 <span>/</span>
                 {!isLoggedIn || !current
                     ? <Link className=" hover:text-gray-700" to={`/${path.LOGIN}`}>Đăng nhập hoặc đăng ký</Link>

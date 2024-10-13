@@ -3,7 +3,7 @@ package com.app.webnongsan.config.interceptor;
 import com.app.webnongsan.config.UrlConfig;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
-import com.app.webnongsan.util.exception.AuthException;
+import com.app.webnongsan.util.exception.PermissionException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
@@ -43,7 +41,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        throw new AuthException("Bạn không có quyền truy cập endpoint này");
+        throw new PermissionException("Bạn không có quyền truy cập endpoint này");
     }
 
     private boolean isAllowedUrl(String requestURI, String httpMethod) {

@@ -2,7 +2,9 @@ package com.app.webnongsan.util.exception;
 
 
 import com.app.webnongsan.domain.response.RestResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,6 +91,29 @@ public class GlobalException {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.FORBIDDEN.value());
         res.setError("Authentication failed!");
+        res.setMessage(ex.getMessage());
+
+        ResponseCookie deleteSpringCookie = ResponseCookie
+                .from("refresh_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .expires(Instant.EPOCH)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .header(HttpHeaders.SET_COOKIE, deleteSpringCookie.toString())
+                .body(res);
+    }
+
+    @ExceptionHandler(value = {
+            PermissionException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handlePermissionException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.FORBIDDEN.value());
+        res.setError("Permission denied!");
         res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
     }
