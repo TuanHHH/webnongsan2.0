@@ -4,11 +4,11 @@ import { ClipLoader } from 'react-spinners';
 import icons from '@/utils/icons';
 import { apiDeleteWishlist, apiGetWishlist } from '@/apis';
 import { toast } from 'react-toastify';
-import withBaseComponent from '@/hocs/withBaseComponent';
-//import { getCurrentUser } from '@/store/user/asyncActions';
+import product_default from '@/assets/product_default.png';
 import { Link } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
+import { convertToSlug } from '@/utils/helper';
 
 const { IoTrashBinOutline } = icons;
 const DELETE_DELAY = 750;
@@ -63,7 +63,7 @@ const Wishlist = () => {
         debounceTimeouts.current[pid] = setTimeout(() => {
             setWishlist(prevWishlist => {
                 if (!prevWishlist || !prevWishlist.result) return prevWishlist;
-                
+
                 const updatedResult = prevWishlist.result.filter(item => item.id !== pid);
                 return {
                     ...prevWishlist,
@@ -100,13 +100,13 @@ const Wishlist = () => {
                 {wishlist?.result?.length > 0 ? (
                     <div className="space-y-2">
                         {wishlist?.result.map((item) => (
-                            <div key={item.id} className='grid grid-cols-10 items-center border-b pb-4'>
+                            <div key={item.id} className='flex items-center justify-between border-b pb-4'>
                                 <Link
-                                    to={`/products/${encodeURIComponent(item?.category)}/${item?.id}/${encodeURIComponent(item?.productName)}`}
-                                    className={`col-span-6 flex items-center ${item?.stock <= 0 ? 'opacity-50' : ''}`}
+                                    to={`/products/${encodeURIComponent(item?.category)}/${item?.id}/${convertToSlug(item?.productName)}`}
+                                    className={`flex items-center flex-1 ${item?.stock <= 0 ? 'opacity-50' : ''}`}
                                 >
                                     <img
-                                        src={item.imageUrl}
+                                        src={item.imageUrl || product_default}
                                         alt={item.productName}
                                         className="w-20 h-20 object-cover rounded-md mr-4"
                                     />
@@ -115,10 +115,10 @@ const Wishlist = () => {
                                         <p className="text-sm text-gray-500">{item.category}</p>
                                     </div>
                                 </Link>
-                                <div className='col-span-2 flex justify-center'>
+                                <div className='flex justify-center w-32'>
                                     <p className="text-sm text-gray-500">{item.price.toLocaleString('vi-VN')} đ</p>
                                 </div>
-                                <div className="col-span-2 flex justify-center">
+                                <div className="flex justify-center w-20" title='Xóa sản phẩm'>
                                     <button
                                         disabled={loadingDeletes.has(item.id)}
                                         onClick={() => removeItem(item.id)}
@@ -144,13 +144,15 @@ const Wishlist = () => {
                 )}
             </div>
             <div className='w-4/5 m-auto my-4 flex justify-center'>
-                <Pagination
-                    totalPage={wishlist?.meta?.pages}
-                    currentPage={pages}
-                    totalProduct={wishlist?.meta?.total}
-                    pageSize={wishlist?.meta?.pageSize}
-                    onPageChange={handlePagination}
-                />
+                {wishlist?.meta?.pages > 1 &&
+                    <Pagination
+                        totalPage={wishlist?.meta?.pages}
+                        currentPage={pages}
+                        totalProduct={wishlist?.meta?.total}
+                        pageSize={wishlist?.meta?.pageSize}
+                        onPageChange={handlePagination}
+                    />
+                }
             </div>
         </div>
     );

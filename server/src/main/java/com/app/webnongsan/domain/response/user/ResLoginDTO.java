@@ -23,8 +23,9 @@ public class ResLoginDTO {
         private String email;
         private String name;
         private Role role;
-        private long cartLength;
     }
+
+
 
     @Getter
     @Setter
@@ -32,6 +33,7 @@ public class ResLoginDTO {
     @NoArgsConstructor
     public static class UserGetAccount{
         private UserLogin user;
+        private long cartLength;
     }
 
     @Getter

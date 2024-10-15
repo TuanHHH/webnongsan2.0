@@ -9,6 +9,8 @@ import { getCurrentUser } from '@/store/user/asyncActions';
 import { Link } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
+import { convertToSlug } from '@/utils/helper';
+import product_default from '@/assets/product_default.png';
 
 const { IoTrashBinOutline } = icons;
 
@@ -185,11 +187,11 @@ const Cart = ({ dispatch }) => {
                 />
               </div>
               <Link
-                to={`/products/${encodeURIComponent(item?.category)}/${item?.id}/${encodeURIComponent(item?.productName)}`}
+                to={`/products/${encodeURIComponent(item?.category)}/${item?.id}/${convertToSlug(item?.productName)}`}
                 className={`col-span-6 flex items-center ${item?.stock <= 0 ? 'opacity-50' : ''}`}
               >
                 <img
-                  src={item.imageUrl}
+                  src={item.imageUrl || product_default}
                   alt={item.productName}
                   className="w-20 h-20 object-cover rounded-md mr-4"
                 />

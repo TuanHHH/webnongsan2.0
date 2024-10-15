@@ -14,6 +14,7 @@ import com.app.webnongsan.service.FileService;
 import com.app.webnongsan.service.UserService;
 import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.annotation.ApiMessage;
+import com.app.webnongsan.util.exception.AuthException;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,20 +60,24 @@ public class AuthController {
 
     @PostMapping("auth/login")
     @ApiMessage("Login")
-    public ResponseEntity<ResLoginDTO> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<ResLoginDTO> login(@RequestBody LoginDTO loginDTO) throws AuthException {
+        User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
+
+        if (currentUserDB != null && currentUserDB.getStatus() == 0) {
+           throw new AuthException("Tài khoản của bạn đã bị khóa. Không thể đăng nhập");
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         ResLoginDTO res = new ResLoginDTO();
 
-        User currentUserDB = this.userService.getUserByUsername(loginDTO.getEmail());
         if (currentUserDB != null) {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getName(),
-                    currentUserDB.getRole(),
-                    cartService.countProductInCart(currentUserDB.getId()));
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
 
@@ -94,10 +99,14 @@ public class AuthController {
 
     @GetMapping("auth/account")
     @ApiMessage("Get user")
-    public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
+    public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() throws AuthException {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         // Lấy thông tin người dùng trong db
         User currentUserDB = this.userService.getUserByUsername(email);
+        if (currentUserDB != null && currentUserDB.getStatus() == 0) {
+            throw new AuthException("Tài khoản của bạn đã bị khóa. Không thể đăng nhập");
+        }
+
         ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
         ResLoginDTO.UserGetAccount userGetAccount = new ResLoginDTO.UserGetAccount();
 
@@ -106,15 +115,15 @@ public class AuthController {
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
             userLogin.setRole(currentUserDB.getRole());
-            userLogin.setCartLength(cartService.countProductInCart(currentUserDB.getId()));
             userGetAccount.setUser(userLogin);
+            userGetAccount.setCartLength(cartService.countProductInCart(currentUserDB.getId()));
         }
         return ResponseEntity.ok(userGetAccount);
     }
 
     @GetMapping("auth/refresh")
     @ApiMessage("Get new token")
-    public ResponseEntity<ResLoginDTO> getNewRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "none") String refreshToken) throws ResourceInvalidException {
+    public ResponseEntity<ResLoginDTO> getNewRefreshToken(@CookieValue(name = "refresh_token", defaultValue = "none") String refreshToken) throws ResourceInvalidException, AuthException {
         if (refreshToken.equals("none")) {
             throw new ResourceInvalidException("Vui lòng đăng nhập");
         }
@@ -126,6 +135,11 @@ public class AuthController {
         if (currentUser == null) {
             throw new ResourceInvalidException("Refresh token không hợp lệ");
         }
+        else {
+            if (currentUser.getStatus() == 0){
+                throw new AuthException("Tài khoản bị khóa");
+            }
+        }
 
         // Tạo lại RF token và set cookies
         ResLoginDTO res = new ResLoginDTO();
@@ -135,9 +149,7 @@ public class AuthController {
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getName(),
-                    currentUserDB.getRole(),
-                    cartService.countProductInCart(currentUserDB.getId()));
-
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
 
@@ -177,7 +189,7 @@ public class AuthController {
 
         //Xóa cookie
         ResponseCookie deleteSpringCookie = ResponseCookie
-                .from("refresh_token", null)
+                .from("refresh_token", "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

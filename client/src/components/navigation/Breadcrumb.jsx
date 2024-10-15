@@ -1,32 +1,27 @@
-import React from 'react'
-import useBreadcrumbs from "use-react-router-breadcrumbs";
-import { NavLink } from 'react-router-dom';
-import icons from '@/utils/icons'
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import icons from '@/utils/icons';
 
-const { GrNext } = icons
+const { GrNext } = icons;
+
 const Breadcrumb = ({ title, category }) => {
-    const routes = [
-        { path: "/", breadcrumb: "Home" },
-        { path: "/products", breadcrumb: "Sản phẩm" },
-        { path: "/products/:category", breadcrumb: category },
-        { path: "/:category/:pid/:title", breadcrumb: title }
-    ];
-    const breadcrumb = useBreadcrumbs(routes);
+    const location = useLocation();
+
+    const isProductPage = location.pathname === '/products';
+
     return (
         <div className='flex items-center text-sm gap-1'>
-            {breadcrumb?.filter(e => !e.match.route === false).map(({
-                match,
-                breadcrumb
-            }, idx, self) => (
-                <span key={match.pathname}>
-                    <NavLink to={match.pathname} className='gap-1 flex items-center hover:text-main'>
-                        <span> {breadcrumb}</span>
-                        {idx !== self.length - 1 && <GrNext size={10} />}
-                    </NavLink>
-                </span>
-            ))}
+            <NavLink to="/" className='hover:text-main'>Home</NavLink>
+            <GrNext size={10} />
+            <NavLink to="/products" className='hover:text-main'>Sản phẩm</NavLink>
+            {!isProductPage && <GrNext size={10} />}
+            <NavLink to={`/products/${category}`} className='hover:text-main'>{category}</NavLink>
+            {title && <>
+                <GrNext size={10} />
+                <span className='text-gray-500'>{title}</span>
+            </>}
         </div>
-    )
-}
+    );
+};
 
-export default Breadcrumb
+export default Breadcrumb;
