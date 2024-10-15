@@ -1,95 +1,42 @@
-// import React from "react";
-// const Overview = () => {
-//     return (
-//         <div className="container">
-//             <div className="row">
-//                 <div className="col-sm-12">
-//                     <table
-//                         style={{ width: '100%' }}
-//                         className="table table-hover table-striped table-bordered "
-//                         role="grid"
-//                         aria-describedby="example_info"
-//                     >
-//                         <thead>
-//                             <tr role="row">
-//                                 <th className="sorting_asc" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '180.4px' }} aria-sort="ascending" aria-label="Name: activate to sort column descending">Name</th>
-//                                 <th className="sorting" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '274.4px' }} aria-label="Position: activate to sort column ascending">Position</th>
-//                                 <th className="sorting" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '131.4px' }} aria-label="Office: activate to sort column ascending">Office</th>
-//                                 <th className="sorting" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '63.4px' }} aria-label="Age: activate to sort column ascending">Age</th>
-//                                 <th className="sorting" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '123.4px' }} aria-label="Start date: activate to sort column ascending">Start date</th>
-//                                 <th className="sorting" tabIndex="0" aria-controls="example" rowSpan="1" colSpan="1" style={{ width: '100.2px' }} aria-label="Salary: activate to sort column ascending">Salary</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {[
-//                                 { name: 'Airi Satou', position: 'Accountant', office: 'Tokyo', age: 33, startDate: '2008/11/28', salary: '$162,700' },
-//                                 { name: 'Angelica Ramos', position: 'Chief Executive Officer (CEO)', office: 'London', age: 47, startDate: '2009/10/09', salary: '$1,200,000' },
-//                                 { name: 'Ashton Cox', position: 'Junior Technical Author', office: 'San Francisco', age: 66, startDate: '2009/01/12', salary: '$86,000' },
-//                                 { name: 'Bradley Greer', position: 'Software Engineer', office: 'London', age: 41, startDate: '2012/10/13', salary: '$132,000' },
-//                                 { name: 'Brenden Wagner', position: 'Software Engineer', office: 'San Francisco', age: 28, startDate: '2011/06/07', salary: '$206,850' },
-//                                 { name: 'Brielle Williamson', position: 'Integration Specialist', office: 'New York', age: 61, startDate: '2012/12/02', salary: '$372,000' },
-//                                 { name: 'Bruno Nash', position: 'Software Engineer', office: 'London', age: 38, startDate: '2011/05/03', salary: '$163,500' },
-//                                 { name: 'Caesar Vance', position: 'Pre-Sales Support', office: 'New York', age: 21, startDate: '2011/12/12', salary: '$106,450' },
-//                                 { name: 'Cara Stevens', position: 'Sales Assistant', office: 'New York', age: 46, startDate: '2011/12/06', salary: '$145,600' },
-//                                 { name: 'Cedric Kelly', position: 'Senior Javascript Developer', office: 'Edinburgh', age: 22, startDate: '2012/03/29', salary: '$433,060' },
-//                             ].map((employee, index) => (
-//                                 <tr role="row" className={index % 2 === 0 ? 'even' : 'odd'} key={employee.name}>
-//                                     <td tabIndex="0" className="sorting_1">{employee.name}</td>
-//                                     <td>{employee.position}</td>
-//                                     <td>{employee.office}</td>
-//                                     <td>{employee.age}</td>
-//                                     <td>{employee.startDate}</td>
-//                                     <td>{employee.salary}</td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                         <tfoot>
-//                             <tr>
-//                                 <th rowSpan="1" colSpan="1">Name</th>
-//                                 <th rowSpan="1" colSpan="1">Position</th>
-//                                 <th rowSpan="1" colSpan="1">Office</th>
-//                                 <th rowSpan="1" colSpan="1">Age</th>
-//                                 <th rowSpan="1" colSpan="1">Start date</th>
-//                                 <th rowSpan="1" colSpan="1">Salary</th>
-//                             </tr>
-//                         </tfoot>
-//                     </table>
-//                 </div>
-//             </div>
+import React, { useEffect, useState } from 'react';
+import { apiGetProducts } from '@/apis';
+import { apiGetOrders } from '@/apis';
+import { apiGetAllUser } from '@/apis';
 
-//             <hr />
-//             <div className="col-lg-12">
-//                 <div className="single_element">
-//                     <div className="quick_activity">
-//                         <div className="row">
-//                             <div className="col-12">
-//                                 <div className="quick_activity_wrap">
-//                                     {[
-//                                         { title: 'Total Income', amount: '579,000', saved: '25%' },
-//                                         { title: 'Total Expenses', amount: '79,000', saved: '25%' },
-//                                         { title: 'Cash on Hand', amount: '92,000', saved: '25%' },
-//                                         { title: 'Net Profit Margin', amount: '179,000', saved: '65%' },
-//                                     ].map(activity => (
-//                                         <div className="single_quick_activity" key={activity.title}>
-//                                             <h4>{activity.title}</h4>
-//                                             <h3>$ <span className="counter">{activity.amount}</span></h3>
-//                                             <p>Saved {activity.saved}</p>
-//                                         </div>
-//                                     ))}
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     )
-// };
-// export default Overview;
-
-import React from 'react';
-
+// import { useState } from 'react';
 const Overview = () => {
+  const [totalProduct, setTotalProduct] = useState(0);
+  const [totalOrder, setTotalOrder] = useState(0)
+  const [totalUser, setTotalUser] = useState(0)
+  const [totalProfit, setTotalProfit] = useState(0)
+  const fetchProducts = async()=>{
+    const res = await apiGetProducts();
+    setTotalProduct(res.data.meta.total)
+  };
+  const fetchOrders = async()=>{
+    const res = await apiGetOrders();
+    let total = 0;
+    for (let i=0;i<res.data.result.length;i++){
+      total+=res.data.result[i].total_price;
+    }
+    setTotalProfit(total)
+    setTotalOrder(res.data.meta.total)
+  }
+  const fetchUsers = async()=>{
+    const res = await apiGetAllUser();
+    setTotalUser(res.data.meta.total)
+  }
+  useEffect(()=>{
+    fetchOrders();
+    fetchProducts();
+    fetchUsers();
+  },[])
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(getCategories());
+  // }, [dispatch]); //Tải lại category
+  
+  // const 
   return (
     <div className="flex">
       {/* Main content */}
@@ -100,22 +47,22 @@ const Overview = () => {
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white shadow rounded-lg p-4">
             <h2 className="text-sm font-medium">Tổng lợi nhuận</h2>
-            <p className="text-2xl font-bold">$45,231.89</p>
+            <p className="text-2xl font-bold">${totalProfit}</p>
             {/* <p className="text-green-500">+20.1% from last month</p> */}
           </div>
           <div className="bg-white shadow rounded-lg p-4 pr-40">
             <h2 className="text-sm font-medium">Người sử dụng</h2>
-            <p className="text-2xl font-bold">+2350</p>
+            <p className="text-2xl font-bold">{totalUser}</p>
             {/* <p className="text-green-500">+180.1% from last month</p> */}
           </div>
           <div className="bg-white shadow rounded-lg p-4">
             <h2 className="text-sm font-medium">Tổng sản phẩm</h2>
-            <p className="text-2xl font-bold">12,234</p>
+            <p className="text-2xl font-bold">{totalProduct}</p>
             {/* <p className="text-gray-500">+19 added today</p> */}
           </div>
           <div className="bg-white shadow rounded-lg p-4">
             <h2 className="text-sm font-medium">Đơn hàng</h2>
-            <p className="text-2xl font-bold">573</p>
+            <p className="text-2xl font-bold">{totalOrder}</p>
             {/* <p className="text-green-500">+201 since last hour</p> */}
           </div>
         </div>

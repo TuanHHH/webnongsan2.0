@@ -43,10 +43,6 @@ const App = () => {
           {/* <Route path='Overview' element={<Overview/>}></Route> */}
         </Route>
       </Routes>
-      {/* <Routes> */}
-      {/* <Route path='admin' element={<Admin/>}></Route> */}
-      {/* </Routes> */}
-      
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

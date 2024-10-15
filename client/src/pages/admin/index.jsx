@@ -1,5 +1,4 @@
 export {default as Admin} from './Admin'
-// export {default as OrderDetail} from './OrderDetail'
 export {default as OrderDetail} from './OrderDetail'
 export {default as Overview} from './Overview'
 export {default as Category} from './Category'

@@ -57,6 +57,7 @@ const Personal = () => {
 
     const handleUpdateInfor = async (data) => {
         const formData = new FormData();
+        // console.log(data)
         if (data.avatarUrl.length > 0) formData.append('avatarUrl', data.avatarUrl[0]);
         delete data.avatarUrl;
         for (let [key, value] of Object.entries(data)) {

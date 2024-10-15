@@ -1,4 +1,5 @@
 package com.app.webnongsan.service;
+import com.app.webnongsan.domain.Product;
 import com.app.webnongsan.repository.OrderDetailRepository;
 import com.app.webnongsan.domain.OrderDetail;
 import com.app.webnongsan.domain.response.PaginationDTO;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -22,9 +24,10 @@ public class OrderDetailService {
     public OrderDetail get(long id){
         return this.orderDetailRepository.findById(id).orElse(null);
     }
-    public PaginationDTO getAll(Specification<OrderDetail> spec){
-        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE); // Lấy tất cả
-        Page<OrderDetail> orderDetailsPage = this.orderDetailRepository.findAll(spec, pageable);
+
+    public PaginationDTO getOrderDetailById (Pageable pageable,long orderId){
+        Page<OrderDetail> orderDetailsPage = this.orderDetailRepository.findByOrderId(orderId, pageable);
+
 
         PaginationDTO p = new PaginationDTO();
         PaginationDTO.Meta meta = new PaginationDTO.Meta();
@@ -44,8 +47,10 @@ public class OrderDetailService {
         OrderDetailDTO res = new OrderDetailDTO();
         res.setOrderId(orderDetail.getOrder().getId());
         res.setQuantity(orderDetail.getQuantity());
-        res.setProductName(orderDetail.getProduct().getProduct_name());
+        res.setProductName(orderDetail.getProduct().getProductName());
         res.setUnit_price(orderDetail.getUnit_price());
+//        res.setOrderTime(orderDetail.getOrder().getOrderTime());
+//        res.setDeliveryTime(orderDetail.getOrder().getDeliveryTime());
 
         return res;
     }

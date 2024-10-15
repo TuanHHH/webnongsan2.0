@@ -57,10 +57,10 @@ export const apiLogout = async () =>
     });
 
 
-export const apiGetAllUser = async (params)=>
+export const apiGetAllUser = async (params) =>
     axiosInstance({
-        url:"/users",
-        method:"get",
+        url: "/users",
+        method: "get",
         params,
     });
 
@@ -148,3 +148,11 @@ export const apiAddWishList = async (pid) => {
         }
     })
 }
+
+export const apiSetStatusUser = async (user) => {
+    return axiosInstance({
+        url: "/users",
+        method: 'put',
+        data: user
+    });
+};

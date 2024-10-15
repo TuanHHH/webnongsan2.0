@@ -1,22 +1,16 @@
 import React,{useEffect,useState} from "react";
 import { TopHeader } from "../../components";
-import { Link } from "react-router-dom";
-import { Route, Routes} from "react-router-dom";
+import { Route, Routes ,Navigate} from "react-router-dom";
 import path from "../../utils/path";
-import { Navigate } from 'react-router-dom'
-// import { LeftNavBar, Overview } from "../../components/admin";
-// import { Category,FeedBack,Order,Product,User} from "../../components/admin";
-// import {OrderDetail} from "../../components/admin";
-// import {EditProduct} from "../../components/admin";
-// import {EditCategory} from "../../components/admin";
 import {Category,FeedBack,Order,Product,User} from "./";
 import {Overview} from './';
 import {OrderDetail} from "./";
 import {EditProduct,EditCategory} from "./";
 import { useSelector } from "react-redux";
 import { useRef } from 'react';
-// import {EditCategory} from ".";
+import {AddCategory,AddProduct} from "./Add";
 import {AdminLayout} from "../../components/admin";
+
 const Admin= () =>{
     const { isLoggedIn, current } = useSelector(state => state.user);
     const [shouldNavigate, setShouldNavigate] = useState(false);
@@ -25,8 +19,6 @@ const Admin= () =>{
     const lastMount = async () => {
         try {
           if (isMounted.current) {
-            // console.log(current.role.roleName.toLowerCase() !=='admin')
-            // console.log(current)
             if(!current || !isLoggedIn){
                 setToLogin(true);
             }
@@ -59,11 +51,14 @@ const Admin= () =>{
             <Routes>
                 <Route path="/" element= {<AdminLayout/>}>
                     <Route path={path.ADMIN_OVERVIEW} element={<Overview/>}></Route>
+
                     <Route path={path.ADMIN_PRODUCT} element={<Product/>}></Route>
                     <Route path={path.ADMIN_EDIT_PRODUCT} element={<EditProduct/>}></Route>
+                    <Route path={path.ADD_PRODUCT} element={<AddProduct/>}></Route>
 
                     <Route path={path.ADMIN_CATEGORY} element={<Category/>}></Route>
                     <Route path={path.ADMIN_EDIT_CATEGORY} element={<EditCategory/>}></Route>
+                    <Route path={path.ADD_CATEGORY} element={<AddCategory/>}></Route>
 
                     {/* <Route path={path.ADMIN_FEEDBACK_DETAIL} element={<FeedBackDetail/>}></Route> */}
                     
@@ -71,7 +66,6 @@ const Admin= () =>{
                     <Route path={path.ADMIN_ORDER_DETAIL} element={<OrderDetail/>}></Route>
 
                     <Route path={path.ADMIN_USER} element={<User/>}></Route>
-                    {/* <Route path={path.ADMIN_USER_DETAIL} element={<UserDetail/>}></Route> */}
                     
                 </Route>
             </Routes>

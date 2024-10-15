@@ -1,14 +1,17 @@
 import axiosInstance from "../utils/axios";
-import axiosInstanceRecommended from "../utils/recommendedAxios";
 export const apiGetOrders = async (params) =>
     axiosInstance({
         url: "/orders",
         method: "get",
         params,
     });
-export const apiGetOrderDetail = async (params) =>
+export const apiGetOrderDetail = async (oid) =>
     axiosInstance({
-        url: "/orderDetail",
+        url: `/OrderDetails/${oid}`,
         method: "get",
-        params,
+    })
+export const apiGetOrderInfor = async (oid)=>
+    axiosInstance({
+        url: `/orderInfo/${oid}`,
+        method:"get",
     })

@@ -9,22 +9,155 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { EditProductForm } from '../../components/admin';
 import { DeleteProductForm } from '../../components/admin';
-
+import { Pagination } from '@/components';
+import { data } from 'autoprefixer';
+import { SearchBar } from '@/components';
+import product_default from "./../../assets/product_default.png";
+import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
+import { SearchProduct } from '../../components/admin';
+import { AddScreenButton } from '../../components/admin';
+const PRODUCT_PER_PAGE = 6 ;
 const Product = () => {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getCategories());
-    }, [dispatch]);
+    // const dispatch = useDispatch();
+    // useEffect(() => {
+    //     dispatch(getCategories());
+    // }, [dispatch]);
 
     const { categories } = useSelector((state) => {
         return state.app;
     },
 );
+const [params] = useSearchParams();
+const navigate = useNavigate()
+const [currentPage, setCurrentPage] = useState(Number(params.get('page')) || 1);
 // const [category, setCategory] = useState(null);
 // Thông tin sản phẩm
 const [showMessage, setShowMessage] = useState(false);
 const [messageContent, setMessageContent] = useState('');
 const [productName, setProductName] = useState('');
+const searchQuery = params.get('search') || '';
+
+// const handlePagination = (page = 1) => {
+//   // setPages(page);
+//   setCurrentPage(page);
+//   // navigate({ search: createSearchParams({ page }).toString() });
+//   navigate({
+//     search: `${createSearchParams({ search:searchQuery }).toString()}
+//     &
+//     ${createSearchParams({ page }).toString()}`
+//   });
+// const handlePagination = (page = 1) => {
+//   setCurrentPage(page);
+
+//   const queries = {
+//     page: page,
+//     size: 9,
+//     filter: []
+//   };
+  // fetchProducts({page: page, size: 6,})
+  // const queries = {
+  //   page:currentPage,
+  //   // page: 1, 
+  //   size: 9,
+  //   filter: []
+  // };
+//   const searchTerm = params.get('search');
+//   if (searchTerm) {
+//     queries.filter.push(`productName~'${searchTerm}'`);
+//   }
+//   const categorySearch  = params.get('category');
+//   if (categorySearch){
+//     queries.filter.push(`category~'${categorySearch}'`);
+//   }
+//   console.log(queries)
+//   fetchProducts(queries);
+// };
+const handlePagination = (page = 1) => {
+  setCurrentPage(page);
+
+  const queries = {
+    page: page,
+    size: PRODUCT_PER_PAGE,
+    filter: []
+  };
+
+  const searchTerm = params.get('search');
+  console.log(searchTerm)
+  const categorySearch = params.get('category');
+  console.log(categorySearch)
+
+  // Only add filter if they are not null
+  if (searchTerm && searchTerm !== 'null') {
+    queries.filter.push(`productName~'${searchTerm}'`);
+  }
+  
+  if (categorySearch && categorySearch !== 'null') {
+    queries.filter.push(`category.name~'${categorySearch}'`);
+  }
+
+  // Build search params dynamically
+  const searchParams = {
+    ...(searchTerm && searchTerm !== 'null' && { search: searchTerm }),
+    ...(categorySearch && categorySearch !== 'null' && { category: categorySearch }),
+    page: page,
+  };
+
+  navigate({
+    search: createSearchParams(searchParams).toString()
+  });
+
+  fetchProducts(queries);
+};
+// const handleCategoryChange = (selectedCategory) => {
+//   navigate({
+//     search: createSearchParams({
+//       search: searchQuery !== 'null' ? searchQuery : undefined,
+//       category: selectedCategory !== 'null' ? selectedCategory : undefined,
+//       page: 1 // Reset to page 1 on category change
+//     }).toString()
+//   });
+
+//   fetchProducts({
+//     page: 1,
+//     size: PRODUCT_PER_PAGE,
+//     filter: selectedCategory ? [`category.name~'${selectedCategory}'`] : []
+//   });
+// };
+const handleCategoryChange = (selectedCategory) => {
+  navigate({
+    search: createSearchParams({
+      search: searchQuery !== 'null' ? searchQuery : undefined, // Giữ lại từ khóa tìm kiếm
+      category: selectedCategory !== 'null' ? selectedCategory : undefined,
+      page: 1 // Đặt lại về trang 1 khi thay đổi danh mục
+    }).toString()
+  });
+
+  fetchProducts({
+    page: 1,
+    size: PRODUCT_PER_PAGE,
+    filter: selectedCategory ? [`category.name~'${selectedCategory}'`] : []
+  });
+};
+useEffect(() => {
+  const queries = {
+    page: currentPage,
+    size: PRODUCT_PER_PAGE,
+    filter: []
+  };
+
+  const searchTerm = params.get('search');
+  const categorySearch = params.get('category');
+
+  if (searchTerm && searchTerm !== 'null') {
+    queries.filter.push(`productName~'${searchTerm}'`);
+  }
+
+  if (categorySearch && categorySearch !== 'null') {
+    queries.filter.push(`category.name~'${categorySearch}'`);
+  }
+
+  fetchProducts(queries);
+}, [currentPage, params]);
 
 
 const [showDeleteMessage, setShowDeleteMessage] = useState(false);
@@ -37,7 +170,6 @@ const handleShowDeleteProductMessage = (e) => {
 };
 const handleCloseDeleteProductMessage = () => {
   setShowDeleteMessage(false);
-  // handleCloseDeleteProductProcess()
   setShowEditForm(false); // Đóng form khi đóng thông báo
 };
 const handleConfirmDelete=async(pid)=>{
@@ -86,36 +218,61 @@ const handleCloseMessage = () => {
   setProductName('');
 };
 
-const notify = () => {
-  toast.success(`Chi tiết sản phẩm:`, {
-      position: "top-center",
-      autoClose: 2000, // Thời gian hiển thị thông báo
-      onClose: () => navigate(path) // Điều hướng sau khi thông báo được đóng
-  });
-};
-//   {
-//   toast("Thông báo của bạn ở đây!");
-// };
 
       const [products, setProducts] = useState(null)
-      // console.log(category)
+      console.log(products)
       const fetchProducts = async (queries) => {
         const response = await apiGetProducts(queries)
         // console.log(response)
-        setProducts(response.data.result)
+        setProducts(response)
       }
       
-      useEffect(() => {
-          const queries = {
-            page: 1, 
-            size: 6,
-          };
-          fetchProducts(queries);
-      }, []);
+      // useEffect(() => {
+      //     const queries = {
+      //       page:currentPage,
+      //       // page: 1, 
+      //       size: 3,
+      //       filter: []
+      //     };
+      //     const searchTerm = params.get('search');
+      //     if (searchTerm) {
+      //       queries.filter.push(`productName~'${searchTerm}'`);
+      //     }
+      //     const categorySearch  = params.get('category');
+      //     if (categorySearch){
+      //       queries.filter.push(`category~'${categorySearch}'`);
+      //     }
+      //     fetchProducts(queries);
+      // }, []);
 
+      useEffect(() => {
+        // Bạn có thể thực hiện tìm kiếm hoặc cập nhật trạng thái dựa trên searchQuery ở đây
+        console.log('Giá trị tìm kiếm đã thay đổi:', searchQuery);
+      }, [searchQuery]);
   return (
     <div className="w-full pr-3 relative">
     {/* <div className="w-full mr-3"> */}
+    <div>
+
+      {/* <div>Phần này quan trọng phải xem lại</div> */}
+      
+    {/* <div className="mb-14">
+      <SearchProduct/>
+      <div>
+      <select onChange={(e) => handleCategoryChange(e.target.value)}>
+  <option value="">All Categories</option>
+  {categories?.map((category) => (
+    <option key={category?.id} value={category?.name}>
+      {category?.name}
+    </option>
+  ))}
+
+</select>
+      </div>
+      </div> */}
+
+    </div>
+
       <table className="w-full">
         <thead>
           <tr className="bg-gray-200 border-2 border-black">
@@ -132,12 +289,12 @@ const notify = () => {
           </tr>
         </thead>
         <tbody>
-        {products?.map((e) => (
+        {products?.data?.result?.map((e) => (
         <tr key={e.id} className="border-b">
                         <td className="w-2/12  border-2 border-black content-center">{e?.product_name||productData?.productName}</td>
                         <td className='w-12/12 border border-black flex justify-center items-center'>
                         <img
-                                            src={e?.imageUrl || category_default}
+                                            src={e?.imageUrl || product_default}
                                             alt={e?.product_name}
                                             // className="w-5 h-5 object-cover"
                                             //  className="w-25 h-25 object-cover"
@@ -169,7 +326,6 @@ const notify = () => {
                           // handleDeleteProductProcess(e);
                           handleDeleteProductProcess(e);
                           handleShowDeleteProductMessage(e);
-                          console.log(e)
                           // handleDeleteProductProcess=(e?.id,e?.productName,e?.price,e?.imageUrl,e?.quantity,e?.rating,e?.sold,e?.description);
                         }}>
                           <MdDelete className="w-8 h-8 inline-block"/>
@@ -180,26 +336,6 @@ const notify = () => {
     }
         </tbody>
       </table>
-            {/* Thông báo lớn */}
-            {/* {showMessage && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-                    <div className="bg-white p-5 rounded shadow-lg">
-                        <h2 className="text-lg font-bold">Chi tiết sản phẩm</h2>
-                        <p>{messageContent}</p>
-                        <button onClick={handleCloseMessage} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Đóng</button>
-                    </div>
-                </div>
-            )} */}
-            
-{/* {showMessage && (
-                <div className="bg-white p-5 rounded shadow-lg">
-                <h2 className="text-lg font-bold">Thông báo</h2>
-                <p>{messageContent}</p>
-                <div className="flex justify-end mt-4">
-                    <button onClick={handleCloseMessage} className="bg-blue-500 text-white px-4 py-2 rounded">Đóng</button>
-                </div>
-            </div>
-            )} */}
             {showMessage && (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
         <div className="bg-white p-5 rounded shadow-lg mx-40">
@@ -211,29 +347,6 @@ const notify = () => {
         </div>
     </div>
 )}
-{/* {deleteMessageContent &&(
-  <div>
-  <EditProductForm initialProductData={deleteProduct}/>
-  <div className="flex justify-end mt-4">
-        <button
-          onClick={() => {
-            handleShowDeleteProductMessage(e);
-            handleCloseDeleteProductMessage();
-          }}
-          className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-        >
-          Xác nhận
-        </button>
-        <button
-          onClick={handleCloseDeleteProductMessage}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Đóng
-        </button>
-      </div>
-      </div>
-)} */}
-
 
 {showDeleteMessage && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
@@ -251,34 +364,49 @@ const notify = () => {
                     </div>
                 </div>
             )}
-
-{/* {deleteMessageContent && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-    <div className="bg-white p-5 rounded shadow-lg mx-40">
-    <h2 className="text-lg font-bold text-center">Xác nhận xóa </h2>
-      <h2 className="text-lg font-bold">{showDeleteMessage}</h2>
-      <p>{deleteMessageContent}</p>
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={() => {
-            handleShowDeleteProductMessage(deleteProductId);
-            handleCloseDeleteProductMessage();
-          }}
-          className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-        >
-          Xác nhận
-        </button>
-        <button
-          onClick={handleCloseDeleteProductMessage}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Đóng
-        </button>
-      </div>
-    </div>
-  </div>
-)} */}
+            <div>
+              <AddScreenButton buttonName='+ Thêm sản phẩm' buttonClassName='bg-green-500 hover:bg-green-700' toLink='add'/>
+            </div>
+                  <div className='w-4/5 m-auto my-4 flex justify-center'>
+                <Pagination
+                    totalPage={products?.data?.meta?.pages}
+                    currentPage={currentPage}
+                    totalProduct={products?.data?.meta?.total}
+                    pageSize={productName?.meta?.pageSize}
+                    onPageChange={handlePagination}
+                />
+            </div>
+            <div><StatusComboBox/></div>
     </div>
   );
 };
 export default Product;
+
+const StatusComboBox = () => {
+  const [selectedStatus, setSelectedStatus] = useState('');
+
+  const handleChange = (event) => {
+      setSelectedStatus(event.target.value);
+      console.log("Selected Status:", event.target.value);
+  };
+
+  return (
+      <div className="w-full">
+          <label htmlFor="status" className="block mb-2 text-gray-700">
+              Chọn trạng thái:
+          </label>
+          <select
+              id="status"
+              value={selectedStatus}
+              onChange={handleChange}
+              className="border p-2 w-full rounded-md"
+          >
+              <option value="">-- Chọn trạng thái --</option>
+              <option value="pending">Pending Order</option>
+              <option value="in_delivery">In Delivery</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="success">Success</option>
+          </select>
+      </div>
+  );
+};

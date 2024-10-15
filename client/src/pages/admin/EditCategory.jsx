@@ -5,10 +5,9 @@ import { GrReturn } from "react-icons/gr";
 import {useEffect,useState} from "react";
 import { apiGetCategory } from '../../apis';
 import EditCategoryForm from '../../components/admin/EditCategoryForm';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import TurnBackHeader from '../../components/admin/TurnBackHeader';
 function EditCategory() {
-    const navigate = useNavigate()
     const [category, setCategory] = useState(null)
     const fetchCategory = async(cid)=>{
         const res = await apiGetCategory(cid);

@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
+import product_default from './../../assets/product_default.png'
 const DeleteProductForm = ({ initialProductData }) => {
   const {
     register,
-    formState: { errors },
-    reset,
-    handleSubmit,
+    formState: { errors }
   } = useForm();
-  const handleUpdateProduct = (data) => {};
   const [productData, setProductData] = useState(initialProductData);
   
   const handleChange = (e) => {
@@ -58,7 +56,7 @@ const DeleteProductForm = ({ initialProductData }) => {
             errors={errors}
             id="price"
             validate={{ required: "Cần điền thông tin vào trường này" }}
-            type="number" // Ensure this is treated as a number input
+            type="number"
           />
         </div>
 
@@ -73,7 +71,6 @@ const DeleteProductForm = ({ initialProductData }) => {
             id="quantity"
             validate={{ required: "Cần điền thông tin vào trường này" }}
             type="number"
-            // onWheel={(e) => e.preventDefault()} // Ngăn chặn điều chỉnh bằng cuộn chuột
               inputMode="numeric"
               pattern="[0-9]*"
               step={0}
@@ -81,17 +78,15 @@ const DeleteProductForm = ({ initialProductData }) => {
           />
         </div>
 
-        <div>
-            <textarea
-            disabled={true}
-    className="border p-2 w-full h-40" // Set the height to 40 pixels
-    defaultValue={productData?.description}
-    label="Mô tả"
-    register={register}
-    errors={errors}
-    id="description"
-    validate={{ required: "Cần điền thông tin vào trường này" }}
-  />
+          <div className="mb-6">
+        <label htmlFor="description" className="block mb-2 text-gray-700">
+                                Mô tả
+                            </label>
+  <textarea
+  {...register("description", { required: "Cần điền thông tin vào trường này" })}
+  className="border p-2 w-full h-40"
+  defaultValue={productData?.description}
+/>
         </div>
         <div>
           <label className="block">Đánh giá:</label>
@@ -119,36 +114,22 @@ const DeleteProductForm = ({ initialProductData }) => {
         </div>
 
         <div className="block">
-        {/* <label className="block mb-2 text-gray-700">Hình ảnh</label>
-            <div className="w-full h-48 flex items-center justify-center border rounded-lg overflow-hidden bg-gray-50">
-              <img
-                src={categoryImage}
-                alt={initialCategoryData?.name}
-                className="max-h-full max-w-full object-contain"
-              />
-            </div> */}
         </div>
         <div className="mb-4">
             <label className="block mb-2 text-gray-700">Hình ảnh</label>
             <div className="w-full h86 flex items-center justify-center border rounded-lg overflow-hidden bg-gray-50">
               <img
-                src={productData?.imageUrl}
+                src={productData?.imageUrl || product_default}
                 alt={productData?.name}
                 className="max-h-full max-w-full object-contain"
               />
             </div>
           </div>
-
       </form>
     </div>
     </div>
     </div>
   );
 };
-
-
-
-
-
 
 export default DeleteProductForm

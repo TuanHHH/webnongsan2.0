@@ -39,6 +39,8 @@ const path = {
   ADMIN_FEEDBACK: "feedback",
   ADMIN_FEEDBACK_DETAIL: "",
 
+  ADD_PRODUCT:"product/add",
+  ADD_CATEGORY:"category/add",
   // ADMIN_
 };
 

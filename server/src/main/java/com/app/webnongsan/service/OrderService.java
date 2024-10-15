@@ -1,7 +1,6 @@
 package com.app.webnongsan.service;
 
 import com.app.webnongsan.domain.Order;
-import com.app.webnongsan.domain.Product;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.order.OrderDTO;
 import com.app.webnongsan.repository.OrderRepository;
@@ -31,9 +30,26 @@ public class OrderService {
             this.orderRepository.save(order); // Lưu lại thay đổi
         });
     }
-    public List<Order> getAllOrder(){
-        return orderRepository.findAll();
+
+    public Optional<OrderDTO> findOrder(long id){
+        OrderDTO res = new OrderDTO();
+        Optional<Order> orderOptional = this.orderRepository.findById(id);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            res.setId(order.getId());
+            res.setOrderTime(order.getOrderTime());
+            res.setDeliveryTime(order.getDeliveryTime());
+            res.setStatus(order.getStatus());
+            res.setPaymentMethod(order.getPaymentMethod());
+            res.setAddress(order.getAddress());
+            res.setTotal_price(order.getTotal_price()); // Chú ý: có thể cần sửa lại tên phương thức
+            res.setUserEmail(order.getUser().getEmail());
+            return Optional.of(res);
+        } else {
+            return Optional.empty();
+        }
     }
+
     public PaginationDTO getAll(Specification<Order> spec, Pageable pageable){
         Page<Order> ordersPage = this.orderRepository.findAll(spec, pageable);
 
