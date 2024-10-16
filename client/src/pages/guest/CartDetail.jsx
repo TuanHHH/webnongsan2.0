@@ -26,6 +26,7 @@ const Cart = ({ dispatch }) => {
   const [loadingDeletes, setLoadingDeletes] = useState(new Set());
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [allSelectedItems, setAllSelectedItems] = useState([]);
+  const [isAllSelected, setIsAllSelected] = useState(false);
   const debounceTimeouts = useRef({});
   const pendingChanges = useRef({});
   const [page, setPage] = useState(1);
@@ -89,6 +90,19 @@ const Cart = ({ dispatch }) => {
         return [...prevSelected, newItem];
       }
     });
+    setIsAllSelected(selectedItems.size === cartItems.length);
+  };
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedItems(new Set());
+      setAllSelectedItems([]);
+    } else {
+      const newSelectedItems = new Set(cartItems.map(item => item.id));
+      setSelectedItems(newSelectedItems);
+      setAllSelectedItems(cartItems);
+    }
+    setIsAllSelected(!isAllSelected);
   };
 
   useEffect(() => {
@@ -113,89 +127,93 @@ const Cart = ({ dispatch }) => {
     setIsCheckoutDisabled(isAnyQuantityInvalid || pendingUpdates.size > 0 || loadingDeletes.size > 0);
   }, [cartItems, pendingUpdates, loadingDeletes]);
 
+  useEffect(() => {
+    setIsAllSelected(selectedItems.size === cartItems.length && cartItems.length > 0);
+  }, [selectedItems, cartItems]);
+
   const handleQuantityChange = (pid, newQuantity) => {
-        const currentItem = cartItems.find(item => item.id === pid);
-        if (!currentItem) return;
-    
-        const validatedQuantity =
-          newQuantity === '' || isNaN(newQuantity) || newQuantity < 1 ? 1 : Math.min(newQuantity, currentItem.stock);
-        const quantityDifference = validatedQuantity - currentItem.quantity;
-    
-        if (quantityDifference === 0) return;
-        // Thêm pid vào danh sách pending updates
-        setPendingUpdates(prev => new Set(prev).add(pid));
-        setCartItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === pid ? { ...item, quantity: validatedQuantity, } : item
-          )
-        );
-    
-        const currentPendingChange = pendingChanges.current[pid] || 0;
-        pendingChanges.current[pid] = currentPendingChange + quantityDifference;
-    
-        if (debounceTimeouts.current[pid]) {
-          clearTimeout(debounceTimeouts.current[pid]);
-        }
-    
-        debounceTimeouts.current[pid] = setTimeout(async () => {
-          try {
-            const finalChange = pendingChanges.current[pid];
-            if (finalChange !== undefined) {
-              const rs = await apiAddOrUpdateCart(pid, finalChange);
-              if (rs.statusCode === 201) {
-                toast.success(`Đã cập nhật số lượng mới: ${rs.data.quantity}`);
-              } else {
-                toast.error("Có lỗi xảy ra");
-              }
-              delete pendingChanges.current[pid];
-    
-              // Xóa pid khỏi danh sách pending updates sau khi cập nhật thành công
-              setPendingUpdates(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(pid);
-                return newSet;
-              });
-            }
-          } catch (error) {
-            console.error('Lỗi khi cập nhật giỏ hàng:', error);
+    const currentItem = cartItems.find(item => item.id === pid);
+    if (!currentItem) return;
+
+    const validatedQuantity =
+      newQuantity === '' || isNaN(newQuantity) || newQuantity < 1 ? 1 : Math.min(newQuantity, currentItem.stock);
+    const quantityDifference = validatedQuantity - currentItem.quantity;
+
+    if (quantityDifference === 0) return;
+    // Thêm pid vào danh sách pending updates
+    setPendingUpdates(prev => new Set(prev).add(pid));
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === pid ? { ...item, quantity: validatedQuantity, } : item
+      )
+    );
+
+    const currentPendingChange = pendingChanges.current[pid] || 0;
+    pendingChanges.current[pid] = currentPendingChange + quantityDifference;
+
+    if (debounceTimeouts.current[pid]) {
+      clearTimeout(debounceTimeouts.current[pid]);
+    }
+
+    debounceTimeouts.current[pid] = setTimeout(async () => {
+      try {
+        const finalChange = pendingChanges.current[pid];
+        if (finalChange !== undefined) {
+          const rs = await apiAddOrUpdateCart(pid, finalChange);
+          if (rs.statusCode === 201) {
+            toast.success(`Đã cập nhật số lượng mới: ${rs.data.quantity}`);
+          } else {
+            toast.error("Có lỗi xảy ra");
           }
-        }, DEBOUNCE_DELAY);
-      };
-      const increaseQuantity = (pid) => {
-        const item = cartItems.find((item) => item.id === pid);
-        if (item && item.quantity < item.stock) {
-          handleQuantityChange(pid, item.quantity + 1);
-        }
-      };
-    
-      const decreaseQuantity = (pid) => {
-        const item = cartItems.find((item) => item.id === pid);
-        if (item && item.quantity > 1) {
-          handleQuantityChange(pid, item.quantity - 1);
-        }
-      };
-    
-      const removeItem = (pid) => {
-        setLoadingDeletes(prev => new Set(prev).add(pid)); // Thêm sản phẩm vào danh sách đang xóa
-        setTimeout(() => {
-          deleteProductInCart(pid);
-          setCartItems((prevItems) => prevItems.filter((item) => item.id !== pid));
-          setLoadingDeletes(prev => {
+          delete pendingChanges.current[pid];
+
+          // Xóa pid khỏi danh sách pending updates sau khi cập nhật thành công
+          setPendingUpdates(prev => {
             const newSet = new Set(prev);
-            newSet.delete(pid); // Xóa sản phẩm khỏi danh sách đang xóa
+            newSet.delete(pid);
             return newSet;
           });
-    
-        }, DELETE_DELAY);
-      };
-    
-    
-      const calculateSelectedTotal = () => {
-        return cartItems
-          .filter(item => selectedItems.has(item.id))
-          .reduce((total, item) => total + item.price * item.quantity, 0)
-          .toLocaleString('vi-VN');
-      };
+        }
+      } catch (error) {
+        console.error('Lỗi khi cập nhật giỏ hàng:', error);
+      }
+    }, DEBOUNCE_DELAY);
+  };
+  const increaseQuantity = (pid) => {
+    const item = cartItems.find((item) => item.id === pid);
+    if (item && item.quantity < item.stock) {
+      handleQuantityChange(pid, item.quantity + 1);
+    }
+  };
+
+  const decreaseQuantity = (pid) => {
+    const item = cartItems.find((item) => item.id === pid);
+    if (item && item.quantity > 1) {
+      handleQuantityChange(pid, item.quantity - 1);
+    }
+  };
+
+  const removeItem = (pid) => {
+    setLoadingDeletes(prev => new Set(prev).add(pid)); // Thêm sản phẩm vào danh sách đang xóa
+    setTimeout(() => {
+      deleteProductInCart(pid);
+      setCartItems((prevItems) => prevItems.filter((item) => item.id !== pid));
+      setLoadingDeletes(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(pid); // Xóa sản phẩm khỏi danh sách đang xóa
+        return newSet;
+      });
+
+    }, DELETE_DELAY);
+  };
+
+
+  const calculateSelectedTotal = () => {
+    return cartItems
+      .filter(item => selectedItems.has(item.id))
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toLocaleString('vi-VN');
+  };
 
   return (
     <div className="w-main mt-10 p-6 bg-white shadow-md rounded-lg">
@@ -272,7 +290,7 @@ const Cart = ({ dispatch }) => {
 
       {cartItems?.length > 0 && (
         <>
-          {hasMore && (
+          {(hasMore && current.cartLength > cartItems.length) && (
             <div className='w-full flex justify-center mt-6'>
               <button
                 onClick={loadMore}
@@ -289,6 +307,15 @@ const Cart = ({ dispatch }) => {
             </span>
           </div>
           <div className="mt-4 text-right">
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={toggleSelectAll}
+                className="mr-2"
+              />
+              <span>Chọn tất cả các sản phẩm đang hiển thị</span>
+            </div>
             <button
               className={`bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 
               ${isCheckoutDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
