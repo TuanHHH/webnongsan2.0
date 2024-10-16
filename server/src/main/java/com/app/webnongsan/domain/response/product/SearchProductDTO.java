@@ -12,4 +12,5 @@ public class SearchProductDTO {
     private String product_name;
     private double price;
     private String imageUrl;
+    private String category;
 }

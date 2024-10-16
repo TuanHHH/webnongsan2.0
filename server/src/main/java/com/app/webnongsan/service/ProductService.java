@@ -1,21 +1,16 @@
 package com.app.webnongsan.service;
 
+import com.app.webnongsan.domain.Category;
 import com.app.webnongsan.domain.Product;
-import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.product.ResProductDTO;
 import com.app.webnongsan.domain.response.product.SearchProductDTO;
 import com.app.webnongsan.repository.CategoryRepository;
 import com.app.webnongsan.repository.ProductRepository;
-import com.app.webnongsan.util.PaginationHelper;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +24,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final EntityManager entityManager;
 
     public boolean checkValidCategoryId(long categoryId) {
         return this.categoryRepository.existsById(categoryId);
@@ -123,14 +119,11 @@ public class ProductService {
         return p;
     }
 
-    @Autowired
-    private EntityManager entityManager;
-
     public Page<SearchProductDTO> searchProduct(Specification<Product> specification, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<SearchProductDTO> query = cb.createQuery(SearchProductDTO.class);
         Root<Product> productRoot = query.from(Product.class);
-
+        Join<Product, Category> categoryJoin = productRoot.join("category");
         Predicate predicate = specification.toPredicate(productRoot, query, cb);
         if (predicate != null) {
             query.where(predicate);
@@ -140,7 +133,8 @@ public class ProductService {
                 productRoot.get("id"),
                 productRoot.get("productName"),
                 productRoot.get("price"),
-                productRoot.get("imageUrl")
+                productRoot.get("imageUrl"),
+                categoryJoin.get("name")
         ));
 
         List<SearchProductDTO> resultList = entityManager.createQuery(query)
@@ -161,7 +155,4 @@ public class ProductService {
 
         return new PageImpl<>(resultList, pageable, totalCount);
     }
-
-
-
 }
