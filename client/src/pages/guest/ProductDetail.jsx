@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart, apiAddWishList } from '@/apis';
 import { Breadcrumb, Button, QuantitySelector, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
-import { formatMoney, renderStarFromNumber, convertToSlug} from '@/utils/helper'
+import { formatMoney, renderStarFromNumber} from '@/utils/helper'
 import product_default from '@/assets/product_default.png'
 import { productExtraInfo } from '@/utils/constants';
 import Votebar from '@/components/vote/Votebar';
@@ -28,7 +28,7 @@ const ProductDetail = ({ isQuickView, data }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [update, setUpdate] = useState(false)
   const [uid, setUid] = useState(null)
-  const { isLoggedIn } = useSelector(state => state.user)
+  const { isLoggedIn, current } = useSelector(state => state.user)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [quantity, setQuantity] = useState(1);
@@ -69,10 +69,10 @@ const ProductDetail = ({ isQuickView, data }) => {
     if (response.statusCode === 200)
       setFeedbacks(response.data?.result)
   }
+
   const fetchUserData = async () => {
-    const response = await apiGetCurrentUser()
-    if (response.statusCode == 200)
-      setUid(response.data?.user?.id)
+    if (current)
+      setUid(current.id)
   }
 
 

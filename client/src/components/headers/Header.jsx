@@ -7,9 +7,6 @@ import path from "@/utils/path";
 import { useSelector } from "react-redux";
 import { Logout, SearchBar } from "@/components";
 import withBaseComponent from "@/hocs/withBaseComponent";
-//import { apiGetProducts } from "@/apis"; // không được bỏ
-
-
 
 const { FaUserCircle, FaCartShopping } = icons;
 

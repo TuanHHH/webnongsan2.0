@@ -15,6 +15,21 @@ export const apiGetProducts = async (params) =>
         }
     });
 
+export const apiSearchProducts = async (params) =>
+    axiosInstance({
+        url: "/products/search",
+        method: "get",
+        params,
+        paramsSerializer: {
+            encode: (value) => value,
+            serialize: (params) => {
+                return Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+            }
+        }
+    });
+
 export const apiGetProduct = async (pid) =>
     axiosInstance({
         url: `/products/${pid}`,
