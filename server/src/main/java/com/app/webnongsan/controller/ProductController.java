@@ -72,5 +72,9 @@ public class ProductController {
         return ResponseEntity.ok(this.productService.getMaxPrice(category, productName));
     }
 
-
+    @GetMapping("products/search")
+    @ApiMessage("Search products")
+    public ResponseEntity<PaginationDTO> search(@Filter Specification<Product> spec, Pageable pageable) {
+        return ResponseEntity.ok(this.productService.search(spec, pageable));
+    }
 }

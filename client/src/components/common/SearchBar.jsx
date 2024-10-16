@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { apiGetProducts } from "@/apis/product";
+import { apiSearchProducts } from "@/apis";
 import { useNavigate } from "react-router-dom";
 import product_default from '@/assets/product_default.png';
 import { Link } from "react-router-dom";
 import { ProductMiniItem } from "@/components";
+import { convertToSlug } from "@/utils/helper";
 
 
 const SearchBar = () => {
@@ -47,7 +48,7 @@ const SearchBar = () => {
         size: 3,
         filter: `productName~'${searchTerm}'`,
       };
-      const response = await apiGetProducts(params);
+      const response = await apiSearchProducts(params);
       setProducts(response.data.result);
       setShowResults(true);
     } catch (error) {
@@ -101,7 +102,7 @@ const SearchBar = () => {
             <>
               {products.map((product) => (
                 <div key={product.id} className="p-2 border-b">
-                  <Link to={`/${encodeURIComponent(product.category)}/${product.id}/${encodeURIComponent(product.product_name)}`}>
+                  <Link to={`/products/${encodeURIComponent(product.category)}/${product.id}/${convertToSlug(product.product_name)}`}>
                     <ProductMiniItem title={product.product_name} image={product.imageUrl || product_default} price={product.price} />
                   </Link>
                 </div>
