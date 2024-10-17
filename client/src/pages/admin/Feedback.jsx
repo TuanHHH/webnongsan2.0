@@ -262,4 +262,5 @@ const Feedback = ({navigate, location})=>{
     )
 }
 
-export default withBaseComponent(Feedback)
+// export default withBaseComponent(Feedback)
+export default Feedback;
