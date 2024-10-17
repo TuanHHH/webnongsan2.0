@@ -1,16 +1,11 @@
-import React, { memo, useRef, useEffect, useState } from "react";
-import { voteOption } from "@/utils/constants";
-import { AiFillStar } from "react-icons/ai";
-import { Button } from '@/components';
-import avatar from "../../assets/avatarDefault.png"
-import productDF from "../../assets/product_default.png"
+import React, { memo, useRef, useEffect} from "react";
+import avatar from "@/assets/avatarDefault.png"
+import productDF from "@/assets/product_default.png"
 import { FaClock, FaRegStar, FaStar, FaX } from "react-icons/fa6";
 import { GrStatusCritical, GrStatusCriticalSmall } from "react-icons/gr";
 
 const FeedbackCard = ({ data, onClose }) => {
     const modalRef = useRef()
-    const [chosenScore, setChosenScore] = useState(null)
-    const [comment, setComment] = useState('')
     useEffect(() => {
         modalRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
     }, [])

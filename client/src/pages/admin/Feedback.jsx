@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, CustomSelect, FeedbackCard, InputForm, Pagination } from "../../components";
+import { Button, CustomSelect, FeedbackCard, Pagination } from "@/components";
 import { useForm } from "react-hook-form";
-import { apiGetAllRatingsPage, apiGetOrders, apiHideRating } from "../../apis";
+import { apiGetAllRatingsPage, apiHideRating } from "@/apis";
 import { useDispatch, useSelector } from "react-redux";
-import product_default from '@/assets/product_default.png';
+//import product_default from '@/assets/product_default.png';
 import { showModal } from '@/store/app/appSlice'
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
-import { sortFeedbackOrder, statusHideOrder, statusOrder } from "../../utils/constants";
-import withBaseComponent from "../../hocs/withBaseComponent"
+import { createSearchParams, useSearchParams } from "react-router-dom";
+import { sortFeedbackOrder, statusHideOrder, statusOrder } from "@/utils/constants";
+import withBaseComponent from "@/hocs/withBaseComponent"
 import { FaEye } from "react-icons/fa6";
 import { MdOutlineBlock } from "react-icons/md";
 import { toast } from "react-toastify";
-import { getCurrentUser } from "../../store/user/asyncActions";
+import { getCurrentUser } from "@/store/user/asyncActions";
 
 
 const Feedback = ({navigate, location})=>{

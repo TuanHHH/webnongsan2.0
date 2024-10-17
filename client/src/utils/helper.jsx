@@ -25,9 +25,6 @@ export const usePaginate = (totalPage, currentPage, pageSize, totalProduct, sibl
     if (totalPage <= totalPaginationItem) return generateRange(1, totalPage)
     const isShowLeft = currentPage - siblingCount > 2
     const isShowRight = currentPage + siblingCount < totalPage - 1
-    // console.log(currentPage);
-    // console.log(isShowLeft);
-    // console.log(isShowRight);
     if (isShowLeft && !isShowRight) {
       const rightStart = totalPage - 4
       const rightRange = generateRange(rightStart, totalPage)
