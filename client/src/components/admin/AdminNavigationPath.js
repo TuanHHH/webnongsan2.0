@@ -30,10 +30,5 @@ const AdminNavigationPath = [
         value: "Đơn đặt hàng",
         path: path.ADMIN_ORDER
     },
-    // {
-    //     id: 7,
-    //     value: "PendingOrder",
-    //     path: "PendingOrder",
-    // },
 ];
 export default AdminNavigationPath;

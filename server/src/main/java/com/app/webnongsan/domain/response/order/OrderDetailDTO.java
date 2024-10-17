@@ -15,8 +15,6 @@ public class OrderDetailDTO {
     private int quantity;
 
     private Double unit_price;
-//
-//    private Instant orderTime;
-//
-//    private Instant deliveryTime;
+
+    private String imageUrl;
 }

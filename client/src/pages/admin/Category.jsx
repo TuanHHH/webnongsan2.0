@@ -13,151 +13,15 @@ import { Pagination } from "@/components";
 import { apiGetCategories } from "../../apis";
 import { useParams, useSearchParams, useNavigate, createSearchParams, useLocation } from 'react-router-dom';
 import { AddScreenButton } from '../../components/admin';
-// import { ToastContainer, toast } from 'react-toastify';
-
-
-// const handleDeleteCategory = async (cid) => {
-//     try {
-//         const response = await apiDeleteCategory(cid);
-//         console.log(response)
-//         toast.success('Xóa danh mục thành công!',{
-//             autoClose: 2000, // Set the timeout to 2 seconds
-//             progress: (value) => value,//undefined, // Show the progress bar
-//           });
-//     } catch (error) {
-//       toast.error('Xóa danh mục thất bại!',{
-//         autoClose: 2000, // Set the timeout to 2 seconds
-//         progress: (value) => value,//undefined, // Show the progress bar
-//       });
-//     }
-//   };
-// const handleDeleteCategory = async (cid) => {
-
-
-//     try {
-//         const response = await apiDeleteCategory(cid);
-//         console.log(response);
-//         toast.success('Xóa danh mục thành công!', {
-//             autoClose: 2000,
-//         });
-//         // Cập nhật lại danh sách categories
-//         dispatch(getCategories());
-//     } catch (error) {
-//         toast.error('Xóa danh mục thất bại!', {
-//             autoClose: 2000,
-//         });
-//     }
-// };
 
 
 
-// const handleDeleteCategory = async (cid) => {
-//   try {
-//     const response = await apiDeleteCategory(cid);
-//     console.log(response.statusCode)
-//     console.log(response.statusCode === 200)
-//     console.log(response)
-//     if (response.statusCode === 200) {
-//       toast.success('Xóa danh mục thành công!', {
-//         autoClose: 2000,
-//       });
-//       // dispatch(getCategories());
-//     // } else {
-//     //   throw new Error('Xóa danh mục thất bại!'); // Ném lỗi nếu không thành công
-//     }
-//   } catch (error) {
-//     toast.error('Xóa danh mục thất bại, hãy xóa những sản phẩm liên kết đển phân loại này', {
-//       autoClose: 2000,
-//     })
-//       ;
-//   }
-// };
-
-// const handleDeleteCategory = async (cid) => {
-//   try {
-//     const response = await apiDeleteCategory(cid);
-//     console.log(response.statusCode); // Kiểm tra status thay cho statusCode
-//     console.log(response.statusCode === 200);
-//     console.log(response);
-    
-//     if (response.statusCode === 200) {
-//       toast.success('Xóa danh mục thành công!', {
-//         autoClose: 2000,
-//       });
-//       // dispatch(getCategories()); // Cập nhật danh sách sau khi xóa thành công
-//     } else {
-//       throw new Error('Xóa danh mục thất bại!'); // Ném lỗi nếu không thành công
-//     }
-//   } catch (error) {
-//     toast.error('Xóa danh mục thất bại, hãy xóa những sản phẩm liên kết đến phân loại này', {
-//       autoClose: 2000,
-//     });
-//   }
-// };
-// const dispatch = useDispatch();
-
-
-
-
-// Trong component
-
-// const notify = () => {
-//     toast("Thông báo của bạn ở đây!");
-//   };
-//   const handleAction = () => {
-//     if (role === 'admin') {
-//       toast.success('Thành công!', {
-//         position: toast.POSITION.TOP_RIGHT,
-//       });
-//     } else if (role === 'user') {
-//       toast.error('Thất bại!', {
-//         position: toast.POSITION.TOP_RIGHT,
-//       });
-//     }
-//   };
-
-// import { useSearchParams } from 'react-router-dom';
 const Category = () => {
-    // const location = useLocation();
 
-
-  // // Get all search parameters
-  // const allParams = Object.fromEntries(searchParams);
-
-  // console.log('All parameters:', allParams);
-
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(getCategories());
-  // }, [dispatch]); //Tải lại category
-  // const [categories, setCategories] = useState(null)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(Number(params.get('page')) || 1);
-
-// const [pages, setPages] = useState(1);
-// const handlePagination = (page = 1) => {
-//   setPages(page);
-//   fetchCategories({page: page, size: 6,})
-// };
-// const fetchCategories = async(queries)=>{
-//   const response = dispatch(queries);
-//   setCategories(response)
-// }
-
-// useEffect(() => {
-//   const queries = {
-//     page: 1, 
-//     size: 6,
-//   };
-//   dispatch(getCategories(queries));
-// }, [dispatch]); //Tải lại category
-
-  // const { categories } = useSelector((state) => {
-  //   return state.app;
-  // });
-  // console.log(categories)
   
   const [sortOption, setSortOption] = useState('');
 
@@ -224,14 +88,8 @@ useEffect(() => {
       });
     } finally {
       fetchCategories({page: currentPage, size: 6,});
-      // dispatch({page: currentPage, size: 6,})
-      // dispatch(getCategories()); // Cập nhật danh sách sau khi xóa, ở đây sẽ được thực hiện luôn
     }
 
-
-  // Slice categories for pagination
-  // const paginatedCategories = categories.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  // console.log(paginatedCategories)
   };
 
   return (
@@ -255,9 +113,8 @@ useEffect(() => {
                 <td className="w-1/10 py-2 px-4 border-2 border-black content-center">{e?.id}</td>
                 <td className='w-2/10 border border-black flex justify-center items-center'>
                   <img
-                    src={e?.imageUrl || category_default}
+                    src={e?.imageUrl && e.imageUrl.startsWith('https') ? e.imageUrl : (e?.imageUrl ? `http://localhost:8080/storage/category/${e.imageUrl}` : 'default_image.png')}
                     alt={e?.name}
-                    // className="w-5 h-5 object-cover"
                     className="w-20 h-20 object-cover"
                   />
                 </td>
@@ -269,37 +126,14 @@ useEffect(() => {
                     <MdModeEdit className="w-8 h-8 inline-block" />
                   </a>
                 </td>
-                {/* <td className='w-1/10 py-2 px-4 border-2 border-black text-center'>
-                        <Link 
-                            to={`/edit/${e.id}`} 
-                            onClick={() => handleShowMessage()}
-                        >
-                            <MdModeEdit className="w-8 h-8 inline-block"/>
-                        </Link>
-                        </td> */}
-                {/* <td className='w-1/10 py-2 px-4 border-2 border-black text-center'>
-                        <a href={`${location.pathname}/delete/${e.id}`}>
-                        <MdDelete className="w-8 h-8 inline-block"/>
-                        </a>
-                        </td> */}
                 <td className='w-1/10 py-2 px-4 border-2 border-black text-center'>
-                  {/* <Link 
-                            // to={`${location.pathname}/delete/${e.id}`} 
-                            onClick={() => handleDeleteCategory(e.id)}
-                        >
-                            <MdDelete className="w-8 h-8 inline-block"/>
-                        </Link> */}
+
                   <div onClick={() => {
                     handleShowDeleteCategoryMessage(e?.name, e?.id);
                   }}>
                     <MdDelete className="w-8 h-8 inline-block" />
                   </div>
-                  {/* <span 
-                                    onClick={() => handleShowMessage(e.name, `${location.pathname}/delete/${e.id}`)}
-                                    className="cursor-pointer"
-                                >
-                                    <MdDelete className="w-8 h-8 inline-block"/>
-                                </span> */}
+
                 </td>
               </tr>
             ))}
@@ -316,17 +150,7 @@ useEffect(() => {
             </div>
           </div>
         )}
-        {/* {deleteMessageContent && (
-             <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-                 <div className="bg-white p-5 rounded shadow-lg mx-40">
-                     <h2 className="text-lg font-bold">${showDeleteMessage} </h2>
-                     <p>{deleteMessageContent}</p>
-                     <div className="flex justify-end mt-4">
-                         <button onClick={handleCloseDeleteCategoryMessage} className="bg-blue-500 text-white px-4 py-2 rounded">Đóng</button>
-                     </div>
-                 </div>
-             </div>
-         )} */}
+
         {deleteMessageContent && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
             <div className="bg-white p-5 rounded shadow-lg mx-40">
@@ -354,14 +178,6 @@ useEffect(() => {
           </div>
         )}
 
-            {/* Pagination Component */}
-            {/* <Pagination 
-        totalPage={totalPage}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        totalProduct={totalProduct}
-        onPageChange={onPageChange}
-            /> */}
             <div>
               <AddScreenButton buttonName='+ Thêm phân loại' buttonClassName='bg-green-500 hover:bg-green-700' toLink='add'/>
             </div>

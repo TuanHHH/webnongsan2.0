@@ -10,7 +10,7 @@ const LeftNavBar = () => {
         {/* <aside className="w-64 bg-gray-100 p-4 flex-shrink-0"> */}
             <nav>
                 <ul className="space-y-4">
-                    <li className="text-lg font-semibold text-main">Overview</li>
+                    <li className="text-lg font-semibold text">Dashboard</li>
                     {AdminNavigationPath.map((e) => (
                             <NavLink
                                 to={e.path}

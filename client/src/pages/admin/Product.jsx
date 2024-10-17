@@ -13,7 +13,7 @@ import { Pagination } from '@/components';
 import { data } from 'autoprefixer';
 import { SearchBar } from '@/components';
 import product_default from "./../../assets/product_default.png";
-import { useParams, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, createSearchParams, Link } from 'react-router-dom';
 import { SearchProduct } from '../../components/admin';
 import { AddScreenButton } from '../../components/admin';
 const PRODUCT_PER_PAGE = 6 ;
@@ -205,7 +205,9 @@ const handleDeleteProductProcess = (e) => {
 
   setDeleteProduct(product);
 };
+// const imageToShow(imageName){
 
+// }
 
 const handleShowMessage = (detailProduct,productName) => {
   setMessageContent(`Chi tiết sản phẩm: ${detailProduct}`);
@@ -291,17 +293,17 @@ const handleCloseMessage = () => {
         <tbody>
         {products?.data?.result?.map((e) => (
         <tr key={e.id} className="border-b">
-                        <td className="w-2/12  border-2 border-black content-center">{e?.product_name||productData?.productName}</td>
+                        <td className="w-2/12  border-2 border-black content-center">{e?.product_name||productData?.productName}
+                        {/* <Link to={`products/${e?.category}/${e?.}`}/> */}
+                        </td>
                         <td className='w-12/12 border border-black flex justify-center items-center'>
                         <img
-                                            src={e?.imageUrl || product_default}
-                                            alt={e?.product_name}
-                                            // className="w-5 h-5 object-cover"
-                                            //  className="w-25 h-25 object-cover"
-                                            className="w-21 h-21 object-cover"
+                                            src={e?.imageUrl && e.imageUrl.startsWith('https') ? e.imageUrl : (e?.imageUrl ? `http://localhost:8080/storage/product/${e.imageUrl}` : 'default_image')}
+                                            alt={e?.product_name || 'Product Image'}
+                                            className="w-17 h-17 object-cover"
                                         />
                         </td>
-                        <td className='w-1/12 py-2 px-4 border-2 border-black content-center'>{e.price}</td>
+                        <td className='w-1/12 py-2 px-4 border-2 border-black content-center'>{e.price.toLocaleString("vi-VN")} đ</td>
                         <td className='w-1/12 py-2 px-4 border-2 border-black content-center'>{e.unit}</td>
                         <td className='w-1/12 py-2 px-4 border-2 border-black content-center'>{e.category}</td>
                         <td className='w-1/12 py-2 px-4 border-2 border-black content-center'>{e.rating}</td>
@@ -318,15 +320,10 @@ const handleCloseMessage = () => {
                         </td>
 
                         <td className="w-1/12 border-2 border-black text-center">
-                        {/* <a href={`${location.pathname}/delete/${e?.id}`}>
-                        <MdDelete className="w-8 h-8 inline-block"/>
-                        </a> */}
                         <div   onClick={() => {
-                          // handleShowDeleteProductMessage(e?.name,e?.id);
-                          // handleDeleteProductProcess(e);
+
                           handleDeleteProductProcess(e);
                           handleShowDeleteProductMessage(e);
-                          // handleDeleteProductProcess=(e?.id,e?.productName,e?.price,e?.imageUrl,e?.quantity,e?.rating,e?.sold,e?.description);
                         }}>
                           <MdDelete className="w-8 h-8 inline-block"/>
                         </div>
@@ -365,7 +362,7 @@ const handleCloseMessage = () => {
                 </div>
             )}
             <div>
-              <AddScreenButton buttonName='+ Thêm sản phẩm' buttonClassName='bg-green-500 hover:bg-green-700' toLink='add'/>
+              <AddScreenButton buttonName='+ Thêm sản phẩm mới' buttonClassName='bg-green-500 hover:bg-green-700' toLink='add'/>
             </div>
                   <div className='w-4/5 m-auto my-4 flex justify-center'>
                 <Pagination

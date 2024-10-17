@@ -3,13 +3,14 @@ import InputFormAdmin from '@/components/admin/InputFormAdmin';
 import category_default from "./../../../assets/category_default.png";
 import React, { useState } from 'react'
 import { useForm } from "react-hook-form";
-import { apiCreateCategory } from '@/apis';
+import { apiCreateCategory ,apiUploadImage ,apiUpdateCategory} from '@/apis';
 import { toast } from 'react-toastify';
 
 const AddCategory = () => {
     const [categoryImage, setCategoryImage] = useState(null);
     // const [cateImageUrl, setCateImageUrl] = useState(category_default || "");
     const [previewCategoryImage, setPreviewCategoryImage] = useState(null)
+    // const [categoryImageName,setCategoryImageName] = useState(null)
     const {
         register,
         formState: { errors },
@@ -22,10 +23,23 @@ const AddCategory = () => {
             name:data?.name,
         }
         try {
-            const res = await apiCreateCategory(categoryToCreate,categoryImage,'category')
-            await new Promise(resolve => setTimeout(resolve, 6000));
-            toast.success("Thêm sản phẩm thành công!");
-            reset(data);
+            const resCheck = await apiCreateCategory(categoryToCreate)
+            if (resCheck.statusCode === 400) {
+              throw new Error(resCheck.message || "Có lỗi xảy ra khi tạo danh mục.");
+          }
+
+            const resUpload = await apiUploadImage(categoryImage,"category")
+
+            categoryToCreate.imageUrl = resUpload;
+            categoryToCreate.resCheck?.data?.name;
+
+            const response = await apiUpdateCategory(categoryToCreate);
+
+            // await new Promise(resolve => setTimeout(resolve, 6000));
+            toast.success("Thêm phân loại thành công!");
+            reset();
+            setCategoryImage(null);
+            setPreviewCategoryImage(null);
           } catch (err) {
             toast.error("Có lỗi xảy ra: " + err.message);
           }
@@ -40,6 +54,7 @@ const AddCategory = () => {
           };
           reader.readAsDataURL(file);
           setCategoryImage(file);
+          // setCategoryImageName(file.name);
         }
       };
 
@@ -74,12 +89,32 @@ const AddCategory = () => {
             </div>
           </div>
 
-          <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md">
+          {/* <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md">
             Lưu
-          </button>
+          </button> */}
+          <div className="flex justify-between mt-4">
+            <label className="cursor-pointer" style={{ marginRight: '70px', flex: 1 }}>
+              <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition w-full">
+                Chọn ảnh
+              </span>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+            <button 
+              type="submit" 
+              className="bg-green-500 text-white p-2 rounded-md w-full"
+              style={{ marginLeft: '70px', flex: 1 }}
+            >
+              Lưu
+            </button>
+          </div>
+          
         </form>
 
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <label className="cursor-pointer">
             <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition">
               Chọn ảnh
@@ -91,7 +126,7 @@ const AddCategory = () => {
               className="hidden"
             />
           </label>
-        </div>
+        </div> */}
 
         {/* <form onSubmit={handleUrlSubmit} className="flex flex-col mt-4">
           <input

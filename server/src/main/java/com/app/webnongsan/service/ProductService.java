@@ -1,12 +1,10 @@
 package com.app.webnongsan.service;
 
 import com.app.webnongsan.domain.Product;
-import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.product.ResProductDTO;
 import com.app.webnongsan.repository.CategoryRepository;
 import com.app.webnongsan.repository.ProductRepository;
-import com.app.webnongsan.util.PaginationHelper;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
-import { apiUpdateCategory } from "../../apis";
+import { apiUploadImage,apiUpdateCategory } from "../../apis";
 import category_default from "./../../assets/category_default.png";
 import { toast } from 'react-toastify';
 function EditCategoryForm({ initialCategoryData }) {
@@ -12,10 +12,13 @@ function EditCategoryForm({ initialCategoryData }) {
     handleSubmit,
   } = useForm();
   const [categoryData, setCategoryData] = useState(initialCategoryData);
-
   const [categoryImage, setCategoryImage] = useState(null);
-  const [previewCategoryImage, setPreviewCategoryImage] = useState(initialCategoryData?.imageUrl)
-
+  const [previewCategoryImage, setPreviewCategoryImage] = useState(
+    initialCategoryData?.imageUrl && initialCategoryData.imageUrl.startsWith('https')
+      ? initialCategoryData?.imageUrl
+      : (initialCategoryData?.imageUrl ? `http://localhost:8080/storage/category/${initialCategoryData.imageUrl}` : 'category_default')
+  );
+  const [categoryImageName,setCategoryImageName] = useState(null)
 
   const handleUpdateCategory = async (data) => {
     const categoryToUpdate = {
@@ -24,15 +27,20 @@ function EditCategoryForm({ initialCategoryData }) {
       imageUrl: initialCategoryData?.imageUrl,
     };
     try {
-      const response = await apiUpdateCategory(categoryToUpdate,categoryImage,'category')
+      const resCheck = await apiUpdateCategory(categoryToUpdate);
+      if (resCheck.statusCode === 400) {
+        throw new Error(resCheck.message || "Có lỗi xảy ra khi tạo danh mục.");
+    }
+      const resUpLoad = await apiUploadImage(categoryImage,"category")
+      categoryToUpdate.imageUrl = resUpLoad?.data?.fileName ||initialCategoryData?.imageUrl;
+
+      const res = await apiUpdateCategory(categoryToUpdate);
       toast.success("Sửa phân loại thành công!");
       reset(data);
     } catch (err) {
       toast.error("Có lỗi xảy ra: " + err.message);
     }
   };
-
-  
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -43,9 +51,9 @@ function EditCategoryForm({ initialCategoryData }) {
       };
       reader.readAsDataURL(file);
       setCategoryImage(file)
+      setCategoryImageName(file.name)
     }
   };
-
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -86,12 +94,33 @@ function EditCategoryForm({ initialCategoryData }) {
             </div>
           </div>
 
-          <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md">
+          {/* <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md">
             Lưu
-          </button>
+          </button> */}
+          
+          <div className="flex justify-between mt-4">
+            <label className="cursor-pointer" style={{ marginRight: '70px', flex: 1 }}>
+              <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition w-full">
+                Chọn ảnh
+              </span>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+            <button 
+              type="submit" 
+              className="bg-green-500 text-white p-2 rounded-md w-full"
+              style={{ marginLeft: '70px', flex: 1 }}
+            >
+              Lưu
+            </button>
+          </div>
+
         </form>
 
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <label className="cursor-pointer">
             <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition">
               Chọn ảnh
@@ -103,7 +132,7 @@ function EditCategoryForm({ initialCategoryData }) {
               className="hidden"
             />
           </label>
-        </div>
+        </div> */}
       </div>
     </div>
   );

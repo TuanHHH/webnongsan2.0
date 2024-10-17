@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
-import { apiUpdateProduct } from "../../apis";
-import { CategoryComboBox } from '@/components/admin';
+// import { apiUpdateProduct } from "../../apis";
+// import { CategoryComboBox } from '@/components/admin';
+import { apiUploadImage,apiUpdateProduct } from "../../apis";
 import product_default from "./../../assets/product_default.png";
 import { toast } from 'react-toastify';
-const EditProductForm = ({ initialProductData }) => {
+import { data } from "autoprefixer";
+const EditProductForm = ({ initialProductData}) => {
   const {
     register,
     formState: { errors },
@@ -13,13 +15,31 @@ const EditProductForm = ({ initialProductData }) => {
     handleSubmit,
   } = useForm();
 
-
   const [productData, setProductData] = useState(initialProductData);
 
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [productImage, setProductImage] = useState(null)
-  const [previewProductImage, setPreviewProductImage] = useState(initialProductData?.imageUrl)
+
+  const [previewProductImage, setPreviewProductImage] = useState(
+    initialProductData?.imageUrl && initialProductData.imageUrl.startsWith('https')
+      ? initialProductData?.imageUrl
+      : (initialProductData?.imageUrl ? `http://localhost:8080/storage/product/${initialProductData.imageUrl}` : 'product_default')
+  );
+
+  useEffect(() => {
+    setProductData(initialProductData);
+    setPreviewProductImage(
+      initialProductData?.imageUrl && initialProductData.imageUrl.startsWith('https')
+        ? initialProductData.imageUrl
+        : initialProductData?.imageUrl ? `http://localhost:8080/storage/product/${initialProductData.imageUrl}` : product_default
+    );
+    // Reset form values with the updated initialProductData
+    reset(initialProductData);
+  }, [initialProductData, reset]);
+
+
+  
 
   const handleImageChange = (event)=>{
     const file = event.target.files[0];
@@ -57,7 +77,13 @@ const EditProductForm = ({ initialProductData }) => {
     console.log(productToUpdate)
     try {
       // const response = await apiUpdateProduct(productToUpdate);
-      const response = await apiUpdateProduct(productToUpdate,productImage,"product")
+      const resUpLoad = await apiUploadImage(productImage,"product")
+      productToUpdate.imageUrl = resUpLoad?.data?.fileName || initialProductData?.imageUrl;
+      const resUpdate = await apiUpdateProduct(productToUpdate)
+      if (resUpdate.statusCode === 400) {
+        throw new Error(resCreate.message || "Có lỗi xảy ra khi tạo sản phẩm.");
+    }
+      // const response = await apiUpdateProduct(productToUpdate,productImage,"product")
       toast.success("Sửa sản phẩm thành công!");
       reset(data);
     } catch (err) {
@@ -168,12 +194,19 @@ const EditProductForm = ({ initialProductData }) => {
                 className="max-h-full max-w-full object-contain"
               />
             </div>
-            <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md mt-4">
+            {/* <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md mt-4">
             Lưu
-          </button>
-          </div>
+          </button> */}
+          <div>
+          <div>
+  {/* <div className="bg-black h-1 mt-4"></div> */}
+</div>
 
-          <div className="mt-4">
+</div>
+          </div>
+          
+
+          {/* <div className="mt-4">
             <label className="cursor-pointer">
               <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition">
                   Chọn ảnh
@@ -185,7 +218,41 @@ const EditProductForm = ({ initialProductData }) => {
                 className="hidden"
               />
             </label>
-        </div>
+        </div> */}
+         {/* <div className="flex justify-between mt-4">
+            <label className="cursor-pointer">
+              <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition">
+                Chọn ảnh
+              </span>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+            <button type="submit" className="bg-green-500 text-white p-2 rounded-md">
+              Lưu
+            </button>
+          </div> */}
+          <div className="flex justify-between mt-4">
+            <label className="cursor-pointer" style={{ marginRight: '70px', flex: 1 }}>
+              <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition w-full">
+                Chọn ảnh
+              </span>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+            <button 
+              type="submit" 
+              className="bg-green-500 text-white p-2 rounded-md w-full"
+              style={{ marginLeft: '70px', flex: 1 }}
+            >
+              Lưu
+            </button>
+          </div>
 
       </form>
     </div>
