@@ -1,6 +1,9 @@
 package com.app.webnongsan.service;
 
-import com.app.webnongsan.domain.*;
+import com.app.webnongsan.domain.Cart;
+import com.app.webnongsan.domain.CartId;
+import com.app.webnongsan.domain.Product;
+import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.cart.CartItemDTO;
 import com.app.webnongsan.repository.CartRepository;
@@ -13,8 +16,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -84,6 +87,16 @@ public class CartService {
 
         Page<CartItemDTO> cartItems = this.cartRepository.findCartItemsByUserId(user.getId(), pageable);
         return this.paginationHelper.fetchAllEntities(cartItems);
+    }
+
+    public List<CartItemDTO> getCartItemsByProductIds(List<Long> productIds, Pageable pageable) throws ResourceInvalidException{
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        User user = this.userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new ResourceInvalidException("User không tồn tại");
+        }
+        return this.cartRepository.findCartItemsByUserIdAndProductId(user.getId(),productIds, pageable);
     }
 
     public long countProductInCart(long userId){

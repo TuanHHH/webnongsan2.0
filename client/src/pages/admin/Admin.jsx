@@ -2,7 +2,7 @@ import React,{useEffect,useState} from "react";
 import { TopHeader } from "../../components";
 import { Route, Routes ,Navigate} from "react-router-dom";
 import path from "../../utils/path";
-import {Category,FeedBack,Order,Product,User} from "./";
+import {Category,Order,Product,User} from "./";
 import {Overview} from './';
 import {OrderDetail} from "./";
 import {EditProduct,EditCategory} from "./";
@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { useRef } from 'react';
 import {AddCategory,AddProduct} from "./Add";
 import {AdminLayout} from "../../components/admin";
+import {Feedback} from "./";
 
 const Admin= () =>{
     const { isLoggedIn, current } = useSelector(state => state.user);
@@ -59,6 +60,7 @@ const Admin= () =>{
                     <Route path={path.ADMIN_CATEGORY} element={<Category/>}></Route>
                     <Route path={path.ADMIN_EDIT_CATEGORY} element={<EditCategory/>}></Route>
                     <Route path={path.ADD_CATEGORY} element={<AddCategory/>}></Route>
+                    <Route path={path.FEEDBACK} element={<Feedback/>}></Route>
 
                     {/* <Route path={path.ADMIN_FEEDBACK_DETAIL} element={<FeedBackDetail/>}></Route> */}
                     

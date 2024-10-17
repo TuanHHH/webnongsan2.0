@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiGetOrders } from "./../../apis";
+import { apiGetAllOrders } from "./../../apis";
 import { FaInfoCircle } from "react-icons/fa";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Pagination } from "@/components";
@@ -67,7 +67,7 @@ const Order = () => {
   };
 
   const fetchOrders = async (queries) => {
-    const res = await apiGetOrders(queries);
+    const res = await apiGetAllOrders(queries);
     setOrders(res);
   };
 

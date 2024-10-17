@@ -6,14 +6,13 @@ import { NavLink } from "react-router-dom";
 import clsx from "clsx";
 import { AiOutlineCaretDown, AiOutlineCaretRight } from "react-icons/ai";
 import { useSelector } from "react-redux";
-import { fetchAvatarBase64, getUserById } from "../../apis";
+import { getUserById } from "../../apis";
 
 const activedStyle = 'px-4 py-2 flex items-center gap-2 text-white  bg-[#10B981]'
 const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-100'
 const MemberSidebar = () => {
     const [actived, setActived] = useState([])
     const { current } = useSelector(state => state.user)
-    const [avatarData, setAvatarData] = useState()
     const [user, setUser] = useState()
 
 
@@ -31,27 +30,15 @@ const MemberSidebar = () => {
         }
     }
 
-    const fetchAvatar = async () => {
-        try {
-            const response = await fetchAvatarBase64("avatar", user?.avatarUrl);
-            setAvatarData(response);
 
-        } catch (error) {
-            console.error("Error fetching avatar:", error);
-        }
-    };
     useEffect(() => {
         fetchUserByCurrentId()
     }, [current])
-    useEffect(() => {
-        if (user?.avatarUrl) {
-            fetchAvatar()
-        }
-    }, [user])
+
     return (
         <div className="bg-white h-full py-4">
             <div className="w-full flex flex-col  items-center justify-center p-4">
-                <img src={user?.avatarUrl ? avatarData : avatar} alt="Image" className="w-20 h-20 object-cover rounded-full" />
+                <img src={user?.avatarUrl ? `http://localhost:8080/storage/avatar/${user?.avatarUrl}` : avatar} alt="Image" className="w-20 h-20 object-cover rounded-full" />
                 <span>{user?.name}</span>
             </div>
             <div>

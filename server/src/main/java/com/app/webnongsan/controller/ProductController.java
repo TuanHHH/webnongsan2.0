@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,5 +73,20 @@ public class ProductController {
         return ResponseEntity.ok(this.productService.getMaxPrice(category, productName));
     }
 
-
+    @GetMapping("products/search")
+    @ApiMessage("Search products")
+    public ResponseEntity<PaginationDTO> search(@Filter Specification<Product> spec, Pageable pageable) {
+        return ResponseEntity.ok(this.productService.search(spec, pageable));
+    }
+    @PutMapping("products/quantity/{id}")
+    @ApiMessage("Update quantity product")
+    public ResponseEntity<Product> updateQuantity(@PathVariable("id") long id, @RequestParam("quantity") int quantity) throws ResourceInvalidException {
+        boolean check = this.productService.checkValidProductId(id);
+        if (!check){
+            throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
+        }
+        Product p = this.productService.get(id);
+        p.setQuantity(quantity);
+        return ResponseEntity.ok(this.productService.update(p));
+    }
 }

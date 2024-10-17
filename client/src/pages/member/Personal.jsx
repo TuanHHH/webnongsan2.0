@@ -3,7 +3,7 @@ import { Button, InputForm } from "@/components";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import avatar from "@/assets/avatarDefault.png";
-import { apiUpdateCurrentUser, fetchAvatarBase64, getUserById } from "@/apis";
+import { apiUpdateCurrentUser, getUserById } from "@/apis";
 import { getCurrentUser } from "@/store/user/asyncActions";
 import { toast } from "react-toastify";
 import path from "@/utils/path";
@@ -12,7 +12,6 @@ const Personal = () => {
     const { handleSubmit, register, formState: { errors, isDirty }, reset } = useForm();
     const { current } = useSelector(state => state.user);
     const dispatch = useDispatch();
-    const [avatarData, setAvatarData] = useState();
     const [user, setUser] = useState();
 
     const fetchUserByCurrentId = async () => {
@@ -21,15 +20,6 @@ const Personal = () => {
             setUser(response.data);
         } catch (error) {
             console.error("Error fetching user:", error);
-        }
-    };
-
-    const fetchAvatar = async () => {
-        try {
-            const response = await fetchAvatarBase64("avatar", user?.avatarUrl);
-            setAvatarData(response);
-        } catch (error) {
-            console.error("Error fetching avatar:", error);
         }
     };
 
@@ -48,12 +38,6 @@ const Personal = () => {
             });
         }
     }, [user, reset]);
-
-    useEffect(() => {
-        if (user?.avatarUrl) {
-            fetchAvatar();
-        }
-    }, [user]);
 
     const handleUpdateInfor = async (data) => {
         const formData = new FormData();
@@ -164,7 +148,7 @@ const Personal = () => {
                 <div className="flex flex-col gap-2">
                     <span className="font-medium">Profile image:</span>
                     <label htmlFor="file" className="flex w-1/5">
-                        <img src={user?.avatarUrl ? avatarData : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
+                        <img src={user?.avatarUrl ? `http://localhost:8080/storage/avatar/${user?.avatarUrl}` : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
                     </label>
                     <input type="file" accept="image/*" id="file" {...register('avatarUrl')} hidden />
                 </div>

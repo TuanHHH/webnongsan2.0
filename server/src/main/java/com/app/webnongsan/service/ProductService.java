@@ -1,13 +1,18 @@
 package com.app.webnongsan.service;
 
+import com.app.webnongsan.domain.Category;
 import com.app.webnongsan.domain.Product;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.product.ResProductDTO;
+import com.app.webnongsan.domain.response.product.SearchProductDTO;
 import com.app.webnongsan.repository.CategoryRepository;
 import com.app.webnongsan.repository.ProductRepository;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -16,15 +21,16 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class ProductService{
+public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final EntityManager entityManager;
 
-    public boolean checkValidCategoryId(long categoryId){
+    public boolean checkValidCategoryId(long categoryId) {
         return this.categoryRepository.existsById(categoryId);
     }
 
-    public Product create(Product p){
+    public Product create(Product p) {
         return this.productRepository.save(p);
     }
 
@@ -37,11 +43,11 @@ public class ProductService{
         return this.productRepository.findById(id).orElse(null);
     }
 
-    public void delete(long id){
+    public void delete(long id) {
         this.productRepository.deleteById(id);
     }
 
-    public PaginationDTO getAll(Specification<Product> spec, Pageable pageable){
+    public PaginationDTO getAll(Specification<Product> spec, Pageable pageable) {
         Page<Product> productPage = this.productRepository.findAll(spec, pageable);
 
         PaginationDTO p = new PaginationDTO();
@@ -74,13 +80,13 @@ public class ProductService{
         return res;
     }
 
-    public Product findById(long id){
+    public Product findById(long id) {
         return this.productRepository.findById(id).orElse(null);
     }
 
-    public Product update(Product p){
+    public Product update(Product p) {
         Product curr = this.findById(p.getId());
-        if (curr != null){
+        if (curr != null) {
             curr.setProductName(p.getProductName());
             curr.setPrice(p.getPrice());
             curr.setImageUrl(p.getImageUrl());
@@ -100,5 +106,53 @@ public class ProductService{
         return this.productRepository.getMaxPriceByCategoryAndProductName(category, productName);
     }
 
+    public PaginationDTO search(Specification<Product> spec, Pageable pageable) {
+        Page<SearchProductDTO> productPage = this.searchProduct(spec, pageable);
+        PaginationDTO p = new PaginationDTO();
+        PaginationDTO.Meta meta = new PaginationDTO.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(productPage.getTotalPages());
+        meta.setTotal(productPage.getTotalElements());
+        p.setMeta(meta);
+        p.setResult(productPage.getContent());
+        return p;
+    }
 
+    public Page<SearchProductDTO> searchProduct(Specification<Product> specification, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SearchProductDTO> query = cb.createQuery(SearchProductDTO.class);
+        Root<Product> productRoot = query.from(Product.class);
+        Join<Product, Category> categoryJoin = productRoot.join("category");
+        Predicate predicate = specification.toPredicate(productRoot, query, cb);
+        if (predicate != null) {
+            query.where(predicate);
+        }
+
+        query.select(cb.construct(SearchProductDTO.class,
+                productRoot.get("id"),
+                productRoot.get("productName"),
+                productRoot.get("price"),
+                productRoot.get("imageUrl"),
+                categoryJoin.get("name")
+        ));
+
+        List<SearchProductDTO> resultList = entityManager.createQuery(query)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Product> countRoot = countQuery.from(Product.class);
+        countQuery.select(cb.count(countRoot));
+
+        Predicate countPredicate = specification.toPredicate(countRoot, countQuery, cb);
+        if (countPredicate != null) {
+            countQuery.where(countPredicate);
+        }
+
+        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(resultList, pageable, totalCount);
+    }
 }

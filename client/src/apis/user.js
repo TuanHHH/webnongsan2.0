@@ -74,17 +74,6 @@ export const apiUpdateCurrentUser = async (formData) =>
         }
     });
 
-export const fetchAvatarBase64 = async (folder, fileName) => {
-    return axiosInstance({
-        url: '/files',
-        params: {
-            folder, fileName
-        },
-        method: 'get',
-    });
-};
-
-
 export const getUserById = async (id) => {
     return axiosInstance({
         url: `/users/${id}`,
@@ -156,3 +145,22 @@ export const apiSetStatusUser = async (user) => {
         data: user
     });
 };
+// Tạo order
+export const apiCreateOrder = async (formData)=>{
+    return axiosInstance({
+        url:`/checkout`,
+        method:'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+// Lấy các sản phẩm được chọn trong cart
+export const apiGetSelectedCart = async (pids)=>{
+    return axiosInstance({
+        url:`cart/product-selected?productIds=${pids?.join(',')}`,
+        method: 'get',
+    });
+};
+

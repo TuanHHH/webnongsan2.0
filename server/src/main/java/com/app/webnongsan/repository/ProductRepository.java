@@ -18,5 +18,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     double getMaxPriceByCategoryAndProductName(@Param("category") String category,
                                                @Param("productName") String productName);
 
-
 }

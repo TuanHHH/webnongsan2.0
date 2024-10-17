@@ -15,6 +15,21 @@ export const apiGetProducts = async (params) =>
         }
     });
 
+export const apiSearchProducts = async (params) =>
+    axiosInstance({
+        url: "/products/search",
+        method: "get",
+        params,
+        paramsSerializer: {
+            encode: (value) => value,
+            serialize: (params) => {
+                return Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+            }
+        }
+    });
+
 export const apiGetProduct = async (pid) =>
     axiosInstance({
         url: `/products/${pid}`,
@@ -55,7 +70,6 @@ export const apiGetMaxPrice = async (category, productName) =>
         params: { category, productName },
     });
 
-
 export const apiCreateProduct = async(product)=>{
     const res = await axiosInstance({
         url : `/products`,
@@ -65,7 +79,7 @@ export const apiCreateProduct = async(product)=>{
     return res;
 }
 
-export const apiUpdateProduct = async(product)=>{
+export const apiUpdateProduct2 = async(product)=>{
     const res = await axiosInstance({
         url : `/products`,
         method:'put',
@@ -73,3 +87,31 @@ export const apiUpdateProduct = async(product)=>{
     })
     return res
 }
+
+// Lấy danh sách orders
+export const apiGetOrders = async (params) =>
+    axiosInstance({
+        url: `/orders`,
+        method: "get",
+        params
+    });
+        
+// Cập nhật số lượng sản phẩm
+export const apiUpdateProduct = async (pid, params) => 
+    axiosInstance({
+        url: `/products/quantity/${pid}`,
+        method: 'put',
+        params,
+    });
+export const apiGetAllRatingsPage = async (params) => 
+    axiosInstance({
+        url: `/product/ratings`,
+        method: "get",
+        params
+    });
+export const apiHideRating = async (id)=>
+    axiosInstance({
+        url: `ratings/${id}`,
+        method: "put",
+    })
+

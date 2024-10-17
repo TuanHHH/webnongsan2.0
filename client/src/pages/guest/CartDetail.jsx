@@ -6,7 +6,7 @@ import { apiGetCart, apiAddOrUpdateCart, apiDeleteCart } from '@/apis';
 import { toast } from 'react-toastify';
 import withBaseComponent from '@/hocs/withBaseComponent';
 import { getCurrentUser } from '@/store/user/asyncActions';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
 import { convertToSlug } from '@/utils/helper';
@@ -16,17 +16,23 @@ const { IoTrashBinOutline } = icons;
 
 const DEBOUNCE_DELAY = 2000;
 const DELETE_DELAY = 750;
+const ITEMS_PER_PAGE = 10;
 
 const Cart = ({ dispatch }) => {
   const { current, isLoggedIn } = useSelector(state => state.user)
   const [cartItems, setCartItems] = useState([]);
   const [isCheckoutDisabled, setIsCheckoutDisabled] = useState(false);
   const [pendingUpdates, setPendingUpdates] = useState(new Set());
-  // Trạng thái loading xóa sản phẩm
   const [loadingDeletes, setLoadingDeletes] = useState(new Set());
   const [selectedItems, setSelectedItems] = useState(new Set());
+  const [allSelectedItems, setAllSelectedItems] = useState([]);
+  const [isAllSelected, setIsAllSelected] = useState(false);
   const debounceTimeouts = useRef({});
   const pendingChanges = useRef({});
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const deleteProductInCart = async (pid) => {
     const res = await apiDeleteCart(pid);
@@ -38,19 +44,71 @@ const Cart = ({ dispatch }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await apiGetCart();
-        const products = response.data.result;
-        setCartItems(products);
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
-      }
-    };
+  const fetchCartItems = async (pageToFetch = 1, pageSize = ITEMS_PER_PAGE) => {
+    setIsLoading(true);
+    try {
+      const response = await apiGetCart(pageToFetch, pageSize);
+      const products = response.data.result;
 
+      setCartItems((prevItems) => {
+        const updatedItems = pageToFetch === 1 ? products : [...prevItems, ...products];
+        return updatedItems;
+      });
+
+      setHasMore(products.length === pageSize);
+      setPage(pageToFetch);
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+      toast.error("Có lỗi khi tải dữ liệu giỏ hàng");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      fetchCartItems(page + 1);
+    }
+  };
+
+  const toggleSelectItem = (pid) => {
+    setSelectedItems((prevSelectedItems) => {
+      const newSet = new Set(prevSelectedItems);
+      if (newSet.has(pid)) {
+        newSet.delete(pid);
+      } else {
+        newSet.add(pid);
+      }
+      return newSet;
+    });
+
+    setAllSelectedItems((prevSelected) => {
+      const existingItem = prevSelected.find(item => item.id === pid);
+      if (existingItem) {
+        return prevSelected.filter(item => item.id !== pid);
+      } else {
+        const newItem = cartItems.find(item => item.id === pid);
+        return [...prevSelected, newItem];
+      }
+    });
+    setIsAllSelected(selectedItems.size === cartItems.length);
+  };
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedItems(new Set());
+      setAllSelectedItems([]);
+    } else {
+      const newSelectedItems = new Set(cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).map(item => item.id));
+      setSelectedItems(newSelectedItems);
+      setAllSelectedItems(cartItems);
+    }
+    setIsAllSelected(!isAllSelected);
+  };
+
+  useEffect(() => {
     if (isLoggedIn && current) {
-      fetchCartItems();
+      fetchCartItems(1, ITEMS_PER_PAGE);
     }
 
     return () => {
@@ -61,7 +119,7 @@ const Cart = ({ dispatch }) => {
         }
       });
     };
-  }, []);
+  }, [isLoggedIn, current]);
 
   useEffect(() => {
     const isAnyQuantityInvalid = cartItems.some(
@@ -69,6 +127,10 @@ const Cart = ({ dispatch }) => {
     );
     setIsCheckoutDisabled(isAnyQuantityInvalid || pendingUpdates.size > 0 || loadingDeletes.size > 0);
   }, [cartItems, pendingUpdates, loadingDeletes]);
+
+  useEffect(() => {
+    setIsAllSelected(selectedItems.size === cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).length && cartItems.length > 0 && selectedItems.size !== 0);
+  }, [selectedItems, cartItems]);
 
   const handleQuantityChange = (pid, newQuantity) => {
     const currentItem = cartItems.find(item => item.id === pid);
@@ -146,17 +208,6 @@ const Cart = ({ dispatch }) => {
     }, DELETE_DELAY);
   };
 
-  const toggleSelectItem = (pid) => {
-    setSelectedItems((prevSelectedItems) => {
-      const newSet = new Set(prevSelectedItems);
-      if (newSet.has(pid)) {
-        newSet.delete(pid);
-      } else {
-        newSet.add(pid);
-      }
-      return newSet;
-    });
-  };
 
   const calculateSelectedTotal = () => {
     return cartItems
@@ -164,11 +215,15 @@ const Cart = ({ dispatch }) => {
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toLocaleString('vi-VN');
   };
-
+  const handleCheckout = () => {
+    if (!isCheckoutDisabled) {
+      navigate(`/${path.CHECKOUT}`, { state: { selectedItems: Array.from(selectedItems) } });
+    }
+  };
   return (
     <div className="w-main mt-10 p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Giỏ hàng</h2>
-      {cartItems.length > 0 ? (
+      {cartItems?.length > 0 ? (
         <div className="space-y-4">
           {cartItems.map((item) => (
             <div
@@ -180,7 +235,7 @@ const Cart = ({ dispatch }) => {
                   type="checkbox"
                   checked={selectedItems.has(item.id)}
                   onChange={() => {
-                    if (item.stock > 0) {
+                    if (item.stock > 0 && item.stock >= item.quantity) {
                       toggleSelectItem(item.id);
                     }
                   }}
@@ -201,6 +256,9 @@ const Cart = ({ dispatch }) => {
                   <p className="text-xs text-gray-500">Có sẵn: {item.stock}</p>
                   {item.stock <= 0 && (
                     <p className="text-red-500 text-xs">Sản phẩm tạm hết hàng</p>
+                  )}
+                  {(item.stock < item.quantity && item.stock > 0) && (
+                    <p className="text-red-500 text-xs">Số lượng tồn kho không đủ</p>
                   )}
                 </div>
               </Link>
@@ -238,26 +296,49 @@ const Cart = ({ dispatch }) => {
           </Link>
         </div>)}
 
-      {cartItems?.length > 0 && <>
-        <div className="mt-6 text-right">
-          <span className="text-lg font-semibold">Tổng:{' '}{calculateSelectedTotal()}đ
-          </span>
-        </div>
-        <div className="mt-4 text-right">
-          <button
-            className={`bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 
-            ${isCheckoutDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
-            inline-flex items-center gap-2`}
-            disabled={isCheckoutDisabled}
-          >
-            <span>Thanh toán</span>
-            {(pendingUpdates.size > 0 || loadingDeletes.size > 0) && (
-              <ClipLoader size={16} color="#ffffff" />
-            )}
-          </button>
-        </div>
-      </>
-      }
+      {cartItems?.length > 0 && (
+        <>
+          {(hasMore && current.cartLength > cartItems.length) && (
+            <div className='w-full flex justify-center mt-6'>
+              <button
+                onClick={loadMore}
+                disabled={isLoading}
+                className='bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 disabled:opacity-50'
+              >
+                {isLoading ? 'Đang tải...' : 'Hiện thêm'}
+              </button>
+            </div>
+          )}
+          <div className="mt-6 text-right">
+            <span className="text-lg font-semibold">
+              Tổng: {calculateSelectedTotal()}đ
+            </span>
+          </div>
+          <div className="mt-4 text-right">
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={toggleSelectAll}
+                className="mr-2"
+              />
+              <span>Chọn tất cả</span>
+            </div>
+            <button
+              className={`bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 
+              ${isCheckoutDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
+              inline-flex items-center gap-2`}
+              disabled={isCheckoutDisabled}
+              onClick={handleCheckout}
+            >
+              <span>Thanh toán</span>
+              {(pendingUpdates.size > 0 || loadingDeletes.size > 0) && (
+                <ClipLoader size={16} color="#ffffff" />
+              )}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

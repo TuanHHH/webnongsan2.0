@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiGetProduct, apiUpdateProduct } from "./../../apis";
+import { apiGetProduct, apiUpdateProduct2 } from "./../../apis";
 import { EditProductForm, TurnBackHeader } from "./../../components/admin/index";
 import { toast } from "react-toastify";
 
@@ -61,7 +61,7 @@ function EditProduct() {
     };
 
     try {
-      const resAddQuantity = await apiUpdateProduct(productToAddQuantity);
+      const resAddQuantity = await apiUpdateProduct2(productToAddQuantity);
       if (resAddQuantity.statusCode !== 200) {
         throw new Error(resAddQuantity.message || "Có lỗi xảy ra khi cập nhật sản phẩm.");
       }

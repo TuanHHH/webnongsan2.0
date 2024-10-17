@@ -1,7 +1,7 @@
 import axiosInstance from "../utils/axios";
-export const apiGetOrders = async (params) =>
+export const apiGetAllOrders = async (params) =>
     axiosInstance({
-        url: "/orders",
+        url: "/allOrders",
         method: "get",
         params:params
     })

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiGetProducts } from "@/apis";
-import { apiGetOrders } from "@/apis";
+import { apiGetAllOrders } from "@/apis";
 import { apiGetAllUser, apiGetOverviewOrder } from "@/apis";
 import { apiUpdateOrderStatus } from "@/apis";
 import { toast } from "react-toastify";
@@ -68,7 +68,7 @@ const Overview = () => {
   };
 
   // const fetchOrders = async () => {
-  //   const res = await apiGetOrders();
+  //   const res = await apiGetOrdersAll();
   //   if (res.statusCode === 200) {
   //     let total = 0;
   //     for (let i = 0; i < res.data.result.length; i++) {
@@ -79,7 +79,7 @@ const Overview = () => {
   //   }
   // };
   const fetchOrders = async () => {
-    const res = await apiGetOrders();
+    const res = await apiGetAllOrders();
     if (res.statusCode === 200) {
       let total = 0;
       for (let i = 0; i < res.data.result.length; i++) {

@@ -25,11 +25,11 @@ public class OrderDetailService {
     public boolean checkValidOrderDetailId(Long orderId, Long productId) {
         return this.orderDetailRepository.existsById(new OrderDetailId(orderId, productId));
     }
-    public OrderDetail get(long orderId,long productId){
-        return this.orderDetailRepository.findById(new OrderDetailId(orderId, productId)).orElse(null);
+    public OrderDetail get(long orderId){
+        return this.orderDetailRepository.findById(orderId).orElse(null);
     }
-    public List <OrderDetail> getAllFromOrder(long orderId,long productId){
-        return  this.orderDetailRepository.findAllById(Collections.singleton(new OrderDetailId(orderId, productId)));
+    public List <OrderDetail> getAllFromOrder(long orderId){
+        return  this.orderDetailRepository.findAllById(Collections.singleton(orderId));
     }
 
 //    public List<OrderDetail> getOrderDetailById(long orderId){

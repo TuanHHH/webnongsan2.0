@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
-// import { apiUpdateProduct } from "../../apis";
+// import { apiUpdateProduct2 } from "../../apis";
 // import { CategoryComboBox } from '@/components/admin';
-import { apiUploadImage,apiUpdateProduct } from "../../apis";
+import { apiUploadImage,apiUpdateProduct2 } from "../../apis";
 import product_default from "./../../assets/product_default.png";
 import { toast } from 'react-toastify';
 import { data } from "autoprefixer";
@@ -16,6 +16,8 @@ const EditProductForm = ({ initialProductData}) => {
   } = useForm();
 
   const [productData, setProductData] = useState(initialProductData);
+  console.log(`initial product`,initialProductData),
+  console.log(`product data`,productData)
 
 
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -72,18 +74,18 @@ const EditProductForm = ({ initialProductData}) => {
       // rating:initialProductData?.rating,
       // sold:initialProductData?.sold,
       description:data?.description,
-      category: { id: initialProductData?.category?.id } // Include the category ID
+      category: { id: productData?.category?.id } // Include the category ID
     };
     console.log(productToUpdate)
     try {
-      // const response = await apiUpdateProduct(productToUpdate);
+      // const response = await apiUpdateProduct2(productToUpdate);
       const resUpLoad = await apiUploadImage(productImage,"product")
       productToUpdate.imageUrl = resUpLoad?.data?.fileName || initialProductData?.imageUrl;
-      const resUpdate = await apiUpdateProduct(productToUpdate)
+      const resUpdate = await apiUpdateProduct2(productToUpdate)
       if (resUpdate.statusCode === 400) {
         throw new Error(resCreate.message || "Có lỗi xảy ra khi tạo sản phẩm.");
     }
-      // const response = await apiUpdateProduct(productToUpdate,productImage,"product")
+      // const response = await apiUpdateProduct2(productToUpdate,productImage,"product")
       toast.success("Sửa sản phẩm thành công!");
       reset(data);
     } catch (err) {

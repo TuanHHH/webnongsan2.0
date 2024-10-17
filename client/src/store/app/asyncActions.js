@@ -44,30 +44,3 @@ export const getCategories = createAsyncThunk("app/categories", async () => {
 
     return response.data.result;
 });
-
-// export const getCategories = createAsyncThunk(
-//     "app/categories",
-//     async (params = null, { rejectWithValue }) => {
-//         let response;
-
-//         try {
-//             if (params === null) {
-//                 response = await apis.apiGetCategories();
-//                 // console.log(response);
-//             } else {
-//                 response = await apis.apiGetCategories(params);
-//                 // console.log(response);
-//             }
-
-//             // Check response status
-//             if (response.statusCode < 200 || response.statusCode >= 300) {
-//                 return rejectWithValue(response); // Handle error
-//             }
-
-//             return response.data.result; // Return the result data
-//         } catch (error) {
-//             // Handle any unexpected errors
-//             return rejectWithValue(error.message);
-//         }
-//     }
-// );
