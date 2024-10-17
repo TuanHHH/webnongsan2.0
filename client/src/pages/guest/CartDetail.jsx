@@ -98,7 +98,7 @@ const Cart = ({ dispatch }) => {
       setSelectedItems(new Set());
       setAllSelectedItems([]);
     } else {
-      const newSelectedItems = new Set(cartItems.filter(item => item.stock > 0).map(item => item.id));
+      const newSelectedItems = new Set(cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).map(item => item.id));
       setSelectedItems(newSelectedItems);
       setAllSelectedItems(cartItems);
     }
@@ -128,7 +128,7 @@ const Cart = ({ dispatch }) => {
   }, [cartItems, pendingUpdates, loadingDeletes]);
 
   useEffect(() => {
-    setIsAllSelected(selectedItems.size === cartItems.filter(item => item.stock > 0).length && cartItems.length > 0);
+    setIsAllSelected(selectedItems.size === cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).length && cartItems.length > 0);
   }, [selectedItems, cartItems]);
 
   const handleQuantityChange = (pid, newQuantity) => {
@@ -230,7 +230,7 @@ const Cart = ({ dispatch }) => {
                   type="checkbox"
                   checked={selectedItems.has(item.id)}
                   onChange={() => {
-                    if (item.stock > 0) {
+                    if (item.stock > 0 && item.stock >= item.quantity) {
                       toggleSelectItem(item.id);
                     }
                   }}
@@ -251,6 +251,9 @@ const Cart = ({ dispatch }) => {
                   <p className="text-xs text-gray-500">Có sẵn: {item.stock}</p>
                   {item.stock <= 0 && (
                     <p className="text-red-500 text-xs">Sản phẩm tạm hết hàng</p>
+                  )}
+                  {(item.stock <= item.quantity && item.stock > 0) && (
+                    <p className="text-red-500 text-xs">Số lượng tồn kho không đủ</p>
                   )}
                 </div>
               </Link>
