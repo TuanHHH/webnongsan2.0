@@ -1,16 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appSlice from "./app/appSlice";
-//import productSlice from "./product/productSilce";
 import storage from "redux-persist/lib/storage"
 import {
   persistStore,
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
 } from 'redux-persist'
 import userSlice from "./user/userSlice";
 
@@ -27,15 +20,10 @@ const userConfig = {
 export const store = configureStore({
   reducer: {
     app: appSlice,
-    //    products: productSlice,
     user: persistReducer(userConfig, userSlice)
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      // serializableCheck: {
-      //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, 'app/showModal', 'persist/PERSIST', 'persist/REHYDRATE'],
-      //   ignoredPaths: ['modalChildren'],
-      // },
       serializableCheck: false
     }),
 });

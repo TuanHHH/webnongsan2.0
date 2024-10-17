@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetCurrentUser, apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart, apiAddWishList } from '@/apis';
+import { apiGetProduct, apiGetRatingsPage, apiRatings, apiGetRecommendedProducts, apiAddOrUpdateCart, apiAddWishList } from '@/apis';
 import { Breadcrumb, Button, QuantitySelector, ProductExtraInfoItem, ProductInfomation, VoteOption, Comment, ProductCard } from '@/components';
-import { formatMoney, renderStarFromNumber} from '@/utils/helper'
+import { formatMoney, renderStarFromNumber } from '@/utils/helper'
 import product_default from '@/assets/product_default.png'
 import { productExtraInfo } from '@/utils/constants';
 import Votebar from '@/components/vote/Votebar';
@@ -45,7 +45,6 @@ const ProductDetail = ({ isQuickView, data }) => {
   }, [params, data])
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid)
-    //console.log(response)
     if (response.statusCode === 200)
       setProduct(response.data)
   }

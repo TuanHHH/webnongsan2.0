@@ -6,7 +6,6 @@ import avatar from "@/assets/avatarDefault.png";
 import { apiUpdateCurrentUser, getUserById } from "@/apis";
 import { getCurrentUser } from "@/store/user/asyncActions";
 import { toast } from "react-toastify";
-import path from "@/utils/path";
 
 const Personal = () => {
     const { handleSubmit, register, formState: { errors, isDirty }, reset } = useForm();
