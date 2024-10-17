@@ -53,7 +53,7 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
         toast.success('Đã thêm vào giỏ hàng');
         dispatch(getCurrentUser());
       } else {
-        toast.error("Có lỗi xảy ra");
+        toast.error(res.message);
       }
     }
 
