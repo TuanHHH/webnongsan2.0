@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { setExpiredMessage } from '@/store/user/userSlice';
 import { store } from '@/store/redux';
-//Document: https://axios-http.com/docs/instance
+
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   headers: {
@@ -10,10 +10,8 @@ const axiosInstance = axios.create({
   timeout: 5000,
 });
 
-//Document: https://axios-http.com/docs/interceptors
-// Add a request interceptor
+
 axiosInstance.interceptors.request.use(function (config) {
-  // Do something before request is sent
   let localData = window.localStorage.getItem('persist:ogani_shop/user');
   if (localData && typeof localData === 'string') {
     localData = JSON.parse(localData);
@@ -24,7 +22,6 @@ axiosInstance.interceptors.request.use(function (config) {
   }
   return config;
 }, function (error) {
-  // Do something with request error
   return Promise.reject(error);
 });
 
@@ -40,7 +37,6 @@ axiosInstance.interceptors.response.use(function (response) {
       if (!state.user.isLoggedIn) {
         return Promise.reject(error);
       }
-      // Gọi api làm mới token
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, {
           headers: {
