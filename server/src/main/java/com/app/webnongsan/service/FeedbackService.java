@@ -13,7 +13,9 @@ import com.app.webnongsan.util.SecurityUtil;
 import com.app.webnongsan.util.exception.ResourceInvalidException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +83,57 @@ public class FeedbackService {
         return p;
 
     }
+
+    public PaginationDTO getBySortAndFilter(Pageable pageable, Integer status, String sort) {
+        if(sort != null){
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(sort).descending());
+        }
+        Page<Feedback> feedbackPage = this.feedbackRepository.findByStatus(status, pageable);
+
+        PaginationDTO p = new PaginationDTO();
+        PaginationDTO.Meta meta = new PaginationDTO.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(feedbackPage.getTotalPages());
+        meta.setTotal(feedbackPage.getTotalElements());
+
+        p.setMeta(meta);
+
+        List<FeedbackDTO> listFeedback = feedbackPage.getContent().stream()
+                .map(this::convertToFeedbackDTO).toList();
+        p.setResult(listFeedback);
+        return p;
+    }
+
+    public FeedbackDTO hideFeedback(Long id) throws ResourceInvalidException {
+
+        Optional<Feedback> feedbackOptional = feedbackRepository.findById(id);
+        Feedback f = new Feedback();
+        FeedbackDTO feedbackDTO = new FeedbackDTO();
+        if (feedbackOptional.isPresent()) {
+            f = feedbackOptional.get();
+            if(f.getStatus() == 0) f.setStatus(1);
+            else f.setStatus(0);
+            this.feedbackRepository.save(f);
+            feedbackDTO.setId(f.getId());
+
+            feedbackDTO.setUserAvatarUrl(f.getUser().getAvatarUrl());
+
+            feedbackDTO.setProductId(f.getProduct().getId());
+            feedbackDTO.setProduct_name(f.getProduct().getProductName());
+            feedbackDTO.setImageUrl(f.getProduct().getImageUrl());
+
+            feedbackDTO.setStatus(f.getStatus());
+            feedbackDTO.setDescription(f.getDescription());
+            feedbackDTO.setRatingStar(f.getRatingStar());
+            feedbackDTO.setUpdatedAt(f.getUpdatedAt());
+        }
+
+
+        return feedbackDTO;
+    }
+
     public PaginationDTO getByProductId(Long productId, Pageable pageable) {
         Page<Feedback> feedbackPage = this.feedbackRepository.findByProductId(productId, pageable);
 
@@ -102,14 +155,24 @@ public class FeedbackService {
     public FeedbackDTO convertToFeedbackDTO(Feedback feedback) {
         FeedbackDTO feedbackDTO = new FeedbackDTO();
         Optional<User> optionalUser = userRepository.findById(feedback.getUser().getId());
-        User u = optionalUser.get();
-        feedbackDTO.setUserId(u.getId());
-        feedbackDTO.setUserName(u.getName());
-        feedbackDTO.setProductId(feedback.getProduct().getId());
-        feedbackDTO.setDescription(feedback.getDescription());
-        feedbackDTO.setRatingStar(feedback.getRatingStar());
-        feedbackDTO.setUserAvatarUrl(feedback.getUser().getAvatarUrl());
-        feedbackDTO.setUpdatedAt(feedback.getUpdatedAt());
+        if (optionalUser.isPresent()){
+            User u = optionalUser.get();
+
+            feedbackDTO.setId(feedback.getId());
+
+            feedbackDTO.setUserId(u.getId());
+            feedbackDTO.setUserName(u.getName());
+            feedbackDTO.setUserAvatarUrl(feedback.getUser().getAvatarUrl());
+
+            feedbackDTO.setProductId(feedback.getProduct().getId());
+            feedbackDTO.setProduct_name(feedback.getProduct().getProductName());
+            feedbackDTO.setImageUrl(feedback.getProduct().getImageUrl());
+
+            feedbackDTO.setStatus(feedback.getStatus());
+            feedbackDTO.setDescription(feedback.getDescription());
+            feedbackDTO.setRatingStar(feedback.getRatingStar());
+            feedbackDTO.setUpdatedAt(feedback.getUpdatedAt());
+        }
         return feedbackDTO;
     }
 }

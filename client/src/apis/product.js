@@ -64,4 +64,29 @@ export const apiGetMaxPrice = async (category, productName) =>
         params: { category, productName },
     });
 
-
+// Lấy danh sách orders
+export const apiGetOrders = async (params) =>
+    axiosInstance({
+        url: `/orders`,
+        method: "get",
+        params
+    });
+        
+// Cập nhật số lượng sản phẩm
+export const apiUpdateProduct = async (pid, params) => 
+    axiosInstance({
+        url: `/products/quantity/${pid}`,
+        method: 'put',
+        params,
+    });
+export const apiGetAllRatingsPage = async (params) => 
+    axiosInstance({
+        url: `/product/ratings`,
+        method: "get",
+        params
+    });
+export const apiHideRating = async (id)=>
+    axiosInstance({
+        url: `ratings/${id}`,
+        method: "put",
+    })
