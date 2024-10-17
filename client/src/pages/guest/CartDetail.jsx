@@ -6,7 +6,7 @@ import { apiGetCart, apiAddOrUpdateCart, apiDeleteCart } from '@/apis';
 import { toast } from 'react-toastify';
 import withBaseComponent from '@/hocs/withBaseComponent';
 import { getCurrentUser } from '@/store/user/asyncActions';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import path from '@/utils/path';
 import { useSelector } from 'react-redux';
 import { convertToSlug } from '@/utils/helper';
@@ -32,6 +32,7 @@ const Cart = ({ dispatch }) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const deleteProductInCart = async (pid) => {
     const res = await apiDeleteCart(pid);
@@ -214,7 +215,11 @@ const Cart = ({ dispatch }) => {
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toLocaleString('vi-VN');
   };
-
+  const handleCheckout = () => {
+    if (!isCheckoutDisabled) {
+      navigate(`/${path.CHECKOUT}`, { state: { selectedItems: Array.from(selectedItems) } });
+    }
+  };
   return (
     <div className="w-main mt-10 p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Giỏ hàng</h2>
@@ -324,6 +329,7 @@ const Cart = ({ dispatch }) => {
               ${isCheckoutDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
               inline-flex items-center gap-2`}
               disabled={isCheckoutDisabled}
+              onClick={handleCheckout}
             >
               <span>Thanh toán</span>
               {(pendingUpdates.size > 0 || loadingDeletes.size > 0) && (

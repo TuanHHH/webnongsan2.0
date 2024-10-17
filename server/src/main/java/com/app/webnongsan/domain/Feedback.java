@@ -17,7 +17,7 @@ public class Feedback {
 
     @Column(nullable = false)
     private int ratingStar;
-
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
     @Column(nullable = false)
