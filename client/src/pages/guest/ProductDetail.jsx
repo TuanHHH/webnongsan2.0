@@ -268,10 +268,10 @@ const ProductDetail = ({ isQuickView, data }) => {
             <div className='flex flex-col gap-4'>
               {feedbacksPage?.map((el, index) => (
                 <Comment key={index} ratingStar={el.ratingStar} content={el.description}
-                  updatedAt={el.updatedAt} name={el.userName} image={el.userAvatarUrl} />
+                  updatedAt={el.updatedAt} name={el.userName} image={`http://localhost:8080/storage/avatar/${el?.userAvatarUrl}`} />
               ))}
             </div>
-            {paginate?.page > 1 && <div>
+            {paginate?.pages > 1 && <div>
               <Pagination totalPage={paginate?.pages} currentPage={paginate?.page}
                 pageSize={paginate?.pageSize} totalProduct={paginate?.total} onPageChange={(page) => setCurrentPage(page)} />
             </div>}

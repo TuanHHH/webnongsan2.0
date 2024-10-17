@@ -47,15 +47,24 @@ public class FeedbackController {
             Pageable pageable) {
         if(size == null || size < 1){
             long totalEls = this.feedbackService.getTotalFeedbacksByProductId(id);
-            size = (int) totalEls;
+            size = totalEls > 0 ? (int) totalEls : 1;
         }
         Pageable updatePageable = PageRequest.of(pageable.getPageNumber(),size);
         return ResponseEntity.ok(this.feedbackService.getByProductId(id, updatePageable));
     }
 
     @GetMapping("product/ratings")
-    @ApiMessage("Get All feedbacks")
-    public ResponseEntity<PaginationDTO> getAll(@Filter Specification<Feedback> spec, Pageable pageable){
-        return ResponseEntity.ok(this.feedbackService.getAll(spec, pageable));
+    @ApiMessage("Get All feedbacks By Status")
+    public ResponseEntity<PaginationDTO> getAllByStatus(
+            Pageable pageable,
+            @RequestParam(value = "status", required = false) Integer status,
+            @RequestParam(value = "sort", required = false) String sort){
+        return ResponseEntity.ok(this.feedbackService.getBySortAndFilter(pageable,status,sort));
+    }
+
+    @PutMapping("ratings/{id}")
+    @ApiMessage("Hide a feedback")
+    public ResponseEntity<FeedbackDTO> hideFeedback(@PathVariable Long id) throws ResourceInvalidException{
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.feedbackService.hideFeedback(id));
     }
 }

@@ -116,4 +116,53 @@ export const memberSidebar = [
 
 ]
 
-
+export const statusOrder = [  
+  {
+    label: "Default",
+    value: "default"
+  },
+  {
+    label: 'Pending',
+    value: 0
+  },
+  {
+    label: "Succeed",
+    value: 1
+  },
+  {
+    label: "Cancelled",
+    value: 2
+  }
+]
+export const statusHideOrder = [
+  {
+    label: "Default",
+    value: "default"
+  },
+  {
+    label: 'Unhide',
+    value: 0
+  },
+  {
+    label: "Hide",
+    value: 1
+  }
+]
+export const sortFeedbackOrder = [
+  {
+    label: "Default",
+    value: "default"
+  },
+  {
+    label: "Product",
+    value: "product_name"
+  },
+  {
+    label: "Rating Star",
+    value: "ratingStar"
+  },
+  {
+    label: "Updated Time",
+    value: "updatedAt"
+  }
+]

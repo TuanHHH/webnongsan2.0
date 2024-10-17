@@ -9,6 +9,7 @@ const path = {
   PRODUCT_DETAIL: "/products/:category/:pid/:productname",
   RESET_PASSWORD: "reset-password",
   CART: "cart",
+  CHECKOUT: "checkout",
 
   // Member path
   MEMBER: "member",
@@ -18,7 +19,8 @@ const path = {
 
   //Admin path
   ADMIN: "admin",
-  DASHBOARD: "dashboard"
+  DASHBOARD: "dashboard",
+  FEEDBACK: "feedback"
 };
 
 export default path;
