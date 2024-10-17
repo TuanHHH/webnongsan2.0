@@ -12,8 +12,8 @@ const ResetPassword = () => {
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
 
-    const [validToken, setValidToken] = useState(null); 
-    const [isCheckingToken, setIsCheckingToken] = useState(true); 
+    const [validToken, setValidToken] = useState(null);
+    const [isCheckingToken, setIsCheckingToken] = useState(true);
 
     const checkToken = async (token) => {
         try {
@@ -59,7 +59,8 @@ const ResetPassword = () => {
     }
 
     if (isCheckingToken) {
-        return <p>Đang kiểm tra token...</p>;
+
+        return <div className="absolute animate-fade-in top-0 left-0 bottom-0 right-0 bg-overlay flex flex-col items-center justify-center py-8 z-50"><p>Đang kiểm tra token...</p></div>;
     }
 
     return (

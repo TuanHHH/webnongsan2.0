@@ -14,6 +14,7 @@ import {
   FaCaretDown, FaTimes
 } from "react-icons/fa";
 import { IoMenu, IoLogOutOutline, IoTrashBinOutline } from "react-icons/io5";
+import { TbInfoTriangle } from "react-icons/tb";
 
 const icons = {
   FaPhone,
@@ -33,7 +34,8 @@ const icons = {
   GiReturnArrow,
   FaCaretDown,
   FaTimes,
-  IoTrashBinOutline
+  IoTrashBinOutline,
+  TbInfoTriangle
 };
 
 export default icons;
