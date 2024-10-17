@@ -8,12 +8,17 @@ export const appSlice = createSlice({
     isLoading: false,
     isShowModal: false,
     modalChildren: null,
+    errorCode: null
   },
   // Code logic xử lý sync action
   reducers: {
     showModal: (state, action) => {
       state.isShowModal = action.payload.isShowModal
       state.modalChildren = action.payload.modalChildren
+    },
+    setErrorCode: (state, action) => {
+      state.errorCode = action.payload.errorCode
+      console.log(state.errorCode)
     }
   },
   // Code logic xử lý async action
@@ -41,6 +46,6 @@ export const appSlice = createSlice({
   },
 });
 
-export const { showModal} = appSlice.actions
+export const { showModal, setErrorCode } = appSlice.actions
 //export reducer = reducer(s) = extrareducers
 export default appSlice.reducer;

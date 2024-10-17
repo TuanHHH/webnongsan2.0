@@ -98,7 +98,7 @@ const Cart = ({ dispatch }) => {
       setSelectedItems(new Set());
       setAllSelectedItems([]);
     } else {
-      const newSelectedItems = new Set(cartItems.map(item => item.id));
+      const newSelectedItems = new Set(cartItems.filter(item => item.stock > 0).map(item => item.id));
       setSelectedItems(newSelectedItems);
       setAllSelectedItems(cartItems);
     }
@@ -128,7 +128,7 @@ const Cart = ({ dispatch }) => {
   }, [cartItems, pendingUpdates, loadingDeletes]);
 
   useEffect(() => {
-    setIsAllSelected(selectedItems.size === cartItems.length && cartItems.length > 0);
+    setIsAllSelected(selectedItems.size === cartItems.filter(item => item.stock > 0).length && cartItems.length > 0);
   }, [selectedItems, cartItems]);
 
   const handleQuantityChange = (pid, newQuantity) => {
