@@ -129,7 +129,7 @@ const Cart = ({ dispatch }) => {
   }, [cartItems, pendingUpdates, loadingDeletes]);
 
   useEffect(() => {
-    setIsAllSelected(selectedItems.size === cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).length && cartItems.length > 0);
+    setIsAllSelected(selectedItems.size === cartItems.filter(item => (item.stock > 0 && item.stock >= item.quantity)).length && cartItems.length > 0 && selectedItems.size !== 0);
   }, [selectedItems, cartItems]);
 
   const handleQuantityChange = (pid, newQuantity) => {
@@ -257,7 +257,7 @@ const Cart = ({ dispatch }) => {
                   {item.stock <= 0 && (
                     <p className="text-red-500 text-xs">Sản phẩm tạm hết hàng</p>
                   )}
-                  {(item.stock <= item.quantity && item.stock > 0) && (
+                  {(item.stock < item.quantity && item.stock > 0) && (
                     <p className="text-red-500 text-xs">Số lượng tồn kho không đủ</p>
                   )}
                 </div>
@@ -322,7 +322,7 @@ const Cart = ({ dispatch }) => {
                 onChange={toggleSelectAll}
                 className="mr-2"
               />
-              <span>Chọn tất cả các sản phẩm đang hiển thị</span>
+              <span>Chọn tất cả</span>
             </div>
             <button
               className={`bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 
