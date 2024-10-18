@@ -11,7 +11,6 @@ import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Modal } from '@/components';
 import { Admin } from "./pages/admin/index";
-// import { Feedback } from './pages/admin/index';
 const App = () => {
   const dispatch = useDispatch();
   const { isShowModal, modalChildren } = useSelector(state => state.app)
@@ -34,6 +33,7 @@ const App = () => {
           <Route path={path.CART} element={<CartDetail />}></Route>
           <Route path={path.CHECKOUT} element={<Checkout />}></Route>
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />}></Route>
+          <Route path='/admin' element={<Admin/>}></Route>
           <Route path="/error" element={<ErrorPage />} />
           <Route path='*' element={<ErrorPage />}></Route>
         </Route>
@@ -42,13 +42,8 @@ const App = () => {
           <Route path={path.HISTORY} element={<History />}></Route>
           <Route path={path.WISHLIST} element={<Wishlist />}></Route>
         </Route>
-        <Route path={path.ADMIN} element={<MemberLayout />}>
-          {/* <Route path={path.FEEDBACK} element={<Feedback/>}></Route> */}
-        </Route>
         <Route path={path.LOGIN} element={<Login />}></Route>
-        <Route path='/admin/*' element={<Admin/>}>
-          {/* <Route path='Overview' element={<Overview/>}></Route> */}
-        </Route>
+        <Route path='/vietnam-location' element={<LocationSelector/>}></Route>
       </Routes>
       <ToastContainer
         position="bottom-right"
