@@ -35,6 +35,9 @@ const App = () => {
           <Route path="/error" element={<ErrorPage />} />
           <Route path='*' element={<ErrorPage />}></Route>
         </Route>
+        <Route path={path.ADMIN_LAYOUT} element={<Admin/>}>
+          
+        </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />}></Route>
           <Route path={path.HISTORY} element={<History />}></Route>
