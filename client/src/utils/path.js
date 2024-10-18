@@ -19,7 +19,7 @@ const path = {
   WISHLIST: "wishlist",
 
   //Admin path
-  ADMIN: "admin/*",
+  ADMIN: "admin",
   DASHBOARD: "dashboard",
 
   ADMIN_LAYOUT: "/admin/*",
