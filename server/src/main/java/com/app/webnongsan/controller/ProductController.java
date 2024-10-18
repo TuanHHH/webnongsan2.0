@@ -86,7 +86,11 @@ public class ProductController {
             throw new ResourceInvalidException("Product id = " + id + " không tồn tại");
         }
         Product p = this.productService.get(id);
-        p.setQuantity(quantity);
+        if(quantity > p.getQuantity()){
+            throw new ResourceInvalidException("Product id = " + p.getId() + " không đủ số lượng tồn kho");
+        }
+        p.setQuantity(p.getQuantity() - quantity);
+        p.setSold(p.getSold()+quantity);
         return ResponseEntity.ok(this.productService.update(p));
     }
 }

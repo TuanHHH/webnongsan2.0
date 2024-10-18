@@ -120,7 +120,7 @@ const History = ({ navigate, location }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">{order.quantity}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900 font-medium">
-                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(order.productPrice)}
+                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(+order.unit_price)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-center">
                                         <span
