@@ -13,7 +13,6 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class OrderDetailDTO {
     private long productId;
     private String productName;
@@ -34,7 +33,7 @@ public class OrderDetailDTO {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
-        this.productPrice = productPrice;
+        this.unit_price = productPrice;
         this.imageUrl = imageUrl;
         this.category = category;
         this.orderId = orderId;

@@ -67,7 +67,7 @@ public class EmailService {
 
         String formattedTotalPrice = formatCurrency(totalPrice);
         // Format từng sản phẩm trong danh sách items
-        items.forEach(item -> item.setFormattedPrice(formatCurrency(item.getProductPrice())));
+        items.forEach(item -> item.setFormattedPrice(formatCurrency(item.getUnit_price())));
 
         // Lấy thời gian hiện tại và định dạng
         LocalDateTime currentDateTime = LocalDateTime.now();
