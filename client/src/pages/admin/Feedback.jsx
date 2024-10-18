@@ -243,7 +243,7 @@ const Feedback = ({navigate, location})=>{
                                         {fb?.status === 0 ? <MdOutlineBlock  size={20} color="red"/> : <MdOutlineBlock  size={20} color="gray"/>} 
                                 </Button>
                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    {fb?.status === 0 ? "Hide" : "Unhide"}
+                                    {fb?.status === 0 ? "Unhide" : "Hide"}
                                 </div>
                             </div>
                         </td>

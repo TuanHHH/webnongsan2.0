@@ -158,3 +158,9 @@ export const apiSendEmail = async (formData)=>{
         }
     })
 }
+export const apiPaymentVNPay = async (params) =>
+    axiosInstance({
+        url:`payment/vn-pay`,
+        method: 'get',
+        params,
+    })

@@ -58,10 +58,11 @@ const FeedbackCard = ({ data, onClose }) => {
                 </div>
 
                 <div className="flex items-center justify-start w-full text-sm text-muted-foreground mb-1">
-                     {data?.status === 0 ? (<span className="flex items-center gap-2"><GrStatusCritical size={16} color="red"/>{"Status :"}
-                        <div className="flex items-center"><span>Hide</span></div> </span>) : 
+                     {data?.status === 0 ?
                         (<span className="flex items-center gap-2"> <GrStatusCriticalSmall size={16} color="red"/> {"Status :"}
                         <div className="flex items-center"><span>Unhide</span></div></span>)
+                        :(<span className="flex items-center gap-2"><GrStatusCritical size={16} color="gray"/>{"Status :"}
+                            <div className="flex items-center"><span>Hide</span></div> </span>)
                     }
                 </div>
                 <div className="flex items-center justify-start w-full text-sm text-muted-foreground">

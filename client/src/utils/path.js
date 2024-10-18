@@ -10,6 +10,8 @@ const path = {
   RESET_PASSWORD: "reset-password",
   CART: "cart",
   CHECKOUT: "checkout",
+  PAYMENT_SUCCESS: "payment-success",
+  PAYMENT_FAILURE: "payment-failure",
 
   // Member path
   MEMBER: "member",

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import path from '@/utils/path'
 import { Route, Routes} from "react-router-dom";
-import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword, CartDetail, Checkout, ErrorPage } from "@/pages/guest";
+import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword, CartDetail, Checkout, ErrorPage, PaymentSuccess, PaymentFailure } from "@/pages/guest";
 import { MemberLayout, Personal, Wishlist, History } from '@/pages/member';
 import { useDispatch, useSelector } from "react-redux";
 import { getCategories } from "@/store/app/asyncActions";
@@ -33,6 +33,8 @@ const App = () => {
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />}></Route>
           <Route path="/error" element={<ErrorPage />} />
           <Route path='*' element={<ErrorPage />}></Route>
+          <Route path={path.PAYMENT_SUCCESS} element={<PaymentSuccess />}></Route>
+          <Route path={path.PAYMENT_FAILURE} element={<PaymentFailure />}></Route>
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />}></Route>
