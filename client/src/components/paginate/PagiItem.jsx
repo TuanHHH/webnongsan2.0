@@ -1,5 +1,4 @@
 import React from "react";
-import { useSearchParams, useNavigate, createSearchParams, useParams } from "react-router-dom"
 import clsx from "clsx";
 
 const PagiItem = ({children, onClick, currentPage})=>{

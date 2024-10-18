@@ -2,7 +2,7 @@ import path from "./path";
 import icons from "./icons";
 import { AiOutlineInfo } from "react-icons/ai";
 import { FaHome } from "react-icons/fa";
-import { FaCartShopping, FaHeart } from "react-icons/fa6";
+import {FaHeart } from "react-icons/fa6";
 import { MdHistory } from "react-icons/md";
 export const navigation = [
   {

@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { InputField, Button, ForgotPassword } from "@/components";
 import Swal from 'sweetalert2'
-import { apiLogin, apiRegister } from "../../apis";
+import { apiLogin, apiRegister } from "@/apis";
 import { useNavigate, Link } from "react-router-dom";
-import path from "../../utils/path";
-import { login } from '../../store/user/userSlice'
+import path from "@/utils/path";
+import { login } from '@/store/user/userSlice'
 import { useDispatch } from "react-redux";
 import { useForm } from 'react-hook-form';
 import { ClipLoader } from "react-spinners";
