@@ -1,5 +1,4 @@
 package com.app.webnongsan.repository;
-
 import com.app.webnongsan.domain.Order;
 import com.app.webnongsan.domain.response.cart.CartItemDTO;
 import com.app.webnongsan.domain.response.order.OrderDetailDTO;
@@ -30,3 +29,4 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 //JOIN webnongsan.orders o ON od.order_id = o.id
 //JOIN webnongsan.products p ON od.product_id = p.id
 //WHERE o.user_id = 2;
+
