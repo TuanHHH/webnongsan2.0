@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
-import { apiUploadImage,apiUpdateCategory } from "../../apis";
-import category_default from "./../../assets/category_default.png";
+import { apiUploadImage,apiUpdateCategory } from "@/apis";
+import category_default from "@/assets/category_default.png";
 import { toast } from 'react-toastify';
 function EditCategoryForm({ initialCategoryData }) {
   const {
@@ -16,7 +16,7 @@ function EditCategoryForm({ initialCategoryData }) {
   const [previewCategoryImage, setPreviewCategoryImage] = useState(
     initialCategoryData?.imageUrl && initialCategoryData.imageUrl.startsWith('https')
       ? initialCategoryData?.imageUrl
-      : (initialCategoryData?.imageUrl ? `http://localhost:8080/storage/category/${initialCategoryData.imageUrl}` : 'category_default')
+      : (initialCategoryData?.imageUrl ? `${import.meta.env.VITE_BACKEND_TARGET}/storage/category/${initialCategoryData.imageUrl}` : 'category_default')
   );
   const [categoryImageName,setCategoryImageName] = useState(null)
 
@@ -93,14 +93,10 @@ function EditCategoryForm({ initialCategoryData }) {
               />
             </div>
           </div>
-
-          {/* <button type="submit" className="bg-green-500 text-white p-2 w-full rounded-md">
-            Lưu
-          </button> */}
           
           <div className="flex justify-between mt-4">
-            <label className="cursor-pointer" style={{ marginRight: '70px', flex: 1 }}>
-              <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition w-full">
+            <label className="cursor-pointe" style={{ marginRight: '70px', flex: 1 }}>
+              <span className="inline-block text-center px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition w-full">
                 Chọn ảnh
               </span>
               <input

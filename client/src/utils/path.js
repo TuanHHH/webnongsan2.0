@@ -21,7 +21,7 @@ const path = {
   //Admin path
   ADMIN: "admin",
   DASHBOARD: "dashboard",
-  
+
   ADMIN_LAYOUT: "/admin/*",
   ADMIN_OVERVIEW: "overview",
   ADMIN_PRODUCT: "product",
@@ -39,8 +39,8 @@ const path = {
   ADMIN_FEEDBACK: "feedback",
   ADMIN_FEEDBACK_DETAIL: "",
 
-  ADD_PRODUCT:"product/add",
-  ADD_CATEGORY:"category/add",
+  ADD_PRODUCT: "product/add",
+  ADD_CATEGORY: "category/add",
   // ADMIN_
   FEEDBACK: "feedback"
 };

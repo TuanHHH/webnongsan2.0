@@ -1,9 +1,9 @@
-import path from '../../utils/path'
+import path from './path'
 const AdminNavigationPath = [
     {
         id: 1,
         value: "Tổng quan",
-        path :path.ADMIN_OVERVIEW
+        path: path.ADMIN_OVERVIEW
     },
     {
         id: 2,

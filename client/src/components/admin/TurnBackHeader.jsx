@@ -15,7 +15,7 @@ function TurnBackHeader({ turnBackPage, header}) {
     };
     return (
         <div>
-            <div className="flex items-center text-3xl text-black hover:text-blue-800 mb-3">
+            <div className="flex items-center text-2xl text-black hover:text-blue-800 mb-3">
 
                 <div className="flex items-center cursor-pointer" onClick={handleTurnBack}>
                 

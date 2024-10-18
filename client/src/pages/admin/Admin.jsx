@@ -16,7 +16,7 @@ const Admin= () =>{
     const { isLoggedIn, current } = useSelector(state => state.user);
     const [shouldNavigate, setShouldNavigate] = useState(false);
     const [toLogin, setToLogin] = useState(false)
-    const isMounted = useRef(false); // Dùng để theo dõi xem component có đang mounted không
+    const isMounted = useRef(false);
     const lastMount = async () => {
         try {
           if (isMounted.current) {
@@ -52,23 +52,16 @@ const Admin= () =>{
             <Routes>
                 <Route path="/" element= {<AdminLayout/>}>
                     <Route path={path.ADMIN_OVERVIEW} element={<Overview/>}></Route>
-
                     <Route path={path.ADMIN_PRODUCT} element={<Product/>}></Route>
                     <Route path={path.ADMIN_EDIT_PRODUCT} element={<EditProduct/>}></Route>
                     <Route path={path.ADD_PRODUCT} element={<AddProduct/>}></Route>
-
                     <Route path={path.ADMIN_CATEGORY} element={<Category/>}></Route>
                     <Route path={path.ADMIN_EDIT_CATEGORY} element={<EditCategory/>}></Route>
                     <Route path={path.ADD_CATEGORY} element={<AddCategory/>}></Route>
                     <Route path={path.FEEDBACK} element={<Feedback/>}></Route>
-
-                    {/* <Route path={path.ADMIN_FEEDBACK_DETAIL} element={<FeedBackDetail/>}></Route> */}
-                    
                     <Route path={path.ADMIN_ORDER} element={<Order/>}></Route>
                     <Route path={path.ADMIN_ORDER_DETAIL} element={<OrderDetail/>}></Route>
-
-                    <Route path={path.ADMIN_USER} element={<User/>}></Route>
-                    
+                    <Route path={path.ADMIN_USER} element={<User/>}></Route>   
                 </Route>
             </Routes>
         </div>

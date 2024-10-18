@@ -1,5 +1,5 @@
-import axiosInstance from "../utils/axios";
-import axiosInstanceRecommended from "../utils/recommendedAxios";
+import axiosInstance from "@/utils/axios";
+import axiosInstanceRecommended from "@/utils/recommendedAxios";
 export const apiGetProducts = async (params) =>
     axiosInstance({
         url: "/products",

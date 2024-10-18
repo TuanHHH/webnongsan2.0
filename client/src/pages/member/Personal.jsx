@@ -147,7 +147,7 @@ const Personal = () => {
                 <div className="flex flex-col gap-2">
                     <span className="font-medium">Profile image:</span>
                     <label htmlFor="file" className="flex w-1/5">
-                        <img src={user?.avatarUrl ? `http://localhost:8080/storage/avatar/${user?.avatarUrl}` : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
+                        <img src={user?.avatarUrl ? `${import.meta.env.VITE_BACKEND_TARGET}/storage/avatar/${user?.avatarUrl}` : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
                     </label>
                     <input type="file" accept="image/*" id="file" {...register('avatarUrl')} hidden />
                 </div>

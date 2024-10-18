@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputFormAdmin from "./InputFormAdmin";
-import product_default from './../../assets/product_default.png'
+import product_default from '@/assets/product_default.png'
 const DeleteProductForm = ({ initialProductData }) => {
   const {
     register,

@@ -24,7 +24,6 @@ const Overview = () => {
       const res = await apiUpdateOrderStatus(orderId, 1); // Chờ kết quả
       if (res.statusCode === 200) {
         toast.success("Đơn hàng đã được đặt là đang vận chuyển!");
-        // Có thể gọi lại fetchOrders() để làm mới danh sách đơn hàng nếu cần
         await fetchOrders();
         await fetchOverviewOrder();
       } else {

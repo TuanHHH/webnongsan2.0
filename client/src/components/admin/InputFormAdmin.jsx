@@ -20,9 +20,7 @@ const InputFormAdmin = ({
             id={id}
             {...register(id,validate)}
             disabled={disabled}
-            // placeholder={placeholder}
-            // className={clsx('form-input my-auto',fullWitdh && 'w-full')}
-            className={className}
+            className={className && 'rounded-lg'}
             defaultValue={defaultValue}
         />
         {errors[id] && <small className='text-x5 text-red-500'>{errors[id]?.message}</small>}

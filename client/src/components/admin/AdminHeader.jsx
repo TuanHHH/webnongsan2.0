@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import path from "../../utils/path";
-import logo from "../../assets/logo.png";
+import path from "@/utils/path";
+import logo from "@/assets/logo.png";
 const AdminHeader = () => {
     return (
         <div className="flex justify-between w-main h-[110px] py-[35px] border border-red-500">

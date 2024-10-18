@@ -1,5 +1,4 @@
-import axiosInstance from "../utils/axios";
-import axiosInstanceRecommended from "../utils/recommendedAxios";
+import axiosInstance from "@/utils/axios";
 export const apiGetCategory = async (cid) =>
     axiosInstance({
         url: `/categories/${cid}`,
