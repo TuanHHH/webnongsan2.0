@@ -35,7 +35,9 @@ const TopHeader = () => {
     return (
         <div className="w-full bg-main flex items-center justify-center">
             <div className="w-main h-10 flex items-center justify-between text-xs text-white">
-                <span>/</span>
+                <Link to={'/vietnam-location'}>
+                    <img src="https://cdn-0.emojis.wiki/emoji-pics/google/vietnam-google.png" className="w-8 h-8"/>
+                </Link>
                 {!isLoggedIn || !current
                     ? <Link className=" hover:text-gray-700" to={`/${path.LOGIN}`}>Đăng nhập hoặc đăng ký</Link>
                     : <div className="flex items-center gap-2">

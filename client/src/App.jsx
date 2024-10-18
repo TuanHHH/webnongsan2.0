@@ -9,6 +9,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Modal } from '@/components';
 import { Feedback } from './pages/admin';
+import LocationSelector from './pages/guest/LocationSelector';
 const App = () => {
   const dispatch = useDispatch();
   const { isShowModal, modalChildren } = useSelector(state => state.app)
@@ -43,6 +44,7 @@ const App = () => {
           <Route path={path.FEEDBACK} element={<Feedback/>}></Route>
         </Route>
         <Route path={path.LOGIN} element={<Login />}></Route>
+        <Route path='/vietnam-location' element={<LocationSelector/>}></Route>
       </Routes>
       <ToastContainer
         position="bottom-right"
