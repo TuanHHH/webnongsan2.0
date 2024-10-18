@@ -1,5 +1,5 @@
-import axiosInstance from "../utils/axios";
-import axiosInstanceRecommended from "../utils/recommendedAxios";
+import axiosInstance from "@/utils/axios";
+import axiosInstanceRecommended from "@/utils/recommendedAxios";
 export const apiGetProducts = async (params) =>
     axiosInstance({
         url: "/products",
@@ -39,10 +39,16 @@ export const apiGetProduct = async (pid) =>
 export const apiGetRecommendedProducts = async (pid) =>
     axiosInstanceRecommended({
         url: `/similar-products/${pid}`,
-        method: 'get'
-    })
+        method: 'get',
+    });
 
+export const apiDeleteProduct = async (pid)=>
+    axiosInstance({
+        url: `/products/${pid}`,
+        method: 'delete',
+    });
 
+    
 export const apiRatings = async (data) =>
     axiosInstance({
         url: `/product/ratings`,
@@ -63,6 +69,24 @@ export const apiGetMaxPrice = async (category, productName) =>
         method: "get",
         params: { category, productName },
     });
+
+export const apiCreateProduct = async(product)=>{
+    const res = await axiosInstance({
+        url : `/products`,
+        method:'post',
+        data:product,
+    })
+    return res;
+}
+
+export const apiUpdateProduct2 = async(product)=>{
+    const res = await axiosInstance({
+        url : `/products`,
+        method:'put',
+        data:product,
+    })
+    return res
+}
 
 // Lấy danh sách orders
 export const apiGetOrders = async (params) =>
@@ -90,3 +114,4 @@ export const apiHideRating = async (id)=>
         url: `ratings/${id}`,
         method: "put",
     })
+

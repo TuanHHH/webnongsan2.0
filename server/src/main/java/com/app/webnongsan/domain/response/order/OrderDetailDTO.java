@@ -2,6 +2,7 @@ package com.app.webnongsan.domain.response.order;
 
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,8 @@ public class OrderDetailDTO {
     private long productId;
     private String productName;
     private int quantity;
-    private Double productPrice;
+    private Double unit_price;
+
     private String imageUrl;
     private String category;
 
@@ -31,7 +33,7 @@ public class OrderDetailDTO {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
-        this.productPrice = productPrice;
+        this.unit_price = productPrice;
         this.imageUrl = imageUrl;
         this.category = category;
         this.orderId = orderId;

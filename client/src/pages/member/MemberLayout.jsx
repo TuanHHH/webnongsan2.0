@@ -11,7 +11,7 @@ const MemberLayout = ()=>{
     useEffect(() => {
         // Đợi 1 giây rồi chuyển hướng
         const timer =setTimeout(() => {
-            setLoading(false); // Dừng hiển thị spinner
+            setLoading(false);
             }, 1000);
         return () => clearTimeout(timer);
     }, []);
@@ -22,9 +22,9 @@ const MemberLayout = ()=>{
             {loading && (
             <ClipLoader
                 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                color="#36d7b7" // Màu của spinner
+                color="#36d7b7"
                 loading={loading}
-                size={50} // Kích thước của spinner
+                size={50}
             />
         )}
         {!loading && (

@@ -20,6 +20,7 @@ const override = {
 };
 
 const Product = () => {
+
   const [products, setProducts] = useState([]);
   const [activeClick, setActiveClick] = useState(null);
   const [params] = useSearchParams();

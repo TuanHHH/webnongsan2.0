@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axios";
+import axiosInstance from "@/utils/axios";
 
 export const apiRegister = async (data) =>
     axiosInstance({
@@ -54,6 +54,14 @@ export const apiLogout = async () =>
         url: "/auth/logout",
         method: 'post',
         withCredentials: true,
+    });
+
+
+export const apiGetAllUser = async (params) =>
+    axiosInstance({
+        url: "/users",
+        method: "get",
+        params,
     });
 
 export const apiUpdateCurrentUser = async (formData) =>
@@ -130,6 +138,13 @@ export const apiAddWishList = async (pid) => {
     })
 }
 
+export const apiSetStatusUser = async (user) => {
+    return axiosInstance({
+        url: "/users",
+        method: 'put',
+        data: user
+    });
+};
 // Tạo order
 export const apiCreateOrder = async (formData)=>{
     return axiosInstance({
