@@ -10,7 +10,7 @@ import { getCategories } from "@/store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Modal } from '@/components';
-import { Admin } from "./pages/admin/index";
+import { Admin, Feedback } from "./pages/admin/index";
 const App = () => {
   const dispatch = useDispatch();
   const { isShowModal, modalChildren } = useSelector(state => state.app)
@@ -38,7 +38,8 @@ const App = () => {
           <Route path={path.PAYMENT_SUCCESS} element={<PaymentSuccess />}></Route>
           <Route path={path.PAYMENT_FAILURE} element={<PaymentFailure />}></Route>
         </Route>
-        <Route path={path.ADMIN_LAYOUT} element={<Admin/>}>    
+        <Route path={path.ADMIN_LAYOUT} element={<Admin/>}> 
+          <Route path={path.FEEDBACK} element={<Feedback />}></Route>   
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />}></Route>
