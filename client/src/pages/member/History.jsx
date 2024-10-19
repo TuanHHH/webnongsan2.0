@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { CustomSelect, Pagination } from "@/components";
+import { CustomSelect, Pagination,Button, OrderCard } from "@/components";
 import { useForm } from "react-hook-form";
 import { apiGetOrders } from "@/apis";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import product_default from '@/assets/product_default.png';
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 import { statusOrder } from "@/utils/constants";
 import withBaseComponent from "@/hocs/withBaseComponent"
+import { FaEye } from "react-icons/fa6";
+import { showModal } from "@/store/app/appSlice";
+import { convertToSlug } from "@/utils/helper";
 
 
 const History = ({ navigate, location }) => {
-    const { current } = useSelector(state => state.user)
+    const { current,isLoggedIn } = useSelector(state => state.user)
     const { handleSubmit, register, formState: { errors }, watch, setValue } = useForm()
     const [paginate, setPaginate] = useState(null)
     const [ordersPage, setOrdersPage] = useState()
     const [currentPage, setCurrentPage] = useState(1)
     const [paramPage, SetParamPage] = useState()
     const [params] = useSearchParams()
+    const dispatch = useDispatch()
     const status = watch("status")
 
     const navigateProduct = useNavigate()
@@ -56,6 +60,32 @@ const History = ({ navigate, location }) => {
             }).toString()
         })
     }
+    const handleViewDetail = (oid,pid)=>{
+        console.log(oid,pid)
+        if (!isLoggedIn) {
+            Modal.confirm({
+                title: "Oops!",
+                content: "Đăng nhập trước xem",
+                okText: "Đăng nhập",
+                cancelText: "Hủy",
+                onOk: () => navigate(`/${path.LOGIN}`)
+            });
+        } else {
+            const order = ordersPage.filter(order => order?.orderId === oid);
+            dispatch(showModal({
+                isShowModal: true,
+                modalChildren: <OrderCard data={order} onClose={() => dispatch(showModal({ isShowModal: false }))} updateOrderStatus={updateOrderStatus}/>
+            }));
+        }
+    }
+    const updateOrderStatus = (orderId, newStatus) => {
+        // Tìm đơn hàng cần cập nhật
+        const updatedOrders = ordersPage.map(order => 
+            order.orderId === orderId ? { ...order, status: newStatus } : order
+        );
+        // Cập nhật lại state với dữ liệu mới
+        setOrdersPage(updatedOrders);
+    }
     return (
         <div className="w-full relative px-4 flex flex-col gap-6">
             <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">
@@ -86,6 +116,7 @@ const History = ({ navigate, location }) => {
                                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
                                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Xem chi tiết</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian đặt hàng</th>
                             </tr>
                         </thead>
@@ -97,7 +128,7 @@ const History = ({ navigate, location }) => {
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center cursor-pointer"
-                                            onClick={e => navigateProduct(`/${encodeURIComponent(order?.category)}/${order?.productId}/${encodeURIComponent(order?.productName)}`)}
+                                            onClick={e => navigate(`/products/${encodeURIComponent(order?.category)}/${order?.productId}/${convertToSlug(order?.productName)}`)}
                                             onMouseEnter={(e) => {
                                                 e.stopPropagation();
                                             }}
@@ -130,6 +161,19 @@ const History = ({ navigate, location }) => {
                                         >
                                             {order.status === 0 ? "Pending" : order.status === 1 ? "Succeed" : "Cancelled"}
                                         </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                        <div className="relative group">
+                                            <Button 
+                                            handleOnClick={() => handleViewDetail(order?.orderId,order?.productId)}
+                                            style="text-blue-500 hover:text-blue-700 focus:outline-n "
+                                            >
+                                                <FaEye size={20} color="green"/>
+                                            </Button>
+                                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                View Detail
+                                            </div>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
                                         {new Date(order.orderTime).toLocaleString("vi-VN")}
