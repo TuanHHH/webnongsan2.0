@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { getUserById } from "@/apis";
 
 const activedStyle = 'px-4 py-2 flex items-center gap-2 text-white  bg-[#10B981]'
-const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-100'
+const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-green-100'
 const MemberSidebar = () => {
     const [actived, setActived] = useState([])
     const { current } = useSelector(state => state.user)
@@ -53,7 +53,7 @@ const MemberSidebar = () => {
                         </NavLink>}
                         {el.type === 'PARENT' && <div className="flex flex-col" onClick={() => handleShowTabs(+el.id)}>
                             <div
-                                className="flex items-center justify-between px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                                className="flex items-center justify-between px-4 py-2 hover:bg-green-100 cursor-pointer"
 
                             >
                                 <div className="flex items-center gap-2">

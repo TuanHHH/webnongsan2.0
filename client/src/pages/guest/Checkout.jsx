@@ -126,10 +126,9 @@ const Checkout = () => {
         }
     }
     useEffect(() => {
-        if (current) {
+        if (current && selectedItems) {
             fetchCart()
             fetchUserByCurrentId()
-            console.log(selectedItems)
         }
     }, [current])
 
@@ -159,22 +158,22 @@ const Checkout = () => {
             }
             {isCart &&
                 <div className="flex w-full flex-col justify-center items-center col-span-7 gap-6">
-                    <h2 className="text-3xl mb-6 font-bold">Check out your order</h2>
+                    <h2 className="text-3xl mb-6 font-bold">Kiểm tra đơn hàng của bạn</h2>
                     <div className="grid grid-cols-10 h-full w-full gap-6">
-                        <table className="table-auto w-full col-span-6 border-collapse border border-gray-300 rounded-lg">
+                        <table className="table-auto w-full h-fit col-span-6 border-collapse border border-gray-300 rounded-lg">
                             <thead>
                                 {/* border bg-gray-300 */}
                                 <tr className=" border-b hover:bg-gray-50 transition duration-200">
-                                    <th className="p-2 text-left">Products</th>
-                                    <th className="p-2 text-center">Quantity</th>
-                                    <th className="p-2 text-right">Price</th>
+                                    <th className="p-2 text-left">Sản phẩm</th>
+                                    <th className="p-2 text-center">Số lượng</th>
+                                    <th className="p-2 text-right">Giá</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {cart?.map((el, index) => (<tr className="border" key={el?.productId + "-" + index}>
                                     <td className="p-2 text-left">{el?.productName}</td>
                                     <td className="p-2 text-center">{el?.quantity}</td>
-                                    <td className="p-2 text-right">{el?.price + ' VND'}</td>
+                                    <td className="p-2 text-right">{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(+el?.price)}</td>
                                 </tr>))}
                             </tbody>
                         </table>
@@ -185,16 +184,14 @@ const Checkout = () => {
                                 <FaRegCreditCard className="w-16 h-16 text-primary" />
                             </div>
                             <div className="text-2xl font-bold text-center">
-                                Total Price: <span className="text-green-500">{`${cart?.reduce((sum, el) =>
-                                    +el?.price * el.quantity + sum, 0)} VND`}</span>
+                                Tổng tiền: 
+                                <span className="text-green-500 ml-2">
+                                {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(+cart?.reduce((sum, el) =>
+                                    +el?.price * el.quantity + sum, 0))}
+                                </span>
                             </div>
-                            {/* <span className="flex items-center gap-8 text-base mt-8"> */}
-                            {/* <span>Total Price:</span>
-                        <span className="text-main font-bold text-2xl">{`${cart?.reduce((sum,el) => 
-                            +el?.productPrice * el.quantity + sum,0 )} VND`}</span>
-                        </span> */}
                             <InputForm
-                                label='Address:'
+                                label='Địa chỉ:'
                                 register={register}
                                 errors={errors}
                                 id='address'
@@ -210,9 +207,22 @@ const Checkout = () => {
                                     }
                                 }}
                             />
+                            <InputForm
+                                label='Số điện thoại'
+                                register={register}
+                                errors={errors}
+                                id='phone'
+                                validate={{
+                                    required: 'Vui lòng điền thông tin',
+                                    pattern: {
+                                        value: /^0\d{9}$/, // Regex để kiểm tra số điện thoại bắt đầu bằng 0 và có 10 số
+                                        message: 'Số điện thoại không hợp lệ',
+                                    },
+                                }}
+                            />
                             {/* px-4 py-2 rounded-md text-white bg-main text-semibold my-2 w-full justify-end */}
-                            {isValid && <button className={ "px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="COD">Thanh toán khi nhận hàng</button>}
-                            {isValid && <button className={"px-4 py-2 rounded-md text-white bg-green-600 hover:bg-blue-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="VNPAY">Thanh toán bằng VNPAY</button>}
+                            {<button className={ "px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="COD">Thanh toán khi nhận hàng</button>}
+                            {<button className={"px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="VNPAY">Thanh toán bằng VNPAY</button>}
                         </form>
                     </div>
                 </div>

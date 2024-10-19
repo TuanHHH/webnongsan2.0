@@ -106,33 +106,41 @@ const Feedback = ({ navigate, location }) => {
             const feedback = feedbacksPage.find(feedback => feedback.id === id);
             const response = await apiHideRating(feedback?.id);
             if (+response.statusCode === 201) {
-                message.success(feedback?.status === 0 ? "Hide feedback succeed" : "Unhide feedback succeed");
+                message.success(feedback?.status === 0 ? "Ẩn đánh giá thành công" : "Hiện đánh giá thành công");
                 setTimeout(() => {
                     dispatch(getCurrentUser());
                 }, 1000);
             } else {
-                message.error("Can't hide this feedback");
+                message.error("Có lỗi. Không thể ẩn hay hiện đánh giá này");
             }
         }
     };
 
     const columns = [
-        { title: 'Product', dataIndex: 'product_name', key: 'product_name' },
-        { title: 'User', dataIndex: 'userName', key: 'userName' },
-        { title: 'Rating', dataIndex: 'ratingStar', key: 'ratingStar', align: 'center', render: (rating) => `${rating} ★` },
-        { title: 'Description', dataIndex: 'description', key: 'description', render: (text) => text.length > 50 ? `${text.substring(0, 50)}...` : text },
-        { title: 'Updated Time', dataIndex: 'updatedAt', key: 'updatedAt', align: 'right', render: (date) => new Date(date).toLocaleString("vi-VN") },
+        { title: 'Sản phẩm', dataIndex: 'product_name', key: 'product_name' },
+        { title: 'Người dùng', dataIndex: 'userName', key: 'userName' },
+        { title: 'Đánh giá', dataIndex: 'ratingStar', key: 'ratingStar', align: 'center', render: (rating) => `${rating} ★` },
+        { title: 'Mô tả', dataIndex: 'description', key: 'description', render: (text) => text.length > 50 ? `${text.substring(0, 50)}...` : text },
+        { title: 'Thời gian cập nhật', dataIndex: 'updatedAt', key: 'updatedAt', align: 'right', render: (date) => new Date(date).toLocaleString("vi-VN") },
         {
-            title: 'View Detail',
+            title: 'Xem chi tiết',
             key: 'viewDetail',
             align: 'center',
-            render: (_, record) => <Button type="link" onClick={() => handleViewDetail(record.id)} icon={<FaEye color="green" />} />
+            render: (_, record) => <Button 
+            type="link" 
+            onClick={() => handleViewDetail(record.id)} 
+            icon={<FaEye color="green" />} 
+            title="Xem chi tiết"/>
         },
         {
-            title: 'Hide',
+            title: 'Ẩn',
             key: 'hide',
             align: 'center',
-            render: (_, record) => <Button type="link" onClick={() => handleHideFeedback(record.id)} icon={<MdOutlineBlock color={record.status === 0 ? "red" : "gray"} />} />
+            render: (_, record) => <Button 
+            type="link" 
+            onClick={() => handleHideFeedback(record.id)} 
+            icon={<MdOutlineBlock color={record.status === 0 ? "red" : "gray"} />} 
+            title={record.status === 0 ? "Ẩn" : "Hiện"}/>
         }
     ];
 
@@ -140,13 +148,13 @@ const Feedback = ({ navigate, location }) => {
         <div className="w-full">
             <div className="mb-4">
                 <Select
-                    placeholder="Sort"
+                    placeholder="Sắp xếp"
                     options={sortFeedbackOrder}
                     onChange={handleChangeSortValue}
                     style={{ width: 200, marginRight: 16 }}
                 />
                 <Select
-                    placeholder="Filter by status"
+                    placeholder="Lọc theo trạng thái"
                     options={statusHideOrder}
                     onChange={handleChangeStatusValue}
                     style={{ width: 200 }}

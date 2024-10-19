@@ -28,7 +28,6 @@ const History = ({ navigate, location }) => {
             setCurrentPage(page);
         } else if (!isNaN(+status?.status)) {
             response = await apiGetOrders({ page, status: status?.status });
-            console.log(response)
             setPaginate(response.data?.meta);
             setCurrentPage(page);
         }
@@ -60,12 +59,12 @@ const History = ({ navigate, location }) => {
     return (
         <div className="w-full relative px-4 flex flex-col gap-6">
             <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">
-                History
+                Lịch sử mua hàng
             </header>
             <div className="flex justify-end items-center px-4">
                 <form className="w-[45%] grid grid-cols-4 gap-4">
                     <div className="col-span-3 flex items-center justify-end">
-                        <span>Filter by status:</span>
+                        <span>Lọc theo trạng thái:</span>
                     </div>
                     <div className="col-span-1 flex items-start">
                         <CustomSelect
@@ -83,11 +82,11 @@ const History = ({ navigate, location }) => {
 
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ordered Time</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian đặt hàng</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
