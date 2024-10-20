@@ -135,7 +135,8 @@ const Checkout = () => {
 
     useEffect(() => {
         reset({
-            address: user?.address
+            address: user?.address,
+            phone: user?.phone
         })
     }, [user])
 
