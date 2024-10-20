@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
-
-const CategoryComboBox = ({ onSelectCategory}) => {
+const CategoryComboBox = ({ onSelectCategory, search }) => {
     const { categories } = useSelector((state) => state.app);
     const [selectedCategory, setSelectedCategory] = useState('');
 
@@ -10,21 +9,25 @@ const CategoryComboBox = ({ onSelectCategory}) => {
         const selectedId = event.target.value;
         setSelectedCategory(selectedId);
 
-        // Tìm category theo id đã chọn và gửi nó cho cha
         const selectedCategory = categories.find(category => category.id === parseInt(selectedId));
-        onSelectCategory(selectedCategory);
+        if (onSelectCategory) {
+            onSelectCategory(selectedCategory);
+        }
     };
-
+    const selectClass = (typeof search !== 'undefined' && search !== null) 
+    ? "border p-1 w-full rounded-md text-xs" 
+    : "border p-2 w-full rounded-md";
+    
     return (
         <div className='w-full'>
             <select 
                 value={selectedCategory} 
                 onChange={handleChange}
-                className="border p-2 w-full rounded-md"
+                className={selectClass}
             >
-                <option value="">Select a category</option>
+                <option value="" className={search ? 'text-xs' : ''}>Chọn phân loại</option>
                 {categories?.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.id} value={category.id} className={search ? 'text-xs' : ''}>
                         {category.name}
                     </option>
                 ))}

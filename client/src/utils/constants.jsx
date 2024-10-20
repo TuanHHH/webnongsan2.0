@@ -122,15 +122,19 @@ export const statusOrder = [
   },
   {
     label: 'Pending',
-    value: 0
+    value: 0,
+  },
+  {
+    label:'In delivery',
+    value: 1,
   },
   {
     label: "Succeed",
-    value: 1
+    value: 2,
   },
   {
     label: "Cancelled",
-    value: 2
+    value: 3,
   }
 ]
 export const statusHideOrder = [
