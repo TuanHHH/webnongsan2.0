@@ -34,5 +34,4 @@ build/
 
 **/application.properties
 **/application.yml
-**/application-urls.yml
 

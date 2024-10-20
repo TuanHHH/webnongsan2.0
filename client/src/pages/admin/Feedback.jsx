@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Select, Table, Pagination, Modal, message } from "antd";
+import { Button, Select, Table, Modal, message } from "antd";
 import { apiGetAllRatingsPage, apiHideRating } from "@/apis";
 import { useDispatch, useSelector } from "react-redux";
 import { showModal } from '@/store/app/appSlice';

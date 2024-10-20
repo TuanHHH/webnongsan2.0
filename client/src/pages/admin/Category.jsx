@@ -119,7 +119,7 @@ const Category = () => {
           }} />
         <Modal
           title="Xác nhận xóa"
-          visible={!!deleteCategoryId}
+          open={!!deleteCategoryId}
           onCancel={handleCloseDeleteCategoryMessage}
           footer={[
             <Button key="back" onClick={handleCloseDeleteCategoryMessage}>

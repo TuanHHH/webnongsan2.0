@@ -189,7 +189,6 @@ const ProductDetail = ({ isQuickView, data }) => {
           <div className='w-[450px]'>
             <div className='px-2' >
               <img 
-              // src={product?.imageUrl || product_default}
               src={
                 product?.imageUrl
                   ? product?.imageUrl.startsWith("https")
@@ -278,7 +277,7 @@ const ProductDetail = ({ isQuickView, data }) => {
             <div className='flex flex-col gap-4'>
               {feedbacksPage?.map((el, index) => (
                 <Comment key={index} ratingStar={el.ratingStar} content={el.description}
-                  updatedAt={el.updatedAt} name={el.userName} image={`http://localhost:8080/storage/avatar/${el?.userAvatarUrl}`} />
+                  updatedAt={el.updatedAt} name={el.userName} image={`${import.meta.env.VITE_BACKEND_TARGET}/storage/avatar/${el?.userAvatarUrl}`} />
               ))}
             </div>
             {paginate?.pages > 1 && <div>
