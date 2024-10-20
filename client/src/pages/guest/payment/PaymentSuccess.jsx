@@ -62,7 +62,7 @@ const PaymentSuccess = () => {
                     productId: item?.productId,
                     productName: item?.productName,
                     quantity: item?.quantity,
-                    productPrice: item?.productPrice
+                    unit_price: item?.unit_price
                 }));
                 formData.append("items", new Blob([JSON.stringify(items)], { type: "application/json" }));
                 await apiSendEmail(formData);

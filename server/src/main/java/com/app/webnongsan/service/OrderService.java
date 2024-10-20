@@ -156,6 +156,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(currentUserDB);
         order.setAddress(orderDTO.getAddress());
+        order.setPhone(orderDTO.getPhone());
         order.setTotal_price(orderDTO.getTotalPrice());
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setStatus(0);
@@ -170,8 +171,9 @@ public class OrderService {
             orderDetail.setId(id);
             orderDetail.setOrder(saveOrder);
             orderDetail.setProduct(product);
+
             orderDetail.setQuantity(item.getQuantity());
-            orderDetail.setUnit_price(item.getUnit_price());
+            orderDetail.setUnit_price(product.getPrice());
             orderDetailRepository.save(orderDetail);
         });
         return saveOrder;

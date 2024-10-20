@@ -30,6 +30,7 @@ const History = ({ navigate, location }) => {
             response = await apiGetOrders({ page });
             setPaginate(response.data?.meta);
             setCurrentPage(page);
+            console.log(response.data)
         } else if (!isNaN(+status?.status)) {
             response = await apiGetOrders({ page, status: status?.status });
             setPaginate(response.data?.meta);
@@ -40,7 +41,6 @@ const History = ({ navigate, location }) => {
     useEffect(() => {
         if (current) {
             fectOrders(currentPage, paramPage)
-            console.log(ordersPage)
         }
     }, [current, currentPage])
 
@@ -154,12 +154,14 @@ const History = ({ navigate, location }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-center">
                                         <span
-                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 0
-                                                    ? "bg-green-100 text-green-800"
-                                                    : order.status === 1 ? "bg-green-200 text-green-900" : "bg-red-100 text-red-800"
+                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                    order.status === 0 ? "bg-green-100 text-green-700"
+                                                    : order.status === 1 ? "bg-green-200 text-green-800" 
+                                                    : order.status === 2 ? "bg-green-300 text-green-900" 
+                                                    : "bg-red-100 text-red-800"
                                                 }`}
                                         >
-                                            {order.status === 0 ? "Pending" : order.status === 1 ? "Succeed" : "Cancelled"}
+                                            {order.status === 0 ? "Pending" : order.status === 1 ? "In delivery" : order.status === 2 ? "Succeed" : "Cancelled"}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-center">

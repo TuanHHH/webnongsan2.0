@@ -25,6 +25,8 @@ public class Order {
 
     private String address;
 
+    private String phone;
+
     private double total_price;
 
     @ManyToOne(fetch = FetchType.LAZY)

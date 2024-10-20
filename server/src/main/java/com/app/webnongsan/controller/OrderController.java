@@ -76,6 +76,7 @@ public class OrderController {
     public ResponseEntity<RestResponse<Long>> create(
             @RequestParam("userId") Long userId,
             @RequestParam("address") String address,
+            @RequestParam("phone") String phone,
             @RequestParam("paymentMethod") String paymentMethod,
             @RequestParam("totalPrice") Double totalPrice,
             @RequestPart("items") List<OrderDetailDTO> items
@@ -85,6 +86,7 @@ public class OrderController {
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setUserId(userId);
             orderDTO.setAddress(address);
+            orderDTO.setPhone(phone);
             orderDTO.setPaymentMethod(paymentMethod);
             orderDTO.setTotalPrice(totalPrice);
             orderDTO.setItems(items);

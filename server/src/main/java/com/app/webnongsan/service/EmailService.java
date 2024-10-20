@@ -63,7 +63,7 @@ public class EmailService {
     }
     @Async
     public void sendEmailFromTemplateSyncCheckout(String to, String subject, String templateName,
-                                                  String username,String address, String paymentMethod, Double totalPrice, List<OrderDetailDTO> items) {
+                                                  String username,String address, String phone, String paymentMethod, Double totalPrice, List<OrderDetailDTO> items) {
 
         String formattedTotalPrice = formatCurrency(totalPrice);
         // Format từng sản phẩm trong danh sách items
@@ -79,6 +79,7 @@ public class EmailService {
         context.setVariable("TOTAL_PRICE", totalPrice);
         context.setVariable("customerName",username);
         context.setVariable("customerAddress",address);
+        context.setVariable("customerPhone",phone);
         context.setVariable("customerCountry","Việt Nam");
         context.setVariable("paymentMethod",paymentMethod);
         context.setVariable("invoiceDate",formattedDateTime);
