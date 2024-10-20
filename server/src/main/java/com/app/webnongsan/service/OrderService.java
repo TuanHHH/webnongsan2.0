@@ -8,7 +8,9 @@ import com.app.webnongsan.repository.OrderRepository;
 import com.app.webnongsan.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -52,14 +54,11 @@ public class OrderService {
 
 
     public List<OrderDTO> getLastFiveOrders() {
-        List<Order> orders = orderRepository.findAll();
-        orders.sort(Comparator.comparingLong(Order::getId).reversed());
-        List<OrderDTO> responseOrders;
-        responseOrders = orders.stream()
-                .limit(5)
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
+        List<Order> orders = this.orderRepository.findAll(pageable).getContent();
+        return orders.stream()
                 .map(this::convertToOrderDTO)
                 .collect(Collectors.toList());
-        return responseOrders;
     }
 
 

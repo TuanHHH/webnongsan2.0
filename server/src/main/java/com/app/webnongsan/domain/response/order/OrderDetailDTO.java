@@ -13,7 +13,6 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class OrderDetailDTO {
     private long productId;
     private String productName;
@@ -29,12 +28,12 @@ public class OrderDetailDTO {
     @Transient
     private String formattedPrice;
     // Constructor không bao gồm formattedPrice để Hibernate sử dụng
-    public OrderDetailDTO(long productId, String productName, int quantity, Double productPrice,
+    public OrderDetailDTO(long productId, String productName, int quantity, Double unit_price,
                           String imageUrl, String category, long orderId, Instant orderTime, int status) {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
-        this.productPrice = productPrice;
+        this.unit_price = unit_price;
         this.imageUrl = imageUrl;
         this.category = category;
         this.orderId = orderId;

@@ -3,48 +3,129 @@ import { apiGetAllOrders, apiUpdateOrderStatus } from "@/apis";
 import { FaInfoCircle } from "react-icons/fa";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Table, Button, Dropdown, Menu } from "antd";
-
+import { Table, Button, Dropdown, Menu ,Select} from "antd";
+import { createSearchParams } from "react-router-dom";
+import { statusOrder } from "@/utils/constants";
 const Order = () => {
+  // const statusOrder = [  
+  //   {
+  //     label: "Default",
+  //     value: "default"
+  //   },
+  //   {
+  //     label: 'Pending',
+  //     value: 0,
+  //   },
+  //   {
+  //     label:'In delivery',
+  //     value: 1,
+  //   },
+  //   {
+  //     label: "Succeed",
+  //     value: 2,
+  //   },
+  //   {
+  //     label: "Cancelled",
+  //     value: 3,
+  //   }
+  // ]
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(params.get("page")) || 1);
   const ORDER_PER_PAGE = 12;
+  const [orderMeta, setOrderMeta] = useState(null)
+  const status = params.get("status")
 
   const fetchOrders = async (queries) => {
     const res = await apiGetAllOrders(queries);
     setOrders(res.data.result);
+    setOrderMeta(res.data.meta)
   };
 
   useEffect(() => {
     const queries = {
       page: currentPage,
       size: ORDER_PER_PAGE,
+      filter:[],
     };
     fetchOrders(queries);
-  }, [currentPage]);
+  }, []);
 
   const handlePagination = (page) => {
     setCurrentPage(page);
     const queries = {
       page: page,
       size: ORDER_PER_PAGE,
+      filter:[]
     };
-    navigate({
-      pathname: location.pathname,
-      search: new URLSearchParams(queries).toString(),
-    });
+    if(status)queries.filter.push(`status=${status}`)
+      console.log(queries.filter)
+    console.log(orderMeta.total)
     fetchOrders(queries);
+    const params = {};
+    if(status) params.status = status
+    params.page = page;
+    navigate({
+      search: createSearchParams(params).toString(),
+    });
   };
 
-  const updateOrderStatus = async (orderId, status) => {
+  const handleChangeStatusOrder = (value) => {
+    setCurrentPage(1);
+    const filter = [];
+    const params = {};
+    if (value === "default") {
+      const queries = {
+        page: 1,
+        size: ORDER_PER_PAGE,
+        filter: []
+      };
+      params.page = 1;
+      fetchOrders(queries);
+      navigate({
+        search: createSearchParams(params).toString(),
+      });
+      
+    } else {
+      filter.push(`status=${value}`);
+      
+      const queries = {
+        page: 1,
+        size: ORDER_PER_PAGE,
+        filter: filter
+      };
+      fetchOrders(queries);
+      params.status = value
+      params.page = 1;
+      navigate({
+        search: createSearchParams(params).toString(),
+      });
+    }
+    
+  }
+
+  const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const res = await apiUpdateOrderStatus(orderId, status);
+      const res = await apiUpdateOrderStatus(orderId, newStatus);
+      const queries = {
+        page: currentPage,
+        size: ORDER_PER_PAGE,
+        filter: []
+      };
       if (res.statusCode === 200) {
         toast.success("Cập nhật trạng thái đơn hàng thành công!");
-        fetchOrders({ page: currentPage, size: ORDER_PER_PAGE });
+        const params = {};
+        if(status) params.status = status
+        params.page = currentPage;
+        queries.filter.push(`status=${status}`)
+        fetchOrders(queries);
+        navigate({
+          search: createSearchParams(params).toString(),
+        });
+        
+        // setOrders()
       } else {
         throw new Error("Cập nhật trạng thái thất bại");
       }
@@ -129,6 +210,14 @@ const Order = () => {
 
   return (
     <div className="w-full">
+      <div className="mb-4">
+      <Select
+                    placeholder="Sắp xếp theo trạng thái đơn đặt hàng"
+                    options={statusOrder}
+                    onChange={handleChangeStatusOrder}
+                    style={{ width: 200, marginRight: 16 }}
+                />
+      </div>
       <Table
         columns={columns}
         dataSource={orders}
@@ -136,7 +225,7 @@ const Order = () => {
         pagination={{
           current: currentPage,
           pageSize: ORDER_PER_PAGE,
-          total: orders.length,
+          total: orderMeta?.total,
           onChange: handlePagination,
         }}
       />

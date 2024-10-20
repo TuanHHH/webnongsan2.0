@@ -410,7 +410,7 @@ function OrderDetail() {
             <Text strong>Tên:</Text> {user?.data?.name}<br />
             <Text strong>☎Số điện thoại:</Text> {user?.data?.phone}<br />
             <Text strong>📩Email:</Text> {orderInformation?.data?.userEmail}<br />
-            <Text strong>📍Địa chỉ:</Text> {user?.data?.address}
+            <Text strong>📍Địa chỉ:</Text> {orderInformation?.data?.address}
           </Col>
           <Col span={12}>
             <Title level={4}>Đơn hàng</Title>

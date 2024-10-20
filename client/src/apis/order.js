@@ -3,7 +3,15 @@ export const apiGetAllOrders = async (params) =>
     axiosInstance({
         url: "/allOrders",
         method: "get",
-        params:params
+        params:params,
+        paramsSerializer: {
+            encode: (value) => value,
+            serialize: (params) => {
+                return Object.entries(params)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+            }
+        }
     })
 
 export const apiGetOrderDetail = async (oid) =>

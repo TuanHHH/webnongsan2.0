@@ -109,20 +109,19 @@ const Overview = () => {
     fetchUsers();
     fetchOverviewOrder();
   }, []);
-
+  
   return (
     <div className="flex">
       <div>
       </div>
       <div className="flex-1 p-6 bg-white">
         <h1 className="text-2xl font-bold mb-4">Overview</h1>
-
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white shadow rounded-lg p-4">
+          <div className="bg-white shadow rounded-lg p-4 pb-12">
             <h2 className="text-sm font-medium">Tổng lợi nhuận</h2>
-            <p className="text-2xl font-bold">${totalProfit}</p>
+            <p className="text-2xl font-bold">{totalProfit.toLocaleString("vi-VN")} đ</p>
           </div>
-          <div className="bg-white shadow rounded-lg p-4 pr-40">
+          <div className="bg-white shadow rounded-lg p-4 pr-28">
             <h2 className="text-sm font-medium">Người sử dụng</h2>
             <p className="text-2xl font-bold">{totalUser}</p>
           </div>
@@ -135,7 +134,6 @@ const Overview = () => {
             <p className="text-2xl font-bold">{totalOrder}</p>
           </div>
         </div>
-
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Đơn đặt hàng mới nhất</h2>
           <table className="w-full text-left">
@@ -154,7 +152,7 @@ const Overview = () => {
                   <td className="pb-1">{item?.id}</td>
                   <td>
                     <div
-                      className="cell pb-3"
+                      className="pb-3 relative"
                       onMouseEnter={() => setHoverOrderStatus(item.id)}
                       onMouseLeave={() => setHoverOrderStatus(null)}
                     >
@@ -170,38 +168,46 @@ const Overview = () => {
                         }`}
                         title={
                           item.status === 0
-                            ? "Pending"
+                            // ? "Pending"
+                            ?"Đợi"
                             : item.status === 1
-                            ? "In Delivery"
+                            // ? "In Delivery"
+                            ?"Đang vận chuyển"
                             : item.status === 2
-                            ? "Succeed"
-                            : "Cancelled"
+                            // ? "Succeed"
+                            ?"Xong"
+                            // : "Cancelled"
+                            :"Hủy"
                         }
                       >
                         {item.status === 0
-                          ? "Pending"
+                          // ? "Pending"
+                          ?"Đợi"
                           : item.status === 1
-                          ? "In Delivery"
+                          // ? "In Delivery"
+                          ?"Đang vận chuyển"
                           : item.status === 2
-                          ? "Succeed" // Hiển thị "In Delivery"
-                          : "Cancelled"}
+                          // ? "Succeed" 
+                          ?"Hoàn thành"
+                          // : "Cancelled"
+                          :"Hủy"
+                          }
                       </span>
-
                       {hoverOrderStatus === item.id && (
-                        <div className="absolute bg-white border border-gray-300 shadow-lg mt-1">
+                        <div className="absolute  left-0 mt-1 bg-white border border-gray-300 shadow-lg z-10">
                           {item.status === 0 && (
                             <>
                               <button
                                 className="block px-4 py-2 text-green-600 hover:bg-gray-100"
                                 onClick={() => setOrderInDelivery(item.id)}
                               >
-                                In Delivery
+                                Đang vận chuyển
                               </button>
                               <button
                                 className="block px-4 py-2 text-red-600 hover:bg-gray-100"
                                 onClick={() => setOrderCancel(item.id)}
                               >
-                                Cancel
+                                Hủy
                               </button>
                             </>
                           )}
@@ -210,14 +216,13 @@ const Overview = () => {
                               className="block px-4 py-2 text-green-600 hover:bg-gray-100"
                               onClick={() => setOrderSuccess(item.id)}
                             >
-                              Success
+                              Hoàn thành
                             </button>
                           )}
                         </div>
                       )}
                     </div>
                   </td>
-
                   <td>{item?.userName}</td>
                   <td>
                     {new Date(item?.orderTime).toLocaleDateString("vi-VN")}
@@ -231,6 +236,8 @@ const Overview = () => {
       </div>
     </div>
   );
+
+
 };
 
 export default Overview;

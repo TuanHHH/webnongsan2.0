@@ -59,7 +59,7 @@ public class OrderDetailService {
         res.setOrderId(orderDetail.getOrder().getId());
         res.setQuantity(orderDetail.getQuantity());
         res.setProductName(orderDetail.getProduct().getProductName());
-        res.setUnit_price(orderDetail.getUnit_price());
+        res.setUnit_price(orderDetail.getProduct().getPrice());
         res.setImageUrl(orderDetail.getProduct().getImageUrl());
         return res;
     }
