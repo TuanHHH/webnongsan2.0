@@ -1,16 +1,12 @@
 import React,{useEffect,useState} from "react";
-import { TopHeader } from "../../components";
 import { Route, Routes ,Navigate} from "react-router-dom";
-import path from "../../utils/path";
-import {Category,Order,Product,User} from "./";
-import {Overview} from './';
-import {OrderDetail} from "./";
-import {EditProduct,EditCategory} from "./";
+import path from "@/utils/path";
+
+import {Overview, Feedback, OrderDetail, EditCategory, EditProduct, Category,Order,Product,User} from './index';
 import { useSelector } from "react-redux";
 import { useRef } from 'react';
 import {AddCategory,AddProduct} from "./Add";
-import {AdminLayout} from "../../components/admin";
-import {Feedback} from "./";
+import {AdminLayout} from "@/components/admin";
 
 const Admin= () =>{
     const { isLoggedIn, current } = useSelector(state => state.user);
