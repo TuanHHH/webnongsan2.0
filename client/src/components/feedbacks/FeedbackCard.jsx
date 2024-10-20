@@ -32,7 +32,7 @@ const FeedbackCard = ({ data, onClose }) => {
                 </div>
                 
                 <div className="flex items-center justify-start mb-6 w-full">
-                    <span className="font-semibold text-lg mr-2">Rating:</span>
+                    <span className="font-semibold text-lg mr-2">Đánh giá:</span>
                     {[...Array(5)].map((_, index) => (
                     <FaStar
                         key={index}
@@ -54,15 +54,15 @@ const FeedbackCard = ({ data, onClose }) => {
 
                 <div className="flex items-center justify-start w-full text-sm text-muted-foreground mb-1">
                      {data?.status === 0 ?
-                        (<span className="flex items-center gap-2"> <GrStatusCriticalSmall size={16} color="red"/> {"Status :"}
-                        <div className="flex items-center"><span>Unhide</span></div></span>)
-                        :(<span className="flex items-center gap-2"><GrStatusCritical size={16} color="gray"/>{"Status :"}
-                            <div className="flex items-center"><span>Hide</span></div> </span>)
+                        (<span className="flex items-center gap-2"> <GrStatusCriticalSmall size={16} color="red"/> {"Trạng thái :"}
+                        <div className="flex items-center"><span>Hiện</span></div></span>)
+                        :(<span className="flex items-center gap-2"><GrStatusCritical size={16} color="gray"/>{"Trạng thái :"}
+                            <div className="flex items-center"><span>Ẩn</span></div> </span>)
                     }
                 </div>
                 <div className="flex items-center justify-start w-full text-sm text-muted-foreground">
                     <FaClock className="w-4 h-4 mr-1" />
-                    <span>Updated: {new Date(data?.updatedAt).toLocaleString("vi-VN")}</span>
+                    <span>Cập nhật: {new Date(data?.updatedAt).toLocaleString("vi-VN")}</span>
                 </div>
             </div>
         </div>

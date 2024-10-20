@@ -69,11 +69,11 @@ const Personal = () => {
     return (
         <div className="w-full relative px-4">
             <header className="text-xl font-semibold py-4 border-b border-b-blue-200">
-                Personal
+                Tranh cá nhân
             </header>
             <form onSubmit={handleSubmit(handleUpdateInfor)} className="w-3/5 mx-auto py-8 flex flex-col gap-4">
                 <InputForm
-                    label='Name'
+                    label='Tên'
                     register={register}
                     errors={errors}
                     id='name'
@@ -94,7 +94,7 @@ const Personal = () => {
                     }}
                 />
                 <InputForm
-                    label='Email Address'
+                    label='Email'
                     register={register}
                     errors={errors}
                     id='email'
@@ -107,7 +107,7 @@ const Personal = () => {
                     }}
                 />
                 <InputForm
-                    label='Address'
+                    label='Địa chỉ'
                     register={register}
                     errors={errors}
                     id='address'
@@ -124,7 +124,7 @@ const Personal = () => {
                     }}
                 />
                 <InputForm
-                    label='Phone'
+                    label='Số điện thoại'
                     register={register}
                     errors={errors}
                     id='phone'
@@ -138,21 +138,23 @@ const Personal = () => {
                 />
 
                 <div className="flex items-center gap-2">
-                    <span>Account status: </span>
+                    <span>Trạng thái tài khoản: </span>
                     <span>{user?.status === 0 ? "Block" : "Active"}</span>
                 </div>
-                
-                <span>{current?.role === 1 ? "Admin" : "User"}</span>
+                <div className="flex items-center gap-2">
+                    <span>Vai trò: </span>
+                    <span>{current?.role === 1 ? "Admin" : "User"}</span>
+                </div>
 
                 <div className="flex flex-col gap-2">
-                    <span className="font-medium">Profile image:</span>
+                    <span className="font-medium">Ảnh đại diện:</span>
                     <label htmlFor="file" className="flex w-1/5">
                         <img src={user?.avatarUrl ? `${import.meta.env.VITE_BACKEND_TARGET}/storage/avatar/${user?.avatarUrl}` : avatar} alt="avatar" className="w-20 h-20 ml-8 object-cover rounded-full" />
                     </label>
                     <input type="file" accept="image/*" id="file" {...register('avatarUrl')} hidden />
                 </div>
 
-                {isDirty && <div className="w-full flex justify-end"><Button type="submit">Update Information</Button></div>}
+                {isDirty && <div className="w-full flex justify-end"><Button type="submit">Cập nhật thông tin</Button></div>}
             </form>
         </div>
     );

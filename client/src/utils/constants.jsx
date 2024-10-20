@@ -87,14 +87,14 @@ export const memberSidebar = [
   {
     id: 4,
     type: 'SINGLE',
-    text: 'Home',
+    text: 'Trang chủ',
     path: `/`,
     icon: <FaHome size={20} />
   },
   {
     id: 1,
     type: 'SINGLE',
-    text: 'Personal',
+    text: 'Trang cá nhân',
     path: `/${path.MEMBER}/${path.PERSONAL}`,
     icon: <AiOutlineInfo size={20} />
   },
@@ -102,18 +102,17 @@ export const memberSidebar = [
   {
     id: 2,
     type: 'SINGLE',
-    text: 'Buy Histories',
+    text: 'Lịch sử đơn hàng',
     path: `/${path.MEMBER}/${path.HISTORY}`,
     icon: <MdHistory size={20} />
   },
   {
     id: 3,
     type: 'SINGLE',
-    text: 'Wishlist',
+    text: 'Danh sách yêu thích',
     path: `/${path.MEMBER}/${path.WISHLIST}`,
     icon: <FaHeart size={20} />
-  },
-
+  }
 ]
 
 export const statusOrder = [  

@@ -2,6 +2,7 @@ package com.app.webnongsan.service;
 import com.app.webnongsan.domain.Order;
 import com.app.webnongsan.domain.User;
 import com.app.webnongsan.domain.response.PaginationDTO;
+import com.app.webnongsan.domain.response.feedback.FeedbackDTO;
 import com.app.webnongsan.domain.response.order.OrderDTO;
 
 import com.app.webnongsan.repository.OrderRepository;
@@ -101,6 +102,36 @@ public class OrderService {
         p.setResult(listOrders);
         return p;
     }
+
+    public OrderDTO cancelOrder(Long id) throws ResourceInvalidException {
+
+        Optional<Order> orderOptional = orderRepository.findById(id);
+        Order o = new Order();
+        OrderDTO orderDTO = new OrderDTO();
+        if (orderOptional.isPresent()) {
+            o = orderOptional.get();
+            if(o.getStatus() == 0) o.setStatus(1);
+            else o.setStatus(3);
+            this.orderRepository.save(o);
+            orderDTO.setId(o.getId());
+            orderDTO.setOrderTime(o.getOrderTime());
+            orderDTO.setDeliveryTime(o.getDeliveryTime());
+            orderDTO.setStatus(o.getStatus());
+            orderDTO.setPaymentMethod(o.getPaymentMethod());
+
+            orderDTO.setAddress(o.getAddress());
+            orderDTO.setTotal_price(o.getTotal_price());
+            orderDTO.setTotalPrice(o.getTotal_price());
+
+            orderDTO.setUserEmail(o.getUser().getEmail());
+            orderDTO.setUserId(o.getUser().getId());
+            orderDTO.setUserName(o.getUser().getName());
+        }
+
+
+        return orderDTO;
+    }
+
     public OrderDTO convertToOrderDTO(Order order) {
         OrderDTO res = new OrderDTO();
         res.setId(order.getId());
