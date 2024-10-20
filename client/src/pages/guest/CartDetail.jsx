@@ -251,9 +251,8 @@ const Cart = ({ dispatch }) => {
                     item?.imageUrl
                       ? item?.imageUrl.startsWith("https")
                         ? item?.imageUrl
-                        : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
-                            item?.imageUrl
-                          }`
+                        : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${item?.imageUrl
+                        }`
                       : product_default
                   }
                   alt={item.productName}
@@ -331,7 +330,7 @@ const Cart = ({ dispatch }) => {
                 onChange={toggleSelectAll}
                 className="mr-2"
               />
-              <span>Chọn tất cả</span>
+              <span>Chọn tất cả sản phẩm đang hiển thị</span>
             </div>
             <button
               className={`bg-main text-white px-4 py-2 rounded-md hover:bg-green-500 
