@@ -54,6 +54,7 @@ const FeedbackCard = ({ data, onClose, updateOrderStatus }) => {
                     </span>
                     <span className="text-green-600 font-medium">{(data[0]?.status === 2 || data[0]?.status === 3)  ? "HOÀN THÀNH": "CHƯA HOÀN THÀNH"}</span>
                 </div>
+                <div className="overflow-y-auto max-h-80 mt-2 mb-2">
                 {data?.map((order,index) =>(
                     <div key={order?.orderId + "-" + index} className="flex  space-x-4 items-center justify-start mb-6 w-full">
                         <img src={
@@ -69,6 +70,7 @@ const FeedbackCard = ({ data, onClose, updateOrderStatus }) => {
                         </div>
                     </div>
                 ))}
+                </div>
                 <p className="text-sm text-blue-600">Trả hàng miễn phí 15 ngày</p>
                 <div className="flex justify-between items-center pt-4 border-t">
                     <span>Thành tiền:</span>

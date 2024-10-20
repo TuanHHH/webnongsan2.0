@@ -40,6 +40,7 @@ const Checkout = () => {
         const formData = new FormData();
         formData.append("userId", current?.id);
         formData.append("address", data.address);
+        formData.append("phone", data.phone);
         formData.append("totalPrice", cart?.reduce((sum, el) =>
             +el?.price * el.quantity + sum, 0));
         formData.append("paymentMethod", paymentMethod);
@@ -49,7 +50,7 @@ const Checkout = () => {
             productId: item?.id,
             productName: item?.productName,
             quantity: item?.quantity,
-            productPrice: item?.price
+            unit_price: item?.price
         }));
         formData.append("items", new Blob([JSON.stringify(items)], { type: "application/json" }));
         const response = await apiCreateOrder(formData);
@@ -128,6 +129,7 @@ const Checkout = () => {
         if (current && selectedItems) {
             fetchCart()
             fetchUserByCurrentId()
+            console.log(cart)
         }
     }, [current])
 

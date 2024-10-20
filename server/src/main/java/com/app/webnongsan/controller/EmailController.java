@@ -31,6 +31,7 @@ public class EmailController {
     public ResponseEntity<RestResponse<Long>> create(
             @RequestParam("userId") Long userId,
             @RequestParam("address") String address,
+            @RequestParam("phone") String phone,
             @RequestParam("paymentMethod") String paymentMethod,
             @RequestParam("totalPrice") Double totalPrice,
             @RequestPart("items") List<OrderDetailDTO> items
@@ -48,7 +49,7 @@ public class EmailController {
             // Gửi email sau khi thanh toán thành công
             String subject = "Thông tin đơn hàng";
 
-            emailService.sendEmailFromTemplateSyncCheckout(email, subject, templateName, u.getName(),address,paymentMethod, totalPrice,items);
+            emailService.sendEmailFromTemplateSyncCheckout(email, subject, templateName, u.getName(), address, phone, paymentMethod, totalPrice,items);
 //            response.setData(order.getId());
             response.setStatusCode(HttpStatus.CREATED.value());
             response.setMessage("Gửi email thành công");
