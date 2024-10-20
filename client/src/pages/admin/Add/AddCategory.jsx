@@ -8,9 +8,7 @@ import { toast } from 'react-toastify';
 
 const AddCategory = () => {
     const [categoryImage, setCategoryImage] = useState(null);
-    // const [cateImageUrl, setCateImageUrl] = useState(category_default || "");
     const [previewCategoryImage, setPreviewCategoryImage] = useState(null)
-    // const [categoryImageName,setCategoryImageName] = useState(null)
     const {
         register,
         formState: { errors },
@@ -24,14 +22,13 @@ const AddCategory = () => {
         }
         try {
             const resCheck = await apiCreateCategory(categoryToCreate)
+            console.log(resCheck?.data?.id)
             if (resCheck.statusCode === 400) {
               throw new Error(resCheck.message || "Có lỗi xảy ra khi tạo danh mục.");
           }
-
             const resUpload = await apiUploadImage(categoryImage,"category")
-
-            categoryToCreate.imageUrl = resUpload;
-            categoryToCreate.resCheck?.data?.name;
+            categoryToCreate.id = resCheck.data.id;
+            categoryToCreate.imageUrl = resUpload?.data?.fileName;
 
             const response = await apiUpdateCategory(categoryToCreate);
 

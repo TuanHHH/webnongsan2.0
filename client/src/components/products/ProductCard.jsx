@@ -121,7 +121,16 @@ const ProductCard = ({ productData, navigate, dispatch }) => {
 
           <div className="aspect-w-1 aspect-h-1">
             <img
-              src={productData?.imageUrl || product_default}
+              // src={productData?.imageUrl || product_default}
+              src={
+                productData?.imageUrl
+                  ? productData.imageUrl.startsWith("https")
+                    ? productData.imageUrl
+                    : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
+                      productData.imageUrl
+                      }`
+                  : product_default
+              }
               alt=""
               className="object-cover w-full h-40"
             />

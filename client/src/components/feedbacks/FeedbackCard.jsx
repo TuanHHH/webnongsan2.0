@@ -43,8 +43,18 @@ const FeedbackCard = ({ data, onClose }) => {
                     ))}
                 </div>
                 <div className="flex flex-col md:flex-row items-start gap-6 mb-6">
-                    <img src={
-                        data?.imageUrl ? data?.imageUrl : productDF} alt={data?.product_name} 
+                    <img 
+                    // src={data?.imageUrl ? data?.imageUrl : productDF} 
+                    src={
+                        data?.imageUrl
+                          ? data.imageUrl.startsWith("https")
+                            ? data.imageUrl
+                            : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
+                              data.imageUrl
+                              }`
+                          : productDF
+                      }
+                        alt={data?.product_name}
                         className="w-48  h-48 object-cover rounded-lg shadow-md" />
 
                     <blockquote className="flex-1 max-h-48 min-h-48 min-w-[500px] max-w-[500px] text-gray-700 italic border-l-4 border-primary pl-4 py-2 bg-gray-50 rounded overflow-y-auto">

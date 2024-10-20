@@ -246,7 +246,16 @@ const Cart = ({ dispatch }) => {
                 className={`col-span-6 flex items-center ${item?.stock <= 0 ? 'opacity-50' : ''}`}
               >
                 <img
-                  src={item.imageUrl || product_default}
+                  // src={item.imageUrl || product_default}
+                  src={
+                    item?.imageUrl
+                      ? item?.imageUrl.startsWith("https")
+                        ? item?.imageUrl
+                        : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
+                            item?.imageUrl
+                          }`
+                      : product_default
+                  }
                   alt={item.productName}
                   className="w-20 h-20 object-cover rounded-md mr-4"
                 />
