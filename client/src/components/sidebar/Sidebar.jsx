@@ -22,7 +22,16 @@ const Sidebar = () => {
                     }>
                     <div className="flex items-center gap-2">
                         <img
-                            src={e.imageUrl || category_default}
+                            // src={e.imageUrl || category_default}
+                            src={
+                                e?.imageUrl
+                                  ? e?.imageUrl.startsWith("https")
+                                    ? e.imageUrl
+                                    : `${import.meta.env.VITE_BACKEND_TARGET}/storage/category/${
+                                      e?.imageUrl
+                                      }`
+                                  : category_default
+                              }
                             alt={e.name}
                             className="w-5 h-5 object-cover"
                         />

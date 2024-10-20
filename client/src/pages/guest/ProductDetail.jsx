@@ -188,7 +188,18 @@ const ProductDetail = ({ isQuickView, data }) => {
         <div className={clsx('flex-4 flex flex-col gap-4 ', isQuickView ? 'w-1/2' : 'w-2/5')}>
           <div className='w-[450px]'>
             <div className='px-2' >
-              <img src={product?.imageUrl || product_default} alt='product' className='object-cover' />
+              <img 
+              // src={product?.imageUrl || product_default}
+              src={
+                product?.imageUrl
+                  ? product?.imageUrl.startsWith("https")
+                    ? product?.imageUrl
+                    : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
+                      product?.imageUrl
+                      }`
+                  : product_default
+              }
+              alt='product' className='object-cover' />
             </div>
           </div>
         </div>

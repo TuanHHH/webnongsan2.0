@@ -139,7 +139,16 @@ const History = ({ navigate, location }) => {
                                             <div className="flex-shrink-0 h-10 w-10">
                                                 <img
                                                     className="h-10 w-10 rounded-full object-cover"
-                                                    src={order?.imageUrl || product_default}
+                                                    // src={order?.imageUrl || product_default}
+                                                    src={
+                                                        order?.imageUrl
+                                                          ? order?.imageUrl.startsWith("https")
+                                                            ? order?.imageUrl
+                                                            : `${import.meta.env.VITE_BACKEND_TARGET}/storage/product/${
+                                                                order?.imageUrl
+                                                              }`
+                                                          : product_default
+                                                      }
                                                     alt={order.productName}
                                                 />
                                             </div>
