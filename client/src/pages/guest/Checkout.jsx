@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import payment from '../../assets/payment/payment.svg';
-import { apiCreateOrder, apiDeleteCart, apiGetSelectedCart, apiSendEmail, getUserById } from "../../apis/user";
-import { Button, InputForm } from "../../components";
+import { apiCreateOrder, apiDeleteCart, apiGetSelectedCart, apiPaymentVNPay, apiSendEmail, getUserById } from "../../apis/user";
+import { Button,InputForm } from "@/components";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaRegCreditCard } from "react-icons/fa6";
 import { apiGetProduct, apiUpdateProduct } from "@/apis";
+
 
 const Checkout = () => {
     const { current } = useSelector(state => state.user)
@@ -35,13 +36,14 @@ const Checkout = () => {
             console.error("Error fetching avatar:", error);
         }
     }
-    const handlePayment = async (data) => {
+    const handlePayment = async (data,event) => {
+        const paymentMethod = event.nativeEvent.submitter.value;
         const formData = new FormData();
         formData.append("userId", current?.id);
         formData.append("address", data.address);
         formData.append("totalPrice", cart?.reduce((sum, el) =>
             +el?.price * el.quantity + sum, 0));
-        formData.append("paymentMethod", "COD");
+        formData.append("paymentMethod", paymentMethod);
 
         // Thêm từng sản phẩm trong giỏ hàng vào formData
         const items = cart?.map((item) => ({
@@ -53,43 +55,74 @@ const Checkout = () => {
         formData.append("items", new Blob([JSON.stringify(items)], { type: "application/json" }));
         const response = await apiCreateOrder(formData);
         const delay = 2000
-        if (response?.statusCode === 201) {
-            toast.success(response?.data?.message, {
-                hideProgressBar: false, // Bật thanh tiến trình
-                autoClose: delay, // Tùy chọn để tự động đóng sau 3 giây (hoặc thời gian bạn muốn)
-            })
+        if (paymentMethod === 'VNPAY'){
+            const vnpayRes = await apiPaymentVNPay({amount:formData.get("totalPrice"),bankCode:"NCB"})
+            if(vnpayRes?.statusCode === 200 && vnpayRes?.data?.data?.code === "ok"){
+                const paymentUrl = vnpayRes?.data?.data?.paymentUrl;
+                // Chuyển đổi FormData thành đối tượng
+                const formObject = {};
 
-            // Sử dụng Promise.all để xử lý tất cả các yêu cầu song song
-            await Promise.all(cart.map(async (item) => {
-                const resProduct = await apiGetProduct(item?.id);
-                const product = resProduct?.data;
+                const promises = [];
+                formData.forEach((value, key) => {
+                    // Nếu key là "items", sử dụng FileReader để đọc Blob
+                    if (key === "items") {
+                        const reader = new FileReader();
+                        const promise = new Promise((resolve) => {
+                            reader.onload = () => {
+                                const itemsString = reader.result; // Kết quả là chuỗi
+                                formObject[key] = JSON.parse(itemsString); // Chuyển đổi từ JSON string về mảng
+                                resolve();
+                            };
+                        });
+                        reader.readAsText(value); // Đọc Blob dưới dạng chuỗi
+                        promises.push(promise); // Thêm promise vào danh sách
+                    } else {
+                        // Kiểm tra xem value có phải là đối tượng File không
+                        if (value instanceof File) {
+                            formObject[key] = value.name; // Hoặc xử lý theo cách mà bạn muốn
+                        } else {
+                            formObject[key] = value; // Chỉ lưu trữ giá trị cho các kiểu khác
+                        }
+                    }
+                });
 
-                // Kiểm tra xem sản phẩm có tồn tại không
-                if (product) {
+                await Promise.all(promises); // Chờ cho tất cả promises hoàn thành
+                localStorage.setItem('paymentData', JSON.stringify(JSON.stringify(formObject)));
+                location.state = {}
+                window.location.href = paymentUrl;
+                console.log(vnpayRes)
+            }
+        }else{
+            if (response?.statusCode === 201) {
+                toast.success(response?.data?.message, {
+                    hideProgressBar: false, // Bật thanh tiến trình
+                    autoClose: delay, // Tùy chọn để tự động đóng sau 3 giây (hoặc thời gian bạn muốn)
+                })
+    
+                // Sử dụng Promise.all để xử lý tất cả các yêu cầu song song
+                await Promise.all(cart.map(async (item) => {
                     const productData = {
-                        quantity: product?.quantity - item?.quantity,
+                        quantity:  item?.quantity,
                     };
-                    console.log(productData);
-
                     // Cập nhật lại số lượng sản phẩm sau khi thanh toán
                     await apiUpdateProduct(item?.id, productData);
-                }
-
-                // Xóa sản phẩm đó khỏi cart
-                await apiDeleteCart(item?.id);
-            }));
-            
-            await apiSendEmail(formData);
-            location.state = {}
-            setTimeout(() => {
-                navigate('/')
-                window.location.reload()
-            }, delay);
-        } else {
-            toast.error(response?.data?.error, {
-                hideProgressBar: false,
-                autoClose: delay,
-            })
+    
+                    // Xóa sản phẩm đó khỏi cart
+                    await apiDeleteCart(item?.id);
+                }));
+                
+                await apiSendEmail(formData);
+                location.state = {}
+                setTimeout(() => {
+                    navigate('/')
+                    window.location.reload()
+                }, delay);
+            } else {
+                toast.error(response?.data?.error, {
+                    hideProgressBar: false,
+                    autoClose: delay,
+                })
+            }
         }
     }
     useEffect(() => {
@@ -178,7 +211,8 @@ const Checkout = () => {
                                 }}
                             />
                             {/* px-4 py-2 rounded-md text-white bg-main text-semibold my-2 w-full justify-end */}
-                            {isValid && <Button style={"px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-500 shadow-lg transition duration-300 w-full"} type="submit">Thanh toán khi nhận hàng</Button>}
+                            {isValid && <button className={ "px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="COD">Thanh toán khi nhận hàng</button>}
+                            {isValid && <button className={"px-4 py-2 rounded-md text-white bg-green-600 hover:bg-blue-500 shadow-lg transition duration-300 w-full"} type="submit" name="paymentMethod" value="VNPAY">Thanh toán bằng VNPAY</button>}
                         </form>
                     </div>
                 </div>

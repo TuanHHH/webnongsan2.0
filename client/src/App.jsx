@@ -3,15 +3,14 @@
 import React, { useEffect } from 'react'
 import path from '@/utils/path'
 import { Route, Routes} from "react-router-dom";
-import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword, CartDetail, Checkout, ErrorPage } from "@/pages/guest";
+import { Login, Home, Public, ProductDetail, ForYou, Product, ResetPassword, CartDetail, Checkout, ErrorPage, PaymentSuccess, PaymentFailure, LocationSelector } from "@/pages/guest";
 import { MemberLayout, Personal, Wishlist, History } from '@/pages/member';
 import { useDispatch, useSelector } from "react-redux";
 import { getCategories } from "@/store/app/asyncActions";
 import { Bounce, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Modal } from '@/components';
-import { Admin } from "./pages/admin/index";
-// import { Feedback } from './pages/admin/index';
+import { Admin, Feedback } from "./pages/admin/index";
 const App = () => {
   const dispatch = useDispatch();
   const { isShowModal, modalChildren } = useSelector(state => state.app)
@@ -36,19 +35,19 @@ const App = () => {
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />}></Route>
           <Route path="/error" element={<ErrorPage />} />
           <Route path='*' element={<ErrorPage />}></Route>
+          <Route path={path.PAYMENT_SUCCESS} element={<PaymentSuccess />}></Route>
+          <Route path={path.PAYMENT_FAILURE} element={<PaymentFailure />}></Route>
+        </Route>
+        <Route path={path.ADMIN_LAYOUT} element={<Admin/>}> 
+          <Route path={path.FEEDBACK} element={<Feedback />}></Route>   
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout />}>
           <Route path={path.PERSONAL} element={<Personal />}></Route>
           <Route path={path.HISTORY} element={<History />}></Route>
           <Route path={path.WISHLIST} element={<Wishlist />}></Route>
         </Route>
-        <Route path={path.ADMIN} element={<MemberLayout />}>
-          {/* <Route path={path.FEEDBACK} element={<Feedback/>}></Route> */}
-        </Route>
         <Route path={path.LOGIN} element={<Login />}></Route>
-        <Route path='/admin/*' element={<Admin/>}>
-          {/* <Route path='Overview' element={<Overview/>}></Route> */}
-        </Route>
+        <Route path='/vietnam-location' element={<LocationSelector/>}></Route>
       </Routes>
       <ToastContainer
         position="bottom-right"

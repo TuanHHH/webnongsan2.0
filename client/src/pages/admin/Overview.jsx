@@ -66,17 +66,6 @@ const Overview = () => {
     }
   };
 
-  // const fetchOrders = async () => {
-  //   const res = await apiGetOrdersAll();
-  //   if (res.statusCode === 200) {
-  //     let total = 0;
-  //     for (let i = 0; i < res.data.result.length; i++) {
-  //       total += res.data.result[i].total_price;
-  //     }
-  //     setTotalProfit(total);
-  //     setTotalOrder(res.data.meta.total);
-  //   }
-  // };
   const fetchOrders = async () => {
     const res = await apiGetAllOrders();
     if (res.statusCode === 200) {
@@ -97,6 +86,7 @@ const Overview = () => {
       setOverviewOrder(res);
     }
   };
+
   const fetchUsers = async () => {
     const res = await apiGetAllUser();
     if (res.statusCode === 200) {
