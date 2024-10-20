@@ -1,12 +1,9 @@
 import React from 'react'
-import category_default from "./../../assets/category_default.png";
-// import { useSelector} from "react-redux";
-import { GrReturn } from "react-icons/gr";
+
 import {useEffect,useState} from "react";
-import { apiGetCategory } from '../../apis';
-import EditCategoryForm from '../../components/admin/EditCategoryForm';
-import { useLocation, useNavigate } from 'react-router-dom';
-import TurnBackHeader from '../../components/admin/TurnBackHeader';
+import { apiGetCategory } from '@/apis';
+import EditCategoryForm from '@/components/admin/EditCategoryForm';
+import TurnBackHeader from '@/components/admin/TurnBackHeader';
 function EditCategory() {
     const [category, setCategory] = useState(null)
     const fetchCategory = async(cid)=>{

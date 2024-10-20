@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { apiGetProduct, apiUpdateProduct2 } from "./../../apis";
-import { EditProductForm, TurnBackHeader } from "./../../components/admin/index";
+import { apiGetProduct, apiUpdateProduct2 } from "@/apis";
+import { EditProductForm, TurnBackHeader } from "@/components/admin/index";
 import { toast } from "react-toastify";
 
 function EditProduct() {

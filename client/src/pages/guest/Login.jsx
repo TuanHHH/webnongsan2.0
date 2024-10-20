@@ -77,7 +77,7 @@ const Login = () => {
       <div className="absolute top-0 bottom-0 right-0 left-0 flex items-center justify-center">
         <div className="p-8 bg-white rounded-md min-w-[500px] w-1/2">
           <h1 className="text-[28px] font-semibold text-main text-center mb-8">
-            {isRegister ? "Register" : "Login"}
+            {isRegister ? "Đăng ký" : "Đăng nhập"}
           </h1>
           {loading ? (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">

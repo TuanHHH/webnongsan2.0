@@ -13,11 +13,7 @@ const EditProductForm = ({ initialProductData }) => {
   } = useForm();
 
   const [productData, setProductData] = useState(initialProductData);
-  console.log(`initial product`, initialProductData),
-    console.log(`product data`, productData)
-
-
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  //const [selectedCategory, setSelectedCategory] = useState(null);
   const [productImage, setProductImage] = useState(null)
 
   const [previewProductImage, setPreviewProductImage] = useState(
