@@ -63,4 +63,8 @@ public class OrderDetailService {
         res.setImageUrl(orderDetail.getProduct().getImageUrl());
         return res;
     }
+
+    public List<OrderDetail> findByOrderId(Long orderId) {
+        return orderDetailRepository.findByOrderId(orderId);
+    }
 }

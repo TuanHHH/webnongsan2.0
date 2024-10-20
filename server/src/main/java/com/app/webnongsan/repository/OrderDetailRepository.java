@@ -27,6 +27,6 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long>, JpaSpecificationExecutor<OrderDetail> {
         Page<OrderDetail> findByOrderId(long orderId, Pageable pageable);
         boolean existsById(OrderDetailId id);
-
+        List<OrderDetail> findByOrderId(Long orderId);
 }
 

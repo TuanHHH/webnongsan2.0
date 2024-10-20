@@ -36,3 +36,8 @@ export const apiUpdateOrderStatus = async(orderId,status)=>
         url:`updateOrderStatus/${orderId}`,
         params:{status:status},
     })
+export const apiGetTotalSuccessOrder = async()=>
+    axiosInstance({
+        url:`totalSuccessOrder`,
+        method:`get`,
+    })

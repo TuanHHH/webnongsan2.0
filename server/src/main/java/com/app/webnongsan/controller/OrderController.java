@@ -2,6 +2,8 @@ package com.app.webnongsan.controller;
 
 import com.app.webnongsan.domain.Order;
 
+import com.app.webnongsan.domain.OrderDetail;
+import com.app.webnongsan.domain.Product;
 import com.app.webnongsan.domain.response.PaginationDTO;
 import com.app.webnongsan.domain.response.feedback.FeedbackDTO;
 import com.app.webnongsan.domain.response.order.OrderDTO;
@@ -63,6 +65,16 @@ public class OrderController {
         if (status == 2 || status == 3) {
             order.setDeliveryTime(Instant.now());
         }
+        if (status == 3) { //Hủy đơn hàng thì lấy hết tất cả số lượng sản phẩm của orderDetail từ orderId trả về số lượng sản phẩm
+            List<OrderDetail> orderDetails = this.orderDetailService.findByOrderId(orderId);
+
+            for (OrderDetail orderDetail : orderDetails) {
+                Product p = orderDetail.getProduct();
+                p.setQuantity(p.getQuantity()+orderDetail.getQuantity());
+                this.productService.update(p);
+            }
+
+        }
         OrderDTO o = new OrderDTO();
         o.setId(orderId);
         o.setStatus(status);
@@ -117,4 +129,12 @@ public class OrderController {
     ) throws ResourceInvalidException {
         return ResponseEntity.ok(this.orderService.getOrderByCurrentUser(pageable, status));
     }
+
+    @GetMapping("totalSuccessOrder")
+    @ApiMessage("Get total price and count of all successful orders")
+    public ResponseEntity<double[]> getTotalPriceOfSuccessfulOrders() {
+        double[] totals = this.orderService.getTotalSuccessOrder();
+        return ResponseEntity.ok(totals);
+    }
+
 }

@@ -62,6 +62,16 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+public double[] getTotalSuccessOrder() {
+    List<Order> successfulOrders = this.orderRepository.getTotalSuccessOrder();
+    double totalMoney = successfulOrders.stream()
+            .mapToDouble(Order::getTotal_price)
+            .sum();
+    long totalOrder = successfulOrders.size();
+
+    return new double[]{totalMoney, totalOrder};
+}
+
 
     public Optional<OrderDTO> findOrder(long id){
         OrderDTO res = new OrderDTO();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiGetProducts } from "@/apis";
+import { apiGetProducts, apiGetTotalSuccessOrder } from "@/apis";
 import { apiGetAllOrders } from "@/apis";
 import { apiGetAllUser, apiGetOverviewOrder } from "@/apis";
 import { apiUpdateOrderStatus } from "@/apis";
@@ -67,17 +67,9 @@ const Overview = () => {
   };
 
   const fetchOrders = async () => {
-    const res = await apiGetAllOrders();
-    if (res.statusCode === 200) {
-      let total = 0;
-      for (let i = 0; i < res.data.result.length; i++) {
-        if(res.data.result[i].status===2){
-          total += res.data.result[i].total_price;
-        }
-      }
-      setTotalProfit(total);
-      setTotalOrder(res.data.meta.total);
-    }
+    const resTotal = await apiGetTotalSuccessOrder()
+      setTotalProfit(resTotal.data[0]);
+      setTotalOrder(resTotal.data[1]);
   };
   const fetchOverviewOrder = async () => {
     const res = await apiGetOverviewOrder();
@@ -159,28 +151,28 @@ const Overview = () => {
                         title={
                           item.status === 0
                             // ? "Pending"
-                            ?"Đợi"
+                            ?"Chờ xác nhận"
                             : item.status === 1
                             // ? "In Delivery"
-                            ?"Đang vận chuyển"
+                            ?"Đang giao"
                             : item.status === 2
                             // ? "Succeed"
-                            ?"Xong"
+                            ?"Đã giao"
                             // : "Cancelled"
                             :"Hủy"
                         }
                       >
                         {item.status === 0
                           // ? "Pending"
-                          ?"Đợi"
+                          ?"Chờ xác nhận"
                           : item.status === 1
                           // ? "In Delivery"
-                          ?"Đang vận chuyển"
+                          ?"Đang giao"
                           : item.status === 2
                           // ? "Succeed" 
-                          ?"Hoàn thành"
+                          ?"Đã giao"
                           // : "Cancelled"
-                          :"Hủy"
+                          :"Đã hủy"
                           }
                       </span>
                       {hoverOrderStatus === item.id && (

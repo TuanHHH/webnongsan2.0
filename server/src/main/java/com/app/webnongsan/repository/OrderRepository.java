@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
     @Query("SELECT new com.app.webnongsan.domain.response.order.OrderDetailDTO" +
@@ -22,6 +24,9 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             @Param("userId") Long userId,
             @Param("status") Integer status,
             Pageable pageable);
+
+    @Query("SELECT o FROM Order o WHERE o.status = 2")
+    List<Order> getTotalSuccessOrder();
 }
 
 //SELECT *
