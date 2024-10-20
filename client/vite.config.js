@@ -5,7 +5,6 @@ import jsconfigPaths from 'vite-jsconfig-paths'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
-
 export default defineConfig({
   plugins: [react(), jsconfigPaths()],
   css: {
